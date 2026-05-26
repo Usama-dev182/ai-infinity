@@ -1,4 +1,4 @@
-import { Zap, Code2, PlayCircle, ExternalLink, Mail, MessageCircle } from "lucide-react";
+import { Zap, Code2, PlayCircle, ExternalLink, Mail, MessageCircle, MapPin, Phone } from "lucide-react";
 import { TrackedAnchor } from "@/components/analytics/tracked-anchor";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { SITE, SERVICES, NAV_ITEMS } from "@/content/site";
@@ -21,7 +21,7 @@ export function Footer() {
   return (
     <footer className="bg-[var(--surface-bg-subtle)] border-t border-[var(--surface-border)]">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand column */}
           <div className="lg:col-span-2">
             <TrackedLink
@@ -78,12 +78,12 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Navigation + Contact */}
+          {/* Navigation */}
           <div>
             <h3 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
               Company
             </h3>
-            <ul className="space-y-3 mb-6">
+            <ul className="space-y-3">
               {NAV_ITEMS.map((item) => (
                 <li key={item.href}>
                   <TrackedLink
@@ -97,28 +97,74 @@ export function Footer() {
                 </li>
               ))}
             </ul>
-            <div>
-              <h4 className="font-semibold text-[var(--text-primary)] text-sm mb-2">Contact</h4>
-              <TrackedAnchor
-                href={`mailto:${SITE.email}`}
-                eventName="social_click"
-                params={{ label: "Email", location: "footer_contact", destination: `mailto:${SITE.email}` }}
-                className="text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors block mb-2"
-              >
-                {SITE.email}
-              </TrackedAnchor>
-              <TrackedAnchor
-                href={SITE.whatsapp}
-                eventName="social_click"
-                params={{ label: "WhatsApp", location: "footer_contact", destination: SITE.whatsapp }}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-[#25D366] hover:text-[#25D366]/80 transition-colors"
-              >
-                <MessageCircle className="w-4 h-4" />
-                {SITE.phone}
-              </TrackedAnchor>
-            </div>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
+              Contact
+            </h3>
+            <ul className="space-y-4">
+              <li>
+                <TrackedAnchor
+                  href={`mailto:${SITE.email}`}
+                  eventName="social_click"
+                  params={{ label: "Email", location: "footer_contact", destination: `mailto:${SITE.email}` }}
+                  className="flex items-start gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                >
+                  <Mail className="w-4 h-4 mt-0.5 shrink-0 text-[var(--brand-primary)]" />
+                  <span className="break-all">{SITE.email}</span>
+                </TrackedAnchor>
+              </li>
+              <li>
+                <TrackedAnchor
+                  href={`tel:${SITE.phone.replace(/\s/g, "")}`}
+                  eventName="social_click"
+                  params={{ label: "Phone", location: "footer_contact", destination: SITE.phone }}
+                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                >
+                  <Phone className="w-4 h-4 shrink-0 text-[var(--brand-primary)]" />
+                  {SITE.phone}
+                </TrackedAnchor>
+              </li>
+              <li>
+                <TrackedAnchor
+                  href={SITE.whatsapp}
+                  eventName="social_click"
+                  params={{ label: "WhatsApp", location: "footer_contact", destination: SITE.whatsapp }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 text-sm text-[#25D366] hover:text-[#25D366]/80 transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4 shrink-0" />
+                  WhatsApp Us
+                </TrackedAnchor>
+              </li>
+              <li>
+                <TrackedAnchor
+                  href={SITE.linkedin}
+                  eventName="social_click"
+                  params={{ label: "LinkedIn", location: "footer_contact", destination: SITE.linkedin }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4 shrink-0 text-[var(--brand-primary)]" />
+                  LinkedIn
+                </TrackedAnchor>
+              </li>
+              <li>
+                <TrackedLink
+                  href="/contact"
+                  eventName="nav_click"
+                  params={{ label: "Contact Page", location: "footer_contact", destination: "/contact" }}
+                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                >
+                  <MapPin className="w-4 h-4 shrink-0 text-[var(--brand-primary)]" />
+                  Get in Touch
+                </TrackedLink>
+              </li>
+            </ul>
           </div>
         </div>
 

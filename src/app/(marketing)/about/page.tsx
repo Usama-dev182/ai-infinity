@@ -110,14 +110,14 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
               <div className="relative">
-                <div className="w-64 h-64 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] p-0.5 mx-auto lg:mx-0">
+                <div className="w-72 h-96 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] p-0.5 mx-auto lg:mx-0">
                   <div className="w-full h-full rounded-2xl bg-[var(--surface-bg)] overflow-hidden">
                     <Image
                       src={FOUNDER.avatar}
                       alt={FOUNDER.name}
-                      width={256}
-                      height={256}
-                      className="w-full h-full object-cover"
+                      width={288}
+                      height={384}
+                      className="w-full h-full object-cover object-top"
                       priority
                     />
                   </div>

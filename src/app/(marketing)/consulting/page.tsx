@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Metadata } from "next";
 import {
   ArrowRight,
@@ -11,6 +12,8 @@ import {
   Sparkles,
   Layers,
   Cpu,
+  Server,
+  GitBranch,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -95,6 +98,42 @@ const consultingServices = [
       "Tech stack selection and MVP scoping",
       "Monetisation model and pricing strategy",
       "Go-to-market and product positioning advice",
+    ],
+  },
+  {
+    icon: Code2,
+    title: "Full Stack Development",
+    description:
+      "Need a trusted engineer to build or extend your product? We design and ship production-grade full-stack applications — fast, clean, and maintainable.",
+    points: [
+      "React / Next.js frontend architecture & implementation",
+      "Node.js / FastAPI backend and API design",
+      "Database design, optimisation, and migrations",
+      "CI/CD, cloud deployment, and performance tuning",
+    ],
+  },
+  {
+    icon: Server,
+    title: "DevOps & Deployment",
+    description:
+      "Ship confidently and scale reliably. From containerisation to cloud infrastructure, we set up the pipelines and platforms your team needs to deploy fast and sleep soundly.",
+    points: [
+      "Docker & Kubernetes containerisation and orchestration",
+      "CI/CD pipelines with GitHub Actions, GitLab CI, or Jenkins",
+      "Cloud deployment on AWS, GCP, Azure, Vercel, or Railway",
+      "Infrastructure as Code with Terraform or Pulumi",
+    ],
+  },
+  {
+    icon: GitBranch,
+    title: "Agile & Project Delivery",
+    description:
+      "Move faster without the chaos. We embed agile practices that actually fit your team — no pointless ceremonies, just effective delivery rhythms.",
+    points: [
+      "Scrum and Kanban board setup (Jira, Linear, GitHub Projects)",
+      "Sprint planning, backlog grooming, and retrospectives",
+      "User story mapping and acceptance criteria workshops",
+      "Agile transformation coaching for remote-first teams",
     ],
   },
   {
@@ -302,8 +341,16 @@ export default function ConsultingPage() {
             <FadeUp delay={0.3}>
               <div className="glass-card rounded-3xl border border-[var(--surface-border)] p-8 shadow-xl">
                 <div className="flex items-center gap-5 mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center shadow-lg text-white font-bold text-xl flex-shrink-0">
-                    UA
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] p-0.5 flex-shrink-0 shadow-lg">
+                    <div className="w-full h-full rounded-[10px] overflow-hidden">
+                      <Image
+                        src={FOUNDER.avatar}
+                        alt={FOUNDER.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover object-top"
+                      />
+                    </div>
                   </div>
                   <div>
                     <p className="font-bold text-[var(--text-primary)] text-lg">{FOUNDER.name}</p>
@@ -359,7 +406,7 @@ export default function ConsultingPage() {
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">What I Help With</Badge>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] mb-4">
-                Six Areas Where I Can{" "}
+                Nine Areas Where I Can{" "}
                 <span className="gradient-text">Move the Needle</span>
               </h2>
               <p className="text-lg text-[var(--text-secondary)]">

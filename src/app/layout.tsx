@@ -20,13 +20,6 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://aiinfinitylabs.com"),
-  icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-    ],
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
-  },
   title: {
     default: "AI Infinity Labs – AI Integration & Full Stack Development Agency",
     template: "%s | AI Infinity Labs",
