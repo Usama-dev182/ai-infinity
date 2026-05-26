@@ -27,7 +27,7 @@ const engagementModels = [
     icon: Zap,
     name: "Fixed-Price Project",
     tagline: "You know what you want. We deliver exactly that.",
-    range: "From $3,000",
+    range: "From $1,500",
     description:
       "Defined scope, defined timeline, defined cost. Ideal for MVPs, specific feature builds, AI integrations, and automation systems with clear inputs and outputs.",
     includes: [
@@ -45,7 +45,7 @@ const engagementModels = [
     icon: Code2,
     name: "Monthly Retainer",
     tagline: "A dedicated senior engineer on your team, month-to-month.",
-    range: "$4,000–$8,000 / month",
+    range: "$2,000–$4,500 / month",
     description:
       "Rolling monthly engagements for ongoing product development, feature iteration, or AI system maintenance. Ideal for funded startups and growing product teams.",
     includes: [
@@ -63,7 +63,7 @@ const engagementModels = [
     icon: Brain,
     name: "Consulting & Advisory",
     tagline: "Expert guidance without the full-build commitment.",
-    range: "From $200 / hour",
+    range: "From $50 / hour",
     description:
       "Architecture reviews, AI strategy sessions, technical due diligence, and team workshops. Billed hourly or as a day-rate engagement.",
     includes: [
@@ -82,37 +82,37 @@ const engagementModels = [
 const projectExamples = [
   {
     type: "AI Chatbot Integration",
-    range: "$3,500–$8,000",
+    range: "$1,500–$4,000",
     timeline: "2–4 weeks",
     description: "Custom LLM-powered chatbot with RAG, knowledge base integration, and production guardrails.",
   },
   {
     type: "AI Automation Workflow",
-    range: "$4,000–$12,000",
+    range: "$2,000–$6,000",
     timeline: "3–5 weeks",
     description: "Multi-step agentic automation system — email triage, document processing, CRM workflows, or custom business processes.",
   },
   {
     type: "SaaS MVP",
-    range: "$8,000–$20,000",
+    range: "$4,000–$10,000",
     timeline: "5–8 weeks",
     description: "Full-stack Next.js SaaS with auth, billing, admin dashboard, and production deployment.",
   },
   {
     type: "RAG / Knowledge Base System",
-    range: "$5,000–$14,000",
+    range: "$2,500–$7,000",
     timeline: "3–6 weeks",
     description: "Internal AI assistant with semantic search over your private documents, Slack/web UI, and citation engine.",
   },
   {
     type: "Landing Page / Marketing Site",
-    range: "$1,500–$4,000",
+    range: "$800–$2,000",
     timeline: "1–2 weeks",
     description: "High-performance Next.js marketing site with CMS, animations, SEO, and OG image generation.",
   },
   {
     type: "Technical Architecture Review",
-    range: "$800–$2,500",
+    range: "$400–$1,200",
     timeline: "3–5 days",
     description: "Expert review of your existing system with a written recommendation report and a summary call.",
   },
