@@ -36,6 +36,7 @@ const DESKTOP_NAV: DesktopNavItem[] = [
     ],
   },
   { label: "Consulting", href: "/consulting" },
+  { label: "Pricing", href: "/pricing" },
   {
     label: "Company",
     children: [

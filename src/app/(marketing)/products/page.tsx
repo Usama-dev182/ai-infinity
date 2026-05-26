@@ -101,7 +101,7 @@ export default function ProductsPage() {
               </div>
               <p className="text-sm text-[var(--text-secondary)]">
                 <span className="font-semibold text-[var(--text-primary)]">Actively building</span>
-                {" "}— first product drops in Q3 2026
+                {" "}— early access available. <Link href="/contact" className="text-[var(--brand-primary)] underline underline-offset-2">Join the waitlist</Link>.
               </p>
             </div>
           </FadeUp>

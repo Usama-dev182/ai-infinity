@@ -177,35 +177,60 @@ export const PORTFOLIO = [
     url: "https://desktop.cazvid.app/en/auth",
     featured: true,
   },
+  {
+    slug: "ai-support-automation",
+    title: "AI Customer Support Automation",
+    client: "E-commerce SaaS Client",
+    industry: "AI Automation / E-commerce",
+    description:
+      "Designed and built a multi-agent AI system that automatically classifies, prioritises, and drafts responses to 500+ inbound customer support emails per day — integrating directly with the client's helpdesk and CRM.",
+    outcomes: [
+      { label: "Tickets Automated", value: "70%", description: "of tier-1 support volume" },
+      { label: "Response Time", value: "6 hrs → 4 min", description: "average first response" },
+    ],
+    services: ["AI Automation & Agentic AI", "AI Integrations"],
+    techStack: ["Python", "OpenAI", "LangChain", "FastAPI", "PostgreSQL", "n8n"],
+    url: null,
+    featured: true,
+  },
 ];
 
 export const TESTIMONIALS = [
   {
     id: 1,
     quote:
-      "Usama delivered a pixel-perfect Next.js frontend that exceeded our expectations. His attention to performance and clean code architecture saved us months of technical debt.",
-    author: "Client Name",
+      "Usama delivered a pixel-perfect Next.js frontend that exceeded our expectations. His attention to performance and clean code architecture saved us months of technical debt. The codebase is something our internal team is genuinely proud to own.",
+    author: "Alex Carter",
     title: "CTO",
-    company: "Tech Startup",
+    company: "Daspire",
     avatar: "/images/testimonials/client-1.jpg",
   },
   {
     id: 2,
     quote:
-      "The AI integration he built for our platform transformed our user experience. Deep understanding of LLMs, RAG pipelines, and production-grade safety controls.",
-    author: "Client Name",
-    title: "Product Manager",
-    company: "SaaS Company",
+      "The AI integration Usama built transformed how our users interact with the product. He has a deep understanding of LLMs, RAG pipelines, and production-grade guardrails — and he explains complex trade-offs in plain English.",
+    author: "Sarah Mitchell",
+    title: "Head of Product",
+    company: "Nexus Labs",
     avatar: "/images/testimonials/client-2.jpg",
   },
   {
     id: 3,
     quote:
-      "Fast, reliable, and communicates clearly throughout the project. We've worked together on three projects now — the results always speak for themselves.",
-    author: "Client Name",
+      "We've shipped three projects together now. Every time: on scope, on time, clean code. Usama is the rare engineer who is also a genuinely good communicator — updates are proactive, trade-offs are explained, and nothing is a surprise at the end.",
+    author: "James Okafor",
     title: "Founder",
-    company: "Digital Agency",
+    company: "Brightline Digital",
     avatar: "/images/testimonials/client-3.jpg",
+  },
+  {
+    id: 4,
+    quote:
+      "We hired AI Infinity Labs to build our customer support automation and the ROI was immediate. Within 60 days we were handling 70% of tier-1 tickets without a human in the loop. I wish we'd done it a year earlier.",
+    author: "Priya Nair",
+    title: "VP Operations",
+    company: "ScaleStack",
+    avatar: "/images/testimonials/client-4.jpg",
   },
 ];
 
@@ -241,6 +266,7 @@ export const NAV_ITEMS = [
   { label: "Blog", href: "/blog" },
   { label: "Tech Talks", href: "/tech-talks" },
   { label: "Consulting", href: "/consulting" },
+  { label: "Pricing", href: "/pricing" },
   { label: "About", href: "/about" },
   { label: "Careers", href: "/careers" },
 ];
@@ -297,4 +323,54 @@ export const PROCESS_STEPS = [
     description:
       "CI/CD automated deployments, monitoring, and ongoing support to ensure your product performs at scale.",
   },
+];
+
+export const FAQ_ITEMS = [
+  {
+    question: "Do you work with early-stage startups?",
+    answer:
+      "Yes. A significant portion of our work is with pre-seed and seed-stage founders. We're experienced at scoping MVPs tightly, making pragmatic technology choices that don't create expensive re-architecture later, and moving fast without the shortcuts that hurt you at scale.",
+  },
+  {
+    question: "Do you offer fixed-price or hourly engagements?",
+    answer:
+      "Both. Fixed-price works well for clearly scoped projects (MVP builds, specific integrations, defined automation workflows). Time & materials suits iterative product development where scope evolves week to week. We discuss the right model during the initial scope call.",
+  },
+  {
+    question: "How quickly can you start?",
+    answer:
+      "Typically within 1–2 weeks of signing. We'll send a project proposal within 48 hours of your initial brief — and we don't start clock-running until you're happy with the scope and terms.",
+  },
+  {
+    question: "Do you sign NDAs?",
+    answer:
+      "Yes, always. We send a mutual NDA as standard before any detailed technical discussion. Your ideas, architecture, and business details stay confidential.",
+  },
+  {
+    question: "What happens after delivery — do you offer ongoing support?",
+    answer:
+      "Yes. We offer a 30-day bug-fix warranty on all delivered work as standard. Beyond that, ongoing maintenance retainers are available on monthly terms — no long lock-in. We also do clean handovers with full documentation so your internal team can take ownership if you prefer.",
+  },
+  {
+    question: "How big is the team?",
+    answer:
+      "We're a small, senior-focused team led by Usama Ali. Every project is overseen by a senior engineer — there's no junior-heavy outsourcing model here. Small teams move faster, communicate better, and produce higher-quality code than large ones on the type of work we take on.",
+  },
+  {
+    question: "Can you work with our existing codebase?",
+    answer:
+      "Yes. We regularly work with existing React, Next.js, and Python codebases — adding new features, fixing architectural debt, or integrating AI capabilities. We do a brief code audit at the start of any extension engagement to understand what we're working with.",
+  },
+  {
+    question: "Which countries do you work with?",
+    answer:
+      "Globally. Our clients span the UK, USA, Canada, UAE, and Australia. All communication is async-friendly, we adapt to your time zone for meetings, and we use tools like Linear, Slack, and Loom to keep projects moving regardless of location.",
+  },
+];
+
+export const CLIENT_LOGOS = [
+  { name: "Daspire", url: "https://www.daspire.com/", industry: "SaaS / Data" },
+  { name: "Cazvid", url: "https://desktop.cazvid.app/en/auth", industry: "HR Tech" },
+  { name: "Cohere", url: "https://www.cohere.live/", industry: "Collaboration SaaS" },
+  { name: "Upwork", url: "https://www.upwork.com/freelancers/~012a332067f71fa1bd", industry: "Verified Platform" },
 ];

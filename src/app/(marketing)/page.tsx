@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
-import { SERVICES, STATS, PORTFOLIO, TESTIMONIALS, TECH_STACK_BADGES, PROCESS_STEPS, SITE } from "@/content/site";
+import { SERVICES, STATS, PORTFOLIO, TESTIMONIALS, TECH_STACK_BADGES, PROCESS_STEPS, SITE, FAQ_ITEMS, CLIENT_LOGOS } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -386,6 +386,90 @@ export default function HomePage() {
               </StaggerItem>
             ))}
           </StaggerContainer>
+        </div>
+      </section>
+
+      {/* ─── CLIENT LOGO STRIP ──────────────────────────────────── */}
+      <section className="py-12 bg-[var(--surface-bg-subtle)] border-y border-[var(--surface-border)]">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <FadeUp>
+            <p className="text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-8">
+              Trusted by teams at
+            </p>
+          </FadeUp>
+          <FadeUp delay={0.1}>
+            <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-16">
+              {CLIENT_LOGOS.map((logo) => (
+                <a
+                  key={logo.name}
+                  href={logo.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col items-center gap-1.5"
+                  aria-label={logo.name}
+                >
+                  <span className="text-xl font-extrabold text-[var(--text-muted)] group-hover:text-[var(--brand-primary)] transition-colors tracking-tight">
+                    {logo.name}
+                  </span>
+                  <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+                    {logo.industry}
+                  </span>
+                </a>
+              ))}
+              <div className="flex flex-col items-center gap-1.5">
+                <span className="text-xl font-extrabold text-[var(--text-muted)] tracking-tight">
+                  + More
+                </span>
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">
+                  Global clients
+                </span>
+              </div>
+            </div>
+          </FadeUp>
+        </div>
+      </section>
+
+      {/* ─── FAQ ────────────────────────────────────────────────── */}
+      <section className="section-padding">
+        <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <FadeUp>
+            <div className="text-center mb-12">
+              <Badge variant="gradient" className="mb-4">FAQ</Badge>
+              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
+                Questions We Get <span className="gradient-text">All the Time</span>
+              </h2>
+              <p className="text-[var(--text-secondary)]">
+                Straight answers — no sales fluff.
+              </p>
+            </div>
+          </FadeUp>
+          <StaggerContainer className="space-y-3">
+            {FAQ_ITEMS.map((faq) => (
+              <StaggerItem key={faq.question}>
+                <details className="group glass-card rounded-xl border border-[var(--surface-border)] overflow-hidden">
+                  <summary className="flex items-center justify-between gap-4 p-5 cursor-pointer list-none select-none hover:bg-[var(--surface-bg-muted)]/50 transition-colors">
+                    <span className="font-semibold text-[var(--text-primary)] text-sm leading-snug">
+                      {faq.question}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-[var(--text-muted)] shrink-0 transition-transform duration-200 group-open:rotate-90" />
+                  </summary>
+                  <div className="px-5 pb-5 pt-0">
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                      {faq.answer}
+                    </p>
+                  </div>
+                </details>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+          <FadeUp>
+            <p className="text-center text-sm text-[var(--text-muted)] mt-8">
+              More questions?{" "}
+              <Link href="/contact" className="text-[var(--brand-primary)] hover:underline font-medium">
+                Just ask us directly →
+              </Link>
+            </p>
+          </FadeUp>
         </div>
       </section>
 
