@@ -13,7 +13,7 @@ export const SITE = {
   linkedin: "https://www.linkedin.com/in/info-usama-ali/",
   github: "https://github.com/Usama-dev182",
   upwork: "https://www.upwork.com/freelancers/~012a332067f71fa1bd",
-  youtube: "https://www.youtube.com/@Frontendspecialists",
+  youtube: "https://www.youtube.com/@Techtalkswithusamaali",
 };
 
 export const FOUNDER = {
@@ -239,6 +239,8 @@ export const NAV_ITEMS = [
   { label: "Products", href: "/products" },
   { label: "Case Studies", href: "/case-studies" },
   { label: "Blog", href: "/blog" },
+  { label: "Tech Talks", href: "/tech-talks" },
+  { label: "Consulting", href: "/consulting" },
   { label: "About", href: "/about" },
   { label: "Careers", href: "/careers" },
 ];
