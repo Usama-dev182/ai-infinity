@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -18,9 +19,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   providers: [
     Credentials({
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
+
+        // Brute-force protection: limit attempts per client IP and per account.
+        const ip = request ? getClientIp(request.headers) : "unknown";
+        const [byIp, byEmail] = await Promise.all([
+          rateLimit("login", `ip:${ip}`),
+          rateLimit("login", `email:${parsed.data.email.toLowerCase()}`),
+        ]);
+        if (!byIp.success || !byEmail.success) return null;
 
         const user = await db.user.findUnique({
           where: { email: parsed.data.email },

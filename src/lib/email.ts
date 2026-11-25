@@ -2,6 +2,7 @@ import "server-only";
 import { Resend } from "resend";
 import { optionLabel } from "@/content/lead-options";
 import { sourceLabel, type Attribution } from "@/lib/leads/attribution";
+import { escapeHtml } from "@/lib/escape-html";
 
 const FROM = process.env.EMAIL_FROM ?? "infousamaali1@gmail.com";
 const TO = process.env.EMAIL_TO ?? "infousamaali1@gmail.com";
@@ -16,16 +17,6 @@ function getClient(): Resend | null {
   client = key ? new Resend(key) : null;
   if (!client) console.warn("[email] RESEND_API_KEY is not set; notifications are disabled.");
   return client;
-}
-
-/** Escapes user-provided text for safe inclusion in HTML emails. */
-export function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }
 
 const multiline = (value: string) => escapeHtml(value).replace(/\r?\n/g, "<br>");
