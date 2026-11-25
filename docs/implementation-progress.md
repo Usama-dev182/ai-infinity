@@ -232,13 +232,30 @@ Screenshots: before/after at 360, 390, 768, 1024 and 1440 px (light; dark at 390
 
 | Priority | Action |
 | --- | --- |
-| **P0** | Apply `prisma/sql/20261125_lead_pipeline.sql` (or `prisma db push`) to production **before** deploying (backup / Neon branch first). |
-| **P0** | Confirm the production admin password is not the old seed default (the old seed fell back to a hard-coded password when `ADMIN_PASSWORD` was unset). Rotate if unsure. |
+| **P0** | Apply `prisma/sql/20261125_lead_pipeline.sql` to production **before** deploying (Neon branch / backup first). See "Applying the lead pipeline migration" below. |
+| **P0** | Confirm the production admin password is not the old seed default (the old seed fell back to a hard-coded password when `ADMIN_PASSWORD` was unset). Rotate if unsure with `ADMIN_PASSWORD='<new password>' npm run admin:set-password`, which changes only that user's password. **Do not re-run `npm run db:seed` against production:** it rewrites the seeded blog posts. It now refuses non-local databases unless `SEED_ALLOW_REMOTE=1`. |
 | **P0** | Review the deployment on a **Vercel preview** (Next 16.4.6 + next-auth beta.32 upgrades): sign in, submit a test lead, run the advisor with the real key. |
 | P1 | Work through the **Owner verification checklist** below (claims, testimonials, stats, case study outcomes). |
 | P1 | Real-estate case study: confirm each capability status, the anonymised wording and client permission, then set `status: "published"`. |
 | P1 | Privacy policy changes — legal review; decide on a consent banner. |
 | P2 | Set `NEXT_PUBLIC_BOOKING_URL` if you use Cal.com/Calendly. Confirm X handles if you want `twitter:site`. Mark `generate_lead` as a GA4 key event. |
+
+### Applying the lead pipeline migration
+
+1. In the Neon console, create a branch of the production database (an instant backup).
+2. Preview (read-only). The output must contain only `CREATE TYPE`, `ADD COLUMN` and `CREATE INDEX`, and **no `DROP`**:
+   ```bash
+   npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script
+   ```
+3. Apply in a single transaction:
+   ```bash
+   set -a; . ./.env; set +a
+   docker run --rm -i postgres:17-alpine psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -1 -f - < prisma/sql/20261125_lead_pipeline.sql
+   ```
+   Or `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -1 -f prisma/sql/20261125_lead_pipeline.sql` if `psql` is installed.
+4. Re-run step 2. It should report an empty migration.
+
+The currently deployed code keeps working after this: the new columns are nullable or have defaults.
 
 ---
 
