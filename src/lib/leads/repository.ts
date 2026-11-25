@@ -36,9 +36,20 @@ export interface LeadFilters {
   /** utm_source value, referrer host, or "direct". */
   source?: string;
   q?: string;
+  /** 1-based page number. */
+  page?: number;
 }
 
-const PAGE_SIZE = 100;
+export const LEADS_PAGE_SIZE = 50;
+/** Offset paging merges two tables, so deep pages cost more; admin volumes keep this small. */
+export const LEADS_MAX_PAGE = 100;
+
+export interface LeadPage {
+  leads: LeadRecord[];
+  page: number;
+  total: number;
+  hasNext: boolean;
+}
 
 function searchWhere(q?: string) {
   if (!q) return {};
@@ -53,10 +64,14 @@ function sourceWhere(source?: string) {
 }
 
 /**
- * Lists contact and quote leads as one pipeline (most recent first, capped at PAGE_SIZE).
- * Callers must enforce ADMIN authorization.
+ * Lists contact and quote leads as one pipeline, most recent first, one page at a time.
+ * Both tables are read up to the end of the requested page and merged, which keeps the
+ * ordering exact across lead types. Callers must enforce ADMIN authorization.
  */
-export async function listLeads(filters: LeadFilters): Promise<{ leads: LeadRecord[]; truncated: boolean }> {
+export async function listLeads(filters: LeadFilters): Promise<LeadPage> {
+  const page = Math.min(Math.max(1, Math.floor(filters.page ?? 1)), LEADS_MAX_PAGE);
+  const skip = (page - 1) * LEADS_PAGE_SIZE;
+  const take = skip + LEADS_PAGE_SIZE;
   const stage = filters.stage ? { stage: filters.stage as LeadStage } : {};
   const contactWhere: Prisma.ContactSubmissionWhereInput = {
     AND: [stage, searchWhere(filters.q), sourceWhere(filters.source)],
@@ -65,13 +80,15 @@ export async function listLeads(filters: LeadFilters): Promise<{ leads: LeadReco
     AND: [stage, searchWhere(filters.q), sourceWhere(filters.source)],
   };
 
-  const [contacts, quotes] = await Promise.all([
-    filters.type === "quote"
-      ? []
-      : db.contactSubmission.findMany({ where: contactWhere, orderBy: { createdAt: "desc" }, take: PAGE_SIZE + 1 }),
-    filters.type === "contact"
-      ? []
-      : db.quoteRequest.findMany({ where: quoteWhere, orderBy: { createdAt: "desc" }, take: PAGE_SIZE + 1 }),
+  const includeContacts = filters.type !== "quote";
+  const includeQuotes = filters.type !== "contact";
+  const orderBy = [{ createdAt: "desc" as const }, { id: "desc" as const }];
+
+  const [contacts, quotes, contactTotal, quoteTotal] = await Promise.all([
+    includeContacts ? db.contactSubmission.findMany({ where: contactWhere, orderBy, take }) : [],
+    includeQuotes ? db.quoteRequest.findMany({ where: quoteWhere, orderBy, take }) : [],
+    includeContacts ? db.contactSubmission.count({ where: contactWhere }) : 0,
+    includeQuotes ? db.quoteRequest.count({ where: quoteWhere }) : 0,
   ]);
 
   const merged: LeadRecord[] = [
@@ -121,9 +138,22 @@ export async function listLeads(filters: LeadFilters): Promise<{ leads: LeadReco
       referrer: q.referrer,
       createdAt: q.createdAt,
     })),
-  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime() || compareIds(b, a));
 
-  return { leads: merged.slice(0, PAGE_SIZE), truncated: merged.length > PAGE_SIZE };
+  const total = contactTotal + quoteTotal;
+  return {
+    leads: merged.slice(skip, take),
+    page,
+    total,
+    hasNext: take < total && page < LEADS_MAX_PAGE,
+  };
+}
+
+/** Stable tie-break for leads created in the same millisecond. */
+function compareIds(a: LeadRecord, b: LeadRecord) {
+  const ka = `${a.type}:${a.id}`;
+  const kb = `${b.type}:${b.id}`;
+  return ka < kb ? -1 : ka > kb ? 1 : 0;
 }
 
 /** Pipeline counts per stage across both lead types. */

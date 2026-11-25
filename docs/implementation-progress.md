@@ -16,8 +16,9 @@ Plan: [`website-enhancement-plan.md`](./website-enhancement-plan.md). This file 
 | 7. Lead generation | Done (schema change **not applied** to any shared DB) — code landed in owner commit `e43c170` ("all changes"), docs in `8af475d` |
 | 8. SEO & social | Done |
 | 9. Analytics | Done |
-| 10. Security & performance | Done (2 residual advisories documented) |
+| 10. Security & performance | Done (1 residual advisory documented) |
 | 11. QA | Done — 37 unit + 39 E2E tests passing |
+| Follow-up | Done — unused dependencies removed, `sharp` advisory resolved, leads pagination |
 
 ## Phase 0 — Audit & plan
 
@@ -205,19 +206,26 @@ npm test && npm run test:e2e
 
 Screenshots: before/after at 360, 390, 768, 1024 and 1440 px (light; dark at 390 and 1440) for `/`, `/services`, `/case-studies` and `/contact` were captured during the session. They're kept outside the repository and were not committed. No horizontal overflow at any width, before or after.
 
+## Follow-up — dependencies and leads pagination
+
+* **Unused dependencies removed** (no imports anywhere in `src`, `prisma` or `tests`): `@tanstack/react-query`, `@tanstack/react-query-devtools`, `@t3-oss/env-nextjs`, `@uiw/react-md-editor`, `cloudinary`, `date-fns`, and `@radix-ui/react-{avatar,dialog,dropdown-menu,label,navigation-menu,select,switch,tabs}`. The `res.cloudinary.com` image host stays allowed in `next.config.ts`, so existing content that links to Cloudinary images still renders.
+* **`sharp` advisory resolved.** The project's direct `sharp@0.34.5` dependency was the vulnerable copy and nothing imported it. Next 16.4.6 ships its own patched `sharp@0.35.5` for image optimisation, which is now the only copy in the tree. Production advisories: **3 high, 0 critical**, all from one chain: `prisma` CLI → `@prisma/config` → `effect` (build tooling, not shipped to the browser; the only "fix" is a downgrade to Prisma 6).
+* **Leads pagination.** `/admin/leads` shows 50 leads per page with Previous/Next links that keep the active filters, and a "Showing X–Y of N" summary. Contact and quote leads are merged in exact date order across pages, with a stable tie-break for identical timestamps. Out-of-range or invalid `page` values are handled.
+* **Verified** against a throwaway local database seeded with 115 synthetic leads (70 contact, 45 quote, one same-millisecond tie across tables). Every lead appeared exactly once across three pages, in order. Filters, out-of-range pages and invalid `page` values behaved as expected. The local database was removed afterwards. Re-run after these changes: lint 0 errors, typecheck pass, build pass, unit 37/37, E2E 39/39 (including axe on 10 pages in light and dark).
+
 ---
 
 ## Known issues & limitations
 
 1. **Live LLM path not exercised.** The local `OPENAI_API_KEY` is a placeholder (401). The success path was verified against a mock OpenAI-compatible server, and failure → fallback was verified for real. Test on a preview deployment.
 2. **Mobile lab TBT ≈ 2.3 s** (same as baseline). See the Phase 10 recommendations.
-3. **Two residual high advisories** (`prisma` CLI → `effect`, `sharp`). See Phase 10.
+3. **One residual high advisory chain** (`prisma` CLI → `@prisma/config` → `effect`, build tooling only). `sharp` is resolved; see the follow-up section.
 4. **In-memory rate limiting is per instance.** Keep Upstash configured in production. Without proxy headers (`x-real-ip`/`x-forwarded-for`), all clients share one bucket — fine on Vercel; check if self-hosting.
-5. **Leads view** shows the 100 most recent matches per filter (no pagination yet).
+5. **Leads view** paginates 50 per page, up to page 100 (5,000 leads per filter). Beyond that, narrow the filters; switch to cursor paging if volumes grow that large.
 6. **DB case study editor** (`/admin/case-studies/new`) does not exist. Code-managed case studies are the primary path; DB rows are still merged and rendered if created.
 7. **Consent banner** not implemented (GA runs without a prior opt-in). Owner/legal decision.
 8. **OG image font** is the renderer's default regular weight (bundling Geist would add a font fetch per image).
-9. Unused dependencies left in place for the owner to decide: `@tanstack/react-query(-devtools)`, `cloudinary`, `@t3-oss/env-nextjs`, `date-fns`, several `@radix-ui/*` packages.
+9. Unused dependencies have been removed (see the follow-up section). `@radix-ui/react-separator`, `react-slot` and `react-toast` are still used and were kept.
 10. **Process note:** an owner commit `e43c170` ("all changes") was made and pushed mid-session; it contains the Phase 7 code. History was not rewritten.
 
 ## Owner approvals & actions required before release
@@ -231,7 +239,6 @@ Screenshots: before/after at 360, 390, 768, 1024 and 1440 px (light; dark at 390
 | P1 | Real-estate case study: confirm each capability status, the anonymised wording and client permission, then set `status: "published"`. |
 | P1 | Privacy policy changes — legal review; decide on a consent banner. |
 | P2 | Set `NEXT_PUBLIC_BOOKING_URL` if you use Cal.com/Calendly. Confirm X handles if you want `twitter:site`. Mark `generate_lead` as a GA4 key event. |
-| P2 | Decide on the unused dependencies and on raising `sharp` to 0.35. |
 
 ---
 
