@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { ArrowRight, ArrowUpRight, CheckCircle2, Quote } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Calculator, CheckCircle2, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrackedLink } from "@/components/analytics/tracked-link";
@@ -11,6 +11,7 @@ import { CaseStudyCard } from "@/components/marketing/case-study-card";
 import { FaqList } from "@/components/marketing/faq-list";
 import { CtaBanner } from "@/components/marketing/cta-banner";
 import { IllustrativeWorkflow } from "@/components/marketing/illustrative-workflow";
+import { AiSolutionAdvisor } from "@/components/marketing/ai-solution-advisor";
 import {
   CREDENTIALS,
   FAQ_ITEMS,
@@ -287,8 +288,58 @@ export default async function HomePage() {
         </StaggerContainer>
       </Section>
 
-      {/* ─── 6. INDUSTRIES ──────────────────────────────────────── */}
-      <Section muted labelledBy="industries-heading">
+      {/* ─── 6. INTERACTIVE AI EXPERIENCE ───────────────────────── */}
+      <Section muted labelledBy="advisor-heading">
+        <div className="grid lg:grid-cols-[0.8fr_1.2fr] gap-10 lg:gap-14 items-start">
+          <FadeUp>
+            <Badge variant="gradient" className="mb-4">Try it</Badge>
+            <h2 id="advisor-heading" className="text-heading-2 font-bold text-[var(--text-primary)]">
+              Explore your AI opportunity in two minutes
+            </h2>
+            <p className="mt-4 text-lead text-[var(--text-secondary)]">
+              Pick a challenge and talk it through with our AI Solution Advisor — a small, working example of the
+              kind of guarded, context-aware assistant we build.
+            </p>
+            <ul className="mt-6 space-y-2 text-meta text-[var(--text-secondary)]">
+              {[
+                "Bounded conversation memory and input limits",
+                "Prompt-injection guardrails and personal-data redaction",
+                "Rate limiting and a graceful non-AI fallback",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2">
+                  <CheckCircle2 aria-hidden="true" className="w-4 h-4 mt-0.5 shrink-0 text-[var(--text-brand)]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <TrackedLink
+              href="/tools/ai-roi-calculator"
+              eventName="cta_click"
+              params={{ label: "ROI calculator", location: "home_interactive", destination: "/tools/ai-roi-calculator" }}
+              className="group mt-8 flex items-center gap-4 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-5 hover:border-[var(--brand-primary)]/40 transition-colors"
+            >
+              <span className="w-11 h-11 rounded-xl bg-[var(--brand-primary)]/10 flex items-center justify-center shrink-0">
+                <Calculator aria-hidden="true" className="w-5 h-5 text-[var(--text-brand)]" />
+              </span>
+              <span>
+                <span className="block font-semibold text-[var(--text-primary)] group-hover:text-[var(--text-brand)]">
+                  AI automation ROI calculator
+                </span>
+                <span className="block text-meta text-[var(--text-secondary)]">
+                  Estimate hours saved, value and payback for a workflow.
+                </span>
+              </span>
+              <ArrowRight aria-hidden="true" className="w-4 h-4 ml-auto text-[var(--text-brand)]" />
+            </TrackedLink>
+          </FadeUp>
+          <FadeUp delay={0.1}>
+            <AiSolutionAdvisor location="home_advisor" />
+          </FadeUp>
+        </div>
+      </Section>
+
+      {/* ─── 7. INDUSTRIES ──────────────────────────────────────── */}
+      <Section labelledBy="industries-heading">
         <SectionHeading
           id="industries-heading"
           eyebrow="Industries"
@@ -328,7 +379,7 @@ export default async function HomePage() {
       </Section>
 
       {/* ─── 7. PROCESS ─────────────────────────────────────────── */}
-      <Section labelledBy="process-heading">
+      <Section muted labelledBy="process-heading">
         <SectionHeading
           id="process-heading"
           eyebrow="How we deliver"
@@ -349,7 +400,7 @@ export default async function HomePage() {
       </Section>
 
       {/* ─── 8. TECHNICAL CAPABILITIES ──────────────────────────── */}
-      <Section muted labelledBy="capabilities-heading">
+      <Section labelledBy="capabilities-heading">
         <SectionHeading
           id="capabilities-heading"
           eyebrow="Technical capabilities"
@@ -399,7 +450,7 @@ export default async function HomePage() {
       )}
 
       {/* ─── 10. FOUNDER ────────────────────────────────────────── */}
-      <Section labelledBy="founder-heading">
+      <Section muted labelledBy="founder-heading">
         <div className="grid md:grid-cols-[auto_1fr] gap-10 lg:gap-14 items-center max-w-5xl mx-auto">
           <FadeUp>
             <div className="w-48 h-60 sm:w-56 sm:h-72 rounded-2xl overflow-hidden border border-[var(--surface-border)] shadow-md mx-auto">
@@ -447,7 +498,7 @@ export default async function HomePage() {
       </Section>
 
       {/* ─── 11. FAQ ────────────────────────────────────────────── */}
-      <Section muted labelledBy="faq-heading">
+      <Section labelledBy="faq-heading">
         <div className="max-w-3xl mx-auto">
           <SectionHeading id="faq-heading" eyebrow="FAQ" title="Questions we're often asked" />
           <FaqList items={FAQ_ITEMS} />

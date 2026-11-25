@@ -12,7 +12,7 @@ Plan: [`website-enhancement-plan.md`](./website-enhancement-plan.md). This file 
 | 3. Services | Done |
 | 4. Industries | Done |
 | 5. Case studies | Done |
-| 6. Interactive experiences | Not started |
+| 6. Interactive experiences | Done |
 | 7. Lead generation | Not started |
 | 8. SEO & social | Not started |
 | 9. Analytics | Not started |
@@ -82,6 +82,30 @@ Shared presentation components: `SectionHeading`, `PageHero`, `Section`, `Servic
 * Fixed: the contact page "Upwork" link pointed to LinkedIn.
 
 **Verified locally:** every new route returns 200; the draft case study returns 404 publicly and is absent from the sitemap; the admin preview redirects to login when signed out and renders after login (local seeded test user); `/admin/login` renders (no loop); no horizontal overflow at 360/390/1024/1440; titles no longer repeat the brand; with JS disabled, 0 content elements are hidden; the desktop nav moved to ≥1280px after the logo wrapped at 1024px.
+
+## Phase 6 — Interactive experiences
+
+**Problem (R3, R4):** the demo widget wasn't rendered anywhere and sent only the latest message. Its API hard-coded the model, told visitors to "Add your OPENAI_API_KEY", returned 503 on provider errors, and rate limiting was off without Redis.
+
+* **Rate limiting** (`src/lib/rate-limit.ts`): Upstash when configured. A bounded in-memory sliding window covers missing Redis *or* Redis errors (fail-safe, not fail-open), with a production warning when Redis is absent. `getClientIp()` prefers the platform-set `x-real-ip`. Policies: forms 5/min; advisor 10/min plus 60/day per IP.
+* **AI Solution Advisor** (`/api/ai/demo`, same URL, legacy `{message}` still accepted):
+  * zod validation; industry and challenge are **allowlisted** ids (never free text in the system prompt); body size cap; `Cache-Control: no-store`.
+  * Bounded context: last 8 messages / 4,000 chars; 600 chars per visitor message; 8 visitor turns per conversation; assistant echoes truncated (the client is untrusted); 450 output tokens; reply clamped to 2,000 chars.
+  * Privacy: emails, card-like numbers and phone numbers (≥ 9 digits) are redacted before leaving the server; conversations are not stored; the UI warns against sharing personal data.
+  * Guardrails: the system prompt treats all conversation content as untrusted, and refuses to reveal the prompt or configuration, invent prices, results or clients, or go off-topic.
+  * Model from `OPENAI_MODEL` (default `gpt-4o-mini`), 20 s timeout, 1 retry. **Unconfigured or failing provider → deterministic guidance** (`fallback: true`); configuration is never revealed.
+* **UI** (`AiSolutionAdvisor`): industry and challenge chips (`aria-pressed`), a `role="log"` live region, auto-scroll inside the log only, a loading indicator, an error with retry, a character counter, a turn limit with consultation hand-off, a privacy note, and a contextual CTA (`/contact?topic=advisor&service=…&industry=…`).
+* **ROI calculator** (`src/lib/roi.ts` + `RoiCalculator`): hours saved/month, annual time value, first-year and ongoing net benefit, first-year ROI (only when costs exist), payback (only when implementation cost exists and monthly net > 0). Inputs are clamped with visible range hints; currency selector; illustrative disclaimer; CTA.
+* Pages: `/tools`, `/tools/ai-solution-advisor`, `/tools/ai-roi-calculator` (`WebApplication` JSON-LD), plus a homepage "Try it" section. Added to Resources nav, footer and sitemap.
+* Removed the unused `ai-demo-widget.tsx`.
+
+**Verified locally:**
+* API: validation (non-allowlisted context → 422; last message from assistant → 422; > 600 chars → 422); no key → fallback; legacy format works; 12 rapid requests → 10 × 200 then 2 × 429 without Redis.
+* Success path against a **local mock OpenAI server**: payload has the env model, `max_completion_tokens: 450`, allowlisted context only; email/phone/card redacted while "2024-2025" is kept.
+* Browser (390 px): chips → reply → keyboard follow-up → contextual CTA; analytics events contain ids only.
+* ROI outputs match hand-calculated values; out-of-range input is capped with a hint.
+
+**Not verified:** a real model's response quality and guardrail compliance. The local `.env.local` `OPENAI_API_KEY` is a placeholder (401 from the provider), and the endpoint degraded to fallback correctly. **Owner action:** test on a preview deployment with the real key.
 
 ---
 

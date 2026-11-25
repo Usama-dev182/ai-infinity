@@ -52,6 +52,8 @@ export const HEADER_NAV: NavEntry[] = [
     children: [
       { label: "Blog", href: "/blog", description: "AI and engineering articles" },
       { label: "Tech Talks", href: "/tech-talks", description: "Video series on YouTube" },
+      { label: "AI Solution Advisor", href: "/tools/ai-solution-advisor", description: "Explore AI for your business" },
+      { label: "AI ROI Calculator", href: "/tools/ai-roi-calculator", description: "Estimate automation value" },
     ],
   },
   { label: "Pricing", href: "/pricing" },
@@ -75,6 +77,7 @@ export const FOOTER_LINKS: NavLink[] = [
   { label: "Products", href: "/products" },
   { label: "Blog", href: "/blog" },
   { label: "Tech Talks", href: "/tech-talks" },
+  { label: "Free AI Tools", href: "/tools" },
   { label: "About", href: "/about" },
   { label: "Careers", href: "/careers" },
 ];
