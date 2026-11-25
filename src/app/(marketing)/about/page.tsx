@@ -51,7 +51,7 @@ const experience = [
     role: "Senior Full Stack Engineer",
     period: "2022 – 2024",
     description:
-      "Led frontend architecture for multiple SaaS products. Implemented React performance optimisations reducing LCP by 40%.",
+      "Frontend architecture and React performance work for SaaS products.",
   },
   {
     company: "Techling Pvt",
@@ -119,7 +119,7 @@ export default function AboutPage() {
                       width={288}
                       height={384}
                       className="w-full h-full object-cover object-top"
-                      priority
+                      preload
                     />
                   </div>
                 </div>
@@ -137,21 +137,27 @@ export default function AboutPage() {
                 <p className="text-[var(--text-brand)] font-semibold mb-5">{FOUNDER.title}</p>
                 <p className="text-[var(--text-secondary)] leading-relaxed mb-6 text-lg">{FOUNDER.bio}</p>
                 <div className="flex items-center gap-3">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={FOUNDER.github} target="_blank" rel="noopener noreferrer">
-                      <Code2 className="w-4 h-4 mr-2" /> GitHub
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={FOUNDER.linkedin} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-4 h-4 mr-2" /> LinkedIn
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={SITE.upwork} target="_blank" rel="noopener noreferrer">
-                      <ExternalLink className="w-4 h-4 mr-2" /> Upwork
-                    </Link>
-                  </Button>
+                  {FOUNDER.github && (
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={FOUNDER.github} target="_blank" rel="noopener noreferrer">
+                        <Code2 className="w-4 h-4 mr-2" /> GitHub
+                      </Link>
+                    </Button>
+                  )}
+                  {FOUNDER.linkedin && (
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={FOUNDER.linkedin} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4 mr-2" /> LinkedIn
+                      </Link>
+                    </Button>
+                  )}
+                  {SITE.upwork && (
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={SITE.upwork} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4 mr-2" /> Upwork
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               </div>
             </FadeUp>

@@ -12,13 +12,14 @@ const legalLinks = [
   { label: "Terms of Service", href: "/terms" },
 ];
 
+// Profiles whose URL could not be verified are left out (see SOCIAL_PROFILES).
 const socialLinks = [
   { icon: ExternalLink, href: SITE.linkedin, label: "LinkedIn" },
   { icon: Code2, href: SITE.github, label: "GitHub" },
   { icon: PlayCircle, href: SITE.youtube, label: "YouTube" },
   { icon: Mail, href: `mailto:${SITE.email}`, label: "Email" },
   { icon: MessageCircle, href: SITE.whatsapp, label: "WhatsApp" },
-];
+].filter((l): l is typeof l & { href: string } => Boolean(l.href));
 
 export function Footer() {
   return (
@@ -140,19 +141,21 @@ export function Footer() {
                   WhatsApp Us
                 </TrackedAnchor>
               </li>
-              <li>
-                <TrackedAnchor
-                  href={SITE.linkedin}
-                  eventName="social_click"
-                  params={{ label: "LinkedIn", location: "footer_contact", destination: SITE.linkedin }}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4 shrink-0 text-[var(--text-brand)]" />
-                  LinkedIn
-                </TrackedAnchor>
-              </li>
+              {SITE.linkedin && (
+                <li>
+                  <TrackedAnchor
+                    href={SITE.linkedin}
+                    eventName="social_click"
+                    params={{ label: "LinkedIn", location: "footer_contact", destination: SITE.linkedin }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4 shrink-0 text-[var(--text-brand)]" />
+                    LinkedIn
+                  </TrackedAnchor>
+                </li>
+              )}
               <li>
                 <TrackedLink
                   href="/contact"

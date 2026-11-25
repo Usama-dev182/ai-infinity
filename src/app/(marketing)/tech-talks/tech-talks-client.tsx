@@ -77,19 +77,21 @@ export function TechTalksClient() {
           </FadeUp>
 
           <FadeUp delay={0.4}>
-            <TrackedAnchor
-              href={SITE.youtube}
-              target="_blank"
-              rel="noopener noreferrer"
-              eventName="youtube_channel_click"
-              params={{ location: "tech_talks_hero" }}
-            >
-              <Button variant="gradient" size="xl" className="group">
-                <PlayCircle className="w-5 h-5 mr-2" />
-                Subscribe to the Channel
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </TrackedAnchor>
+            {SITE.youtube && (
+              <TrackedAnchor
+                href={SITE.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                eventName="youtube_channel_click"
+                params={{ location: "tech_talks_hero" }}
+              >
+                <Button variant="gradient" size="xl" className="group">
+                  <PlayCircle className="w-5 h-5 mr-2" />
+                  Subscribe to the Channel
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </TrackedAnchor>
+            )}
           </FadeUp>
         </div>
       </section>
@@ -123,18 +125,20 @@ export function TechTalksClient() {
             <FadeUp>
               <div className="text-center py-24">
                 <p className="text-[var(--text-muted)] text-lg mb-6">No videos in this category yet. Check back soon!</p>
-                <TrackedAnchor
-                  href={SITE.youtube}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  eventName="youtube_channel_click"
-                  params={{ location: "tech_talks_empty" }}
-                >
-                  <Button variant="gradient">
-                    <PlayCircle className="w-4 h-4 mr-2" />
-                    Watch on YouTube
-                  </Button>
-                </TrackedAnchor>
+                {SITE.youtube && (
+                  <TrackedAnchor
+                    href={SITE.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    eventName="youtube_channel_click"
+                    params={{ location: "tech_talks_empty" }}
+                  >
+                    <Button variant="gradient">
+                      <PlayCircle className="w-4 h-4 mr-2" />
+                      Watch on YouTube
+                    </Button>
+                  </TrackedAnchor>
+                )}
               </div>
             </FadeUp>
           ) : (
@@ -196,25 +200,27 @@ export function TechTalksClient() {
                   Subscribe & Level Up Your AI Skills
                 </h2>
                 <p className="text-white/80 text-lg max-w-xl mx-auto mb-8">
-                  New videos every week on Agentic AI, LLM integration, vibe coding, and building
-                  real AI-powered products. Join the community.
+                  Practical videos on Agentic AI, LLM integration, vibe coding, and building
+                  real AI-powered products are on the way.
                 </p>
-                <TrackedAnchor
-                  href={SITE.youtube}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  eventName="youtube_channel_click"
-                  params={{ location: "tech_talks_cta_bottom" }}
-                >
-                  <Button
-                    variant="outline"
-                    size="xl"
-                    className="bg-white text-[var(--text-brand)] hover:bg-white/90 border-transparent font-semibold"
+                {SITE.youtube && (
+                  <TrackedAnchor
+                    href={SITE.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    eventName="youtube_channel_click"
+                    params={{ location: "tech_talks_cta_bottom" }}
                   >
-                    <PlayCircle className="w-5 h-5 mr-2" />
-                    Subscribe on YouTube
-                  </Button>
-                </TrackedAnchor>
+                    <Button
+                      variant="outline"
+                      size="xl"
+                      className="bg-white text-[var(--text-brand)] hover:bg-white/90 border-transparent font-semibold"
+                    >
+                      <PlayCircle className="w-5 h-5 mr-2" />
+                      Subscribe on YouTube
+                    </Button>
+                  </TrackedAnchor>
+                )}
               </div>
             </div>
           </FadeUp>

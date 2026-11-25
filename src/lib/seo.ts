@@ -84,7 +84,7 @@ export function organizationJsonLd() {
     slogan: SITE.tagline,
     description: SITE.description,
     founder: { "@type": "Person", name: "Usama Ali", url: absoluteUrl("/about") },
-    sameAs: [SITE.linkedin, SITE.github, SITE.upwork, SITE.youtube],
+    sameAs: [SITE.linkedin, SITE.github, SITE.upwork, SITE.youtube].filter((u): u is string => Boolean(u)),
     contactPoint: {
       "@type": "ContactPoint",
       email: SITE.email,

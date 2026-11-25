@@ -88,6 +88,12 @@ export default async function HomePage() {
   const featured = caseStudies.filter((c) => c.featured).slice(0, 3);
   const detailedIndustry = INDUSTRIES.find((i) => i.hasDetailPage);
   const otherIndustries = INDUSTRIES.filter((i) => !i.hasDetailPage);
+  // Only verified/working profile URLs are defined (see SOCIAL_PROFILES).
+  const founderProfile = FOUNDER.linkedin
+    ? { label: "LinkedIn", href: FOUNDER.linkedin }
+    : FOUNDER.github
+      ? { label: "GitHub", href: FOUNDER.github }
+      : undefined;
 
   return (
     <>
@@ -480,18 +486,20 @@ export default async function HomePage() {
                   About AI Infinity Labs
                 </TrackedLink>
               </Button>
-              <Button asChild variant="ghost">
-                <TrackedLink
-                  href={FOUNDER.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  eventName="social_click"
-                  params={{ label: "LinkedIn", location: "home_founder", destination: FOUNDER.linkedin }}
-                >
-                  LinkedIn <ArrowUpRight aria-hidden="true" className="w-4 h-4" />
-                  <span className="sr-only">(opens in a new tab)</span>
-                </TrackedLink>
-              </Button>
+              {founderProfile && (
+                <Button asChild variant="ghost">
+                  <TrackedLink
+                    href={founderProfile.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    eventName="social_click"
+                    params={{ label: founderProfile.label, location: "home_founder", destination: founderProfile.href }}
+                  >
+                    {founderProfile.label} <ArrowUpRight aria-hidden="true" className="w-4 h-4" />
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </TrackedLink>
+                </Button>
+              )}
             </div>
           </FadeUp>
         </div>
