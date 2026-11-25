@@ -8,7 +8,7 @@ import { buildMetadata } from "@/lib/seo";
 import { db } from "@/lib/db";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Careers – AI Infinity Labs",
+  title: "Careers",
   description:
     "Join AI Infinity Labs and help build the future of AI-powered software. Remote-first positions for senior engineers passionate about AI.",
   keywords: ["AI company careers", "remote software engineer jobs", "AI developer job"],

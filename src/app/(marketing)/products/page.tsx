@@ -7,7 +7,7 @@ import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/an
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Products – AI Infinity Labs",
+  title: "Products — AI Tools in Development",
   description:
     "We're building a suite of AI-powered SaaS tools and developer products. Join the waitlist to be the first to know when we launch.",
   canonicalPath: "/products",

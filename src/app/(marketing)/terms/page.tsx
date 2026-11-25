@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Terms of Service – AI Infinity Labs",
-  description: "Terms of Service for AI Infinity Labs.",
+  title: "Terms of Service",
+  description:
+    "Terms of service for the AI Infinity Labs website and services: use of the site, engagements, intellectual property and liability.",
   canonicalPath: "/terms",
 });
 

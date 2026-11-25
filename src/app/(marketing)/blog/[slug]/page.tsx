@@ -8,7 +8,9 @@ import { TrackedLink } from "@/components/analytics/tracked-link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp } from "@/components/marketing/animation";
-import { buildMetadata } from "@/lib/seo";
+import { cache } from "react";
+import { articleJsonLd, breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
 import { db } from "@/lib/db";
 import { formatDate, calculateReadTime } from "@/lib/utils";
 
@@ -31,22 +33,27 @@ export async function generateStaticParams() {
   }
 }
 
+// Deduplicates the query between generateMetadata and the page within one request.
+const getPublishedPost = cache((slug: string) => db.blogPost.findFirst({ where: { slug, status: "PUBLISHED" } }));
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await db.blogPost.findFirst({ where: { slug, status: "PUBLISHED" } });
+  const post = await getPublishedPost(slug);
   if (!post) return {};
   return buildMetadata({
-    title: post.metaTitle ?? `${post.title} – AI Infinity Labs`,
+    title: post.metaTitle ?? post.title,
     description: post.metaDescription ?? post.excerpt ?? "",
     keywords: post.keywords,
     canonicalPath: `/blog/${post.slug}`,
     ogImage: post.ogImageUrl ?? post.coverImage ?? undefined,
+    ogType: "Article",
+    type: "article",
   });
 }
 
 export default async function BlogDetailPage({ params }: Props) {
   const { slug } = await params;
-  const post = await db.blogPost.findFirst({ where: { slug, status: "PUBLISHED" } });
+  const post = await getPublishedPost(slug);
   if (!post) notFound();
 
   const readTime = post.readTime ?? calculateReadTime(post.content);
@@ -54,6 +61,15 @@ export default async function BlogDetailPage({ params }: Props) {
   return (
     <>
       <PageEventTracker eventName="blog_view" params={{ slug: post.slug }} />
+      <JsonLd
+        data={[
+          articleJsonLd(post),
+          breadcrumbJsonLd([
+            { name: "Blog", path: "/blog" },
+            { name: post.title, path: `/blog/${post.slug}` },
+          ]),
+        ]}
+      />
 
       {/* ── Hero ─────────────────────────────────────────── */}
       <section className="relative bg-gradient-to-b from-[var(--surface-bg-subtle)] to-[var(--surface-bg)] pt-16 pb-0">
