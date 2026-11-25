@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { requireAdmin } from "@/lib/authz";
-import { countLeadsByStage, listLeads, listLeadSources, type LeadFilters } from "@/lib/leads/repository";
+import {
+  countLeadsByStage,
+  LEADS_PAGE_SIZE,
+  listLeads,
+  listLeadSources,
+  type LeadFilters,
+} from "@/lib/leads/repository";
 import { LEAD_STAGES, optionLabel, type LeadStageValue } from "@/content/lead-options";
 import { formatDate } from "@/lib/utils";
 import { LeadUpdateForm } from "./lead-update-form";
@@ -9,7 +15,7 @@ import { LeadUpdateForm } from "./lead-update-form";
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: Promise<{ type?: string; stage?: string; source?: string; q?: string }>;
+  searchParams: Promise<{ type?: string; stage?: string; source?: string; q?: string; page?: string }>;
 }
 
 const stageVariant: Record<LeadStageValue, "warning" | "default" | "success" | "secondary" | "outline" | "error"> = {
@@ -28,7 +34,20 @@ function parseFilters(params: Awaited<Props["searchParams"]>): LeadFilters {
     stage: LEAD_STAGES.some((s) => s.value === params.stage) ? (params.stage as LeadStageValue) : undefined,
     source: params.source?.slice(0, 100) || undefined,
     q: params.q?.trim().slice(0, 100) || undefined,
+    page: /^\d{1,4}$/.test(params.page ?? "") ? Number(params.page) : undefined,
   };
+}
+
+/** Builds a leads URL that keeps the active filters. */
+function leadsHref(filters: LeadFilters, page: number) {
+  const params = new URLSearchParams();
+  if (filters.stage) params.set("stage", filters.stage);
+  if (filters.type) params.set("type", filters.type);
+  if (filters.source) params.set("source", filters.source);
+  if (filters.q) params.set("q", filters.q);
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return query ? `/admin/leads?${query}` : "/admin/leads";
 }
 
 function Detail({ label, value }: { label: string; value?: string | null }) {
@@ -44,12 +63,14 @@ function Detail({ label, value }: { label: string; value?: string | null }) {
 export default async function LeadsPage({ searchParams }: Props) {
   await requireAdmin();
   const filters = parseFilters(await searchParams);
-  const [{ leads, truncated }, counts, sources] = await Promise.all([
+  const [{ leads, page, total, hasNext }, counts, sources] = await Promise.all([
     listLeads(filters),
     countLeadsByStage(),
     listLeadSources(),
   ]);
 
+  const pagerClass =
+    "inline-flex h-10 items-center rounded-lg border border-[var(--surface-border)] px-4 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--surface-bg-muted)]";
   const selectClass =
     "h-10 rounded-lg border border-[var(--surface-border)] bg-[var(--surface-card)] px-2 text-sm text-[var(--text-primary)]";
 
@@ -117,7 +138,16 @@ export default async function LeadsPage({ searchParams }: Props) {
 
       {leads.length === 0 ? (
         <div className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-12 text-center text-[var(--text-secondary)]">
-          No leads match these filters.
+          {total > 0 ? (
+            <>
+              This page is past the last result.{" "}
+              <Link href={leadsHref(filters, 1)} className="text-[var(--text-brand)] hover:underline">
+                Go to the first page
+              </Link>
+            </>
+          ) : (
+            "No leads match these filters."
+          )}
         </div>
       ) : (
         <ul className="space-y-4">
@@ -167,8 +197,26 @@ export default async function LeadsPage({ searchParams }: Props) {
           ))}
         </ul>
       )}
-      {truncated && (
-        <p className="mt-4 text-sm text-[var(--text-secondary)]">Showing the 100 most recent matches. Narrow the filters to see older leads.</p>
+      {total > 0 && (
+        <nav aria-label="Leads pages" className="mt-6 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-[var(--text-secondary)]" aria-live="polite">
+            {leads.length > 0
+              ? `Showing ${(page - 1) * LEADS_PAGE_SIZE + 1}–${(page - 1) * LEADS_PAGE_SIZE + leads.length} of ${total}`
+              : `No leads on page ${page} (${total} in total)`}
+          </p>
+          <div className="flex gap-2">
+            {page > 1 && (
+              <Link href={leadsHref(filters, page - 1)} rel="prev" className={pagerClass}>
+                Previous
+              </Link>
+            )}
+            {hasNext && (
+              <Link href={leadsHref(filters, page + 1)} rel="next" className={pagerClass}>
+                Next
+              </Link>
+            )}
+          </div>
+        </nav>
       )}
     </div>
   );

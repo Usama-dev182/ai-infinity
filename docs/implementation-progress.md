@@ -16,8 +16,9 @@ Plan: [`website-enhancement-plan.md`](./website-enhancement-plan.md). This file 
 | 7. Lead generation | Done (schema change **not applied** to any shared DB) — code landed in owner commit `e43c170` ("all changes"), docs in `8af475d` |
 | 8. SEO & social | Done |
 | 9. Analytics | Done |
-| 10. Security & performance | Not started |
-| 11. QA | Not started |
+| 10. Security & performance | Done (1 residual advisory documented) |
+| 11. QA | Done — 37 unit + 39 E2E tests passing |
+| Follow-up | Done — unused dependencies removed, `sharp` advisory resolved, leads pagination |
 
 ## Phase 0 — Audit & plan
 
@@ -156,6 +157,105 @@ Reuses the existing GA4 integration. Event catalogue (`src/lib/analytics.ts` →
 
 * **Privacy fix:** GA previously loaded on `/admin` and sent full URLs, and the new leads search puts names and emails in the query string. GA now never loads or sends page views on `/admin`, sets the official `ga-disable-<ID>` flag on private paths, and reports only `utm_*` query parameters in `page_location`.
 * Suggested GA4 setup (owner): mark `generate_lead` as a key event; create funnel exploration `cta_click → consultation_started → generate_lead`; segment by `utm_source`. Qualified leads, discovery calls and win rate are tracked in `/admin/leads` (stages), not GA. **No analytics data was available or reported in this work.**
+
+## Phase 10 — Security & performance
+
+* **Dependencies:** `next` 16.2.6 → **16.4.6**, `eslint-config-next` 16.4.6, `next-auth` beta.31 → **beta.32** (`@auth/core` 0.41.3), `@auth/prisma-adapter` 2.11.3, plus a non-breaking `npm audit fix`. Removed unused `framer-motion` and `@vercel/og`. Production advisories went from **23 (4 critical, 13 high) to 4 high, 0 critical**. Remaining: `prisma` CLI → `@prisma/config` → `effect` (build tooling; the only "fix" is a downgrade to Prisma 6) and `sharp` (libvips/libheif CVEs; the fix is a major bump that needs Next compatibility checks).
+* **Auth:** admin sign-in limited to 10 attempts per 15 min per IP and per email. `prisma/seed.ts` refuses to run without `ADMIN_PASSWORD` (≥ 12 chars); the hard-coded fallback was removed (R9).
+* **Rate limiting, validation, escaping, error handling and CSP:** see Phases 6–8.
+* **Performance:**
+  * Reveal animations no longer hide server HTML (Phase 1), so the LCP element renders immediately.
+  * Removed the unused React Query provider from every page.
+  * The header gets menu data as props, so the service and industry copy (~19 KB gz) stays out of the client bundle.
+  * Client attribution is zod-free (zod now loads only where forms need it).
+  * The blog post query is deduplicated, and OG images are cached.
+* **Lighthouse** (homepage, Lighthouse 13.6, system Chrome, local `next start` + local DB). Live-site numbers are the *baseline code on Vercel*, so performance is indicative only (different network/CDN):
+
+  | | Perf | A11y | Best practices | SEO | LCP | CLS | TBT |
+  | --- | --- | --- | --- | --- | --- | --- | --- |
+  | Baseline (live), mobile | 71 | 100 | 96 | 100 | 1.3 s | 0 | 2,330 ms |
+  | After (local), mobile | 72 | 100 | 100 | 100 | 0.9 s | 0 | 2,270 ms |
+  | Baseline (live), desktop | 83 | 100 | 96 | 100 | 0.7 s | 0 | 330 ms |
+  | After (local), desktop | 98 | 100 | 100 | 100 | 0.4 s | 0 | 140 ms |
+
+  Mobile lab TBT (4× CPU throttling) is dominated by hydrating a long homepage. HTML size is unchanged at 247 KB vs 250 KB, so this is not a regression. **Core Web Vitals targets are lab-only so far; no field data was available.** Recommended next steps: measure field INP (Vercel Speed Insights / CrUX); if INP > 200 ms, lazy-load the below-the-fold advisor and trim homepage sections.
+
+## Phase 11 — Testing & QA
+
+| Check | Result |
+| --- | --- |
+| `npm run lint` | **0 errors**, 1 warning (pre-existing: react-hook-form `watch()` in `BlogPostForm` can't be optimised by the React Compiler) |
+| `npm run typecheck` | Pass |
+| `npm run build` | Pass (57 routes) |
+| `npm test` (node:test + tsx, no new runtime deps) | **37/37 pass** — ROI maths, rate limiter, advisor bounds/redaction/allowlists, attribution (client/server parity), lead validation & legacy mapping, HTML escaping, content cross-references, draft gating, nav → route existence, SEO helpers |
+| `npm run test:e2e` (Playwright, system Chrome, against `next start`) | **39/39 pass** — see below |
+
+E2E coverage: homepage → service (CTA carries the service) · homepage → case study (no generic or unverified claims) · draft 404 + absent from sitemap · admin auth redirects · contact validation (`aria-invalid`/`aria-describedby`) + visible, focused server error · industry page → inquiry with UTM attribution and PII-free `generate_lead` · quote success · advisor success, 429, network failure + retry, bounded history sent · advisor API fallback never reveals configuration · ROI maths and capping · keyboard skip link and dropdown Escape · theme toggle · no-JS content visibility · mobile menu (scroll, Escape, closes on navigation) · no horizontal overflow at 360/390/768/1024 px · touch targets ≥ 24 px · **axe-core WCAG 2.0–2.2 A/AA: 0 violations on 10 key pages in light and dark**.
+
+How to run locally (never against production — lead-writing tests skip non-localhost targets):
+
+```bash
+docker run -d --name ai-infinity-test-db -e POSTGRES_USER=aitest -e POSTGRES_PASSWORD=localtest \
+  -e POSTGRES_DB=ai_infinity_test -p 127.0.0.1:55433:5432 postgres:17-alpine
+export DATABASE_URL=postgresql://aitest:localtest@127.0.0.1:55433/ai_infinity_test
+export RESEND_API_KEY=re_invalid UPSTASH_REDIS_REST_URL= UPSTASH_REDIS_REST_TOKEN= NEXT_PUBLIC_GA_MEASUREMENT_ID=
+npx prisma db push && ADMIN_PASSWORD=<local-only-password> npm run db:seed
+npm run build && npx next start -p 3100 &
+npm test && npm run test:e2e
+```
+
+Screenshots: before/after at 360, 390, 768, 1024 and 1440 px (light; dark at 390 and 1440) for `/`, `/services`, `/case-studies` and `/contact` were captured during the session. They're kept outside the repository and were not committed. No horizontal overflow at any width, before or after.
+
+## Follow-up — dependencies and leads pagination
+
+* **Unused dependencies removed** (no imports anywhere in `src`, `prisma` or `tests`): `@tanstack/react-query`, `@tanstack/react-query-devtools`, `@t3-oss/env-nextjs`, `@uiw/react-md-editor`, `cloudinary`, `date-fns`, and `@radix-ui/react-{avatar,dialog,dropdown-menu,label,navigation-menu,select,switch,tabs}`. The `res.cloudinary.com` image host stays allowed in `next.config.ts`, so existing content that links to Cloudinary images still renders.
+* **`sharp` advisory resolved.** The project's direct `sharp@0.34.5` dependency was the vulnerable copy and nothing imported it. Next 16.4.6 ships its own patched `sharp@0.35.5` for image optimisation, which is now the only copy in the tree. Production advisories: **3 high, 0 critical**, all from one chain: `prisma` CLI → `@prisma/config` → `effect` (build tooling, not shipped to the browser; the only "fix" is a downgrade to Prisma 6).
+* **Leads pagination.** `/admin/leads` shows 50 leads per page with Previous/Next links that keep the active filters, and a "Showing X–Y of N" summary. Contact and quote leads are merged in exact date order across pages, with a stable tie-break for identical timestamps. Out-of-range or invalid `page` values are handled.
+* **Verified** against a throwaway local database seeded with 115 synthetic leads (70 contact, 45 quote, one same-millisecond tie across tables). Every lead appeared exactly once across three pages, in order. Filters, out-of-range pages and invalid `page` values behaved as expected. The local database was removed afterwards. Re-run after these changes: lint 0 errors, typecheck pass, build pass, unit 37/37, E2E 39/39 (including axe on 10 pages in light and dark).
+
+---
+
+## Known issues & limitations
+
+1. **Live LLM path not exercised.** The local `OPENAI_API_KEY` is a placeholder (401). The success path was verified against a mock OpenAI-compatible server, and failure → fallback was verified for real. Test on a preview deployment.
+2. **Mobile lab TBT ≈ 2.3 s** (same as baseline). See the Phase 10 recommendations.
+3. **One residual high advisory chain** (`prisma` CLI → `@prisma/config` → `effect`, build tooling only). `sharp` is resolved; see the follow-up section.
+4. **In-memory rate limiting is per instance.** Keep Upstash configured in production. Without proxy headers (`x-real-ip`/`x-forwarded-for`), all clients share one bucket — fine on Vercel; check if self-hosting.
+5. **Leads view** paginates 50 per page, up to page 100 (5,000 leads per filter). Beyond that, narrow the filters; switch to cursor paging if volumes grow that large.
+6. **DB case study editor** (`/admin/case-studies/new`) does not exist. Code-managed case studies are the primary path; DB rows are still merged and rendered if created.
+7. **Consent banner** not implemented (GA runs without a prior opt-in). Owner/legal decision.
+8. **OG image font** is the renderer's default regular weight (bundling Geist would add a font fetch per image).
+9. Unused dependencies have been removed (see the follow-up section). `@radix-ui/react-separator`, `react-slot` and `react-toast` are still used and were kept.
+10. **Process note:** an owner commit `e43c170` ("all changes") was made and pushed mid-session; it contains the Phase 7 code. History was not rewritten.
+
+## Owner approvals & actions required before release
+
+| Priority | Action |
+| --- | --- |
+| **P0** | Apply `prisma/sql/20261125_lead_pipeline.sql` to production **before** deploying (Neon branch / backup first). See "Applying the lead pipeline migration" below. |
+| **P0** | Confirm the production admin password is not the old seed default (the old seed fell back to a hard-coded password when `ADMIN_PASSWORD` was unset). Rotate if unsure with `ADMIN_PASSWORD='<new password>' npm run admin:set-password`, which changes only that user's password. **Do not re-run `npm run db:seed` against production:** it rewrites the seeded blog posts. It now refuses non-local databases unless `SEED_ALLOW_REMOTE=1`. |
+| **P0** | Review the deployment on a **Vercel preview** (Next 16.4.6 + next-auth beta.32 upgrades): sign in, submit a test lead, run the advisor with the real key. |
+| P1 | Work through the **Owner verification checklist** below (claims, testimonials, stats, case study outcomes). |
+| P1 | Real-estate case study: confirm each capability status, the anonymised wording and client permission, then set `status: "published"`. |
+| P1 | Privacy policy changes — legal review; decide on a consent banner. |
+| P2 | Set `NEXT_PUBLIC_BOOKING_URL` if you use Cal.com/Calendly. Confirm X handles if you want `twitter:site`. Mark `generate_lead` as a GA4 key event. |
+
+### Applying the lead pipeline migration
+
+1. In the Neon console, create a branch of the production database (an instant backup).
+2. Preview (read-only). The output must contain only `CREATE TYPE`, `ADD COLUMN` and `CREATE INDEX`, and **no `DROP`**:
+   ```bash
+   npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script
+   ```
+3. Apply in a single transaction:
+   ```bash
+   set -a; . ./.env; set +a
+   docker run --rm -i postgres:17-alpine psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -1 -f - < prisma/sql/20261125_lead_pipeline.sql
+   ```
+   Or `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -1 -f prisma/sql/20261125_lead_pipeline.sql` if `psql` is installed.
+4. Re-run step 2. It should report an empty migration.
+
+The currently deployed code keeps working after this: the new columns are nullable or have defaults.
 
 ---
 

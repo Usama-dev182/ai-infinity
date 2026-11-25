@@ -614,7 +614,27 @@ const BLOG_POSTS = [
   },
 ];
 
+/** Seeding rewrites the seeded blog posts, so it must not hit a live database by accident. */
+function assertSafeTarget() {
+  let host = "";
+  try {
+    host = new URL(process.env.DATABASE_URL ?? "").hostname;
+  } catch {
+    // Unparseable URL: treat as remote.
+  }
+  const local = ["localhost", "127.0.0.1", "::1", "[::1]"].includes(host);
+  if (!local && process.env.SEED_ALLOW_REMOTE !== "1") {
+    throw new Error(
+      "Refusing to seed a non-local database: seeding overwrites existing blog posts with the seed content. " +
+        "Set SEED_ALLOW_REMOTE=1 only for a new, empty database. " +
+        "To change the admin password, run `npm run admin:set-password` instead."
+    );
+  }
+}
+
 async function main() {
+  assertSafeTarget();
+
   // Admin user — never fall back to a default password.
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (!adminPassword || adminPassword.length < 12) {
