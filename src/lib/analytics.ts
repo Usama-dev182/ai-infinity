@@ -12,11 +12,10 @@ function gtag(...args: unknown[]) {
   }
 }
 
+export type AnalyticsParams = Record<string, string | number | boolean | undefined>;
+
 /** Track a custom GA4 event */
-export function trackEvent(
-  eventName: string,
-  params?: Record<string, string | number | boolean>
-) {
+export function trackEvent(eventName: string, params?: AnalyticsParams) {
   gtag("event", eventName, params);
 }
 

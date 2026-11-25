@@ -11,7 +11,7 @@ export default function TermsPage() {
   return (
     <section className="section-padding">
       <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-extrabold text-[var(--text-primary)] mb-4">Terms of Service</h1>
+        <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-4">Terms of Service</h1>
         <p className="text-sm text-[var(--text-muted)] mb-10">Last updated: January 2025</p>
         <div className="prose-content space-y-8 text-[var(--text-secondary)]">
           <section>
@@ -32,7 +32,7 @@ export default function TermsPage() {
           </section>
           <section>
             <h2 className="text-xl font-bold text-[var(--text-primary)] mb-3">5. Contact</h2>
-            <p>Questions about these terms? Email <a href="mailto:infousamaali1@gmail.com" className="text-[var(--brand-primary)] hover:underline">infousamaali1@gmail.com</a>.</p>
+            <p>Questions about these terms? Email <a href="mailto:infousamaali1@gmail.com" className="text-[var(--text-brand)] hover:underline">infousamaali1@gmail.com</a>.</p>
           </section>
         </div>
       </div>

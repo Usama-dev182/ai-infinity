@@ -65,7 +65,7 @@ export function AdminSidebar({ user }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-[var(--surface-border)]">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-cta-gradient flex items-center justify-center">
               <Bot className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-sm text-[var(--text-primary)]">Admin</span>
@@ -87,7 +87,7 @@ export function AdminSidebar({ user }: Props) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                   active
-                    ? "bg-[var(--brand-primary)]/10 text-[var(--brand-primary)]"
+                    ? "bg-[var(--brand-primary)]/10 text-[var(--text-brand)]"
                     : "text-[var(--text-secondary)] hover:bg-[var(--surface-bg-subtle)] hover:text-[var(--text-primary)]"
                 )}
               >
@@ -101,7 +101,7 @@ export function AdminSidebar({ user }: Props) {
         {/* User */}
         <div className="p-4 border-t border-[var(--surface-border)]">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center text-white text-xs font-bold shrink-0">
+            <div className="w-8 h-8 rounded-full bg-cta-gradient flex items-center justify-center text-white text-xs font-bold shrink-0">
               {user.name?.[0] ?? user.email?.[0] ?? "A"}
             </div>
             <div className="min-w-0">

@@ -2,14 +2,14 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { z } from "zod";
 import { quoteSchema } from "@/lib/validators";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { CheckCircle } from "lucide-react";
+import { FormErrorAlert, FormSuccess, HoneypotField } from "@/components/forms/form-feedback";
+import { useFormSubmit, useRenderTimestamp } from "@/components/forms/use-form-submit";
 import { trackQuoteFormSubmit } from "@/lib/analytics";
 
 type FormData = z.infer<typeof quoteSchema>;
@@ -36,45 +36,39 @@ const TIMELINES = [
 ];
 
 export function QuoteForm() {
-  const [success, setSuccess] = useState(false);
   const {
     register,
     handleSubmit,
+    setValue,
+    setError,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(quoteSchema),
-    defaultValues: { _honey: "", _ts: Date.now() },
+    defaultValues: { _honey: "" },
   });
+  useRenderTimestamp(setValue);
+  const { status, errorMessage, submit } = useFormSubmit<FormData>("/api/quote", setError);
 
   const onSubmit = async (data: FormData) => {
-    const res = await fetch("/api/quote", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (res.ok) {
-      setSuccess(true);
+    const result = await submit(data);
+    if (result.ok) {
       trackQuoteFormSubmit();
       reset();
     }
   };
 
-  if (success) {
+  if (status === "success") {
     return (
-      <div className="glass-card rounded-xl border border-[var(--surface-border)] p-8 text-center">
-        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Quote request received!</h3>
-        <p className="text-[var(--text-secondary)]">
-          We&apos;ll review your project and get back to you within 24–48 hours with a detailed proposal.
-        </p>
-      </div>
+      <FormSuccess title="Quote request received">
+        <p>We&apos;ll review your project and reply within 1–2 business days.</p>
+      </FormSuccess>
     );
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-      <input type="text" tabIndex={-1} aria-hidden="true" className="hidden" {...register("_honey")} />
+      <HoneypotField {...register("_honey")} />
       <input type="hidden" {...register("_ts", { valueAsNumber: true })} />
 
       <div className="grid sm:grid-cols-2 gap-5">
@@ -141,6 +135,8 @@ export function QuoteForm() {
           {...register("description")}
         />
       </div>
+
+      <FormErrorAlert message={errorMessage} />
 
       <Button type="submit" variant="gradient" size="lg" className="w-full" loading={isSubmitting}>
         {isSubmitting ? "Sending…" : "Request Quote"}

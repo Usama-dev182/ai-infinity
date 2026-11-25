@@ -33,7 +33,7 @@ export default async function AdminDashboard() {
               <div className="flex items-start justify-between mb-3">
                 <Icon className={`w-5 h-5 ${color}`} />
                 {value > 0 && (
-                  <span className="text-xs bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] rounded-full px-2 py-0.5 font-semibold">
+                  <span className="text-xs bg-[var(--brand-primary)]/10 text-[var(--text-brand)] rounded-full px-2 py-0.5 font-semibold">
                     {value} new
                   </span>
                 )}
@@ -60,7 +60,7 @@ export default async function AdminDashboard() {
                 className="flex items-center justify-between p-3 rounded-lg border border-[var(--surface-border)] hover:bg-[var(--surface-bg-subtle)] transition-colors"
               >
                 <span className="text-sm text-[var(--text-secondary)]">{a.label}</span>
-                <span className="text-[var(--brand-primary)] text-sm">→</span>
+                <span className="text-[var(--text-brand)] text-sm">→</span>
               </Link>
             ))}
           </div>

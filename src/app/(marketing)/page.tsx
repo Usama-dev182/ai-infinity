@@ -61,7 +61,7 @@ export default function HomePage() {
               </FadeUp>
 
               <FadeUp delay={0.1}>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-[var(--text-primary)] mb-6">
+                <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
                   Building{" "}
                   <span className="gradient-text">AI-Powered</span>{" "}
                   Products That{" "}
@@ -149,7 +149,7 @@ export default function HomePage() {
                     {["React", "Next.js", "TypeScript", "Python", "OpenAI", "LangChain"].map((t) => (
                       <span
                         key={t}
-                        className="text-xs px-2.5 py-1 rounded-full bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] border border-[var(--brand-primary)]/20"
+                        className="text-xs px-2.5 py-1 rounded-full bg-[var(--brand-primary)]/10 text-[var(--text-brand)] border border-[var(--brand-primary)]/20"
                       >
                         {t}
                       </span>
@@ -195,7 +195,7 @@ export default function HomePage() {
           <FadeUp>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">What We Do</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                 Services Built for the{" "}
                 <span className="gradient-text">AI Era</span>
               </h2>
@@ -213,7 +213,7 @@ export default function HomePage() {
                 <StaggerItem key={service.slug}>
                   <Link href={`/services/${service.slug}`} className="group block h-full">
                     <div className="glass-card h-full rounded-2xl p-7 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-md">
+                      <div className="w-12 h-12 rounded-xl bg-cta-gradient flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-md">
                         <Icon className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:gradient-text transition-all">
@@ -229,7 +229,7 @@ export default function HomePage() {
                           </Badge>
                         ))}
                       </div>
-                      <div className="flex items-center gap-1 text-sm text-[var(--brand-primary)] font-medium">
+                      <div className="flex items-center gap-1 text-sm text-[var(--text-brand)] font-medium">
                         Learn more <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
@@ -253,7 +253,7 @@ export default function HomePage() {
             {TECH_STACK_BADGES.map((tech) => (
               <span
                 key={tech}
-                className="px-5 py-2.5 rounded-full text-sm font-medium border border-[var(--surface-border)] bg-[var(--surface-card)] text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] transition-colors cursor-default"
+                className="px-5 py-2.5 rounded-full text-sm font-medium border border-[var(--surface-border)] bg-[var(--surface-card)] text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--text-brand)] transition-colors cursor-default"
               >
                 {tech}
               </span>
@@ -269,7 +269,7 @@ export default function HomePage() {
             <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
               <div>
                 <Badge variant="gradient" className="mb-4">Case Studies</Badge>
-                <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)]">
+                <h2 className="text-heading-2 font-bold text-[var(--text-primary)]">
                   Real Projects, <span className="gradient-text">Real Impact</span>
                 </h2>
               </div>
@@ -304,7 +304,7 @@ export default function HomePage() {
                     </div>
                     <Link
                       href={`/case-studies/${project.slug}`}
-                      className="inline-flex items-center gap-1 text-sm font-medium text-[var(--brand-primary)] hover:underline"
+                      className="inline-flex items-center gap-1 text-sm font-medium text-[var(--text-brand)] hover:underline"
                     >
                       Read case study <ChevronRight className="w-3.5 h-3.5" />
                     </Link>
@@ -322,7 +322,7 @@ export default function HomePage() {
           <FadeUp>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">Our Process</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                 How We <span className="gradient-text">Work</span>
               </h2>
               <p className="text-[var(--text-secondary)] text-lg">
@@ -335,7 +335,7 @@ export default function HomePage() {
             {PROCESS_STEPS.map((step) => (
               <StaggerItem key={step.step}>
                 <div className="text-center lg:text-left">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center text-white font-bold text-sm mb-4 mx-auto lg:mx-0 shadow-md">
+                  <div className="w-12 h-12 rounded-full bg-cta-gradient flex items-center justify-center text-white font-bold text-sm mb-4 mx-auto lg:mx-0 shadow-md">
                     {step.step}
                   </div>
                   <h3 className="font-semibold text-[var(--text-primary)] mb-2">{step.title}</h3>
@@ -353,7 +353,7 @@ export default function HomePage() {
           <FadeUp>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">Testimonials</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                 What Clients <span className="gradient-text">Say</span>
               </h2>
             </div>
@@ -408,7 +408,7 @@ export default function HomePage() {
                   className="group flex flex-col items-center gap-1.5"
                   aria-label={logo.name}
                 >
-                  <span className="text-xl font-extrabold text-[var(--text-muted)] group-hover:text-[var(--brand-primary)] transition-colors tracking-tight">
+                  <span className="text-xl font-extrabold text-[var(--text-muted)] group-hover:text-[var(--text-brand)] transition-colors tracking-tight">
                     {logo.name}
                   </span>
                   <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
@@ -435,7 +435,7 @@ export default function HomePage() {
           <FadeUp>
             <div className="text-center mb-12">
               <Badge variant="gradient" className="mb-4">FAQ</Badge>
-              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                 Questions We Get <span className="gradient-text">All the Time</span>
               </h2>
               <p className="text-[var(--text-secondary)]">
@@ -465,7 +465,7 @@ export default function HomePage() {
           <FadeUp>
             <p className="text-center text-sm text-[var(--text-muted)] mt-8">
               More questions?{" "}
-              <Link href="/contact" className="text-[var(--brand-primary)] hover:underline font-medium">
+              <Link href="/contact" className="text-[var(--text-brand)] hover:underline font-medium">
                 Just ask us directly →
               </Link>
             </p>
@@ -477,13 +477,13 @@ export default function HomePage() {
       <section className="section-padding">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeUp>
-            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] p-12 lg:p-20 text-center shadow-2xl glow">
+            <div className="relative rounded-3xl overflow-hidden bg-cta-gradient p-12 lg:p-20 text-center shadow-2xl glow">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.1),transparent_70%)]" />
               <div className="relative">
                 <Badge className="mb-6 bg-white/20 text-white border-white/30">
                   Let&apos;s Build Together
                 </Badge>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-6 leading-tight">
+                <h2 className="text-heading-2 font-extrabold text-white mb-6">
                   Have an AI or software project in mind?
                 </h2>
                 <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto">
@@ -494,7 +494,7 @@ export default function HomePage() {
                   <Button
                     asChild
                     size="xl"
-                    className="bg-white text-[var(--brand-primary)] font-bold hover:bg-white/90 shadow-lg"
+                    className="bg-white text-[var(--text-brand)] font-bold hover:bg-white/90 shadow-lg"
                   >
                     <Link href="/quote">
                       Request a Quote <ArrowRight className="w-5 h-5 ml-2" />

@@ -77,7 +77,7 @@ export default function AboutPage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <FadeUp>
             <Badge variant="gradient" className="mb-4">About Us</Badge>
-            <h1 className="text-4xl sm:text-6xl font-extrabold text-[var(--text-primary)] mb-6 max-w-3xl leading-tight">
+            <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6 max-w-3xl">
               A boutique agency that ships <span className="gradient-text">real AI products</span>
             </h1>
             <p className="text-xl text-[var(--text-secondary)] max-w-2xl leading-relaxed">
@@ -110,7 +110,7 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
               <div className="relative">
-                <div className="w-72 h-96 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] p-0.5 mx-auto lg:mx-0">
+                <div className="w-72 h-96 rounded-2xl bg-cta-gradient p-0.5 mx-auto lg:mx-0">
                   <div className="w-full h-full rounded-2xl bg-[var(--surface-bg)] overflow-hidden">
                     <Image
                       src={FOUNDER.avatar}
@@ -132,8 +132,8 @@ export default function AboutPage() {
             <FadeUp delay={0.2}>
               <div>
                 <Badge variant="secondary" className="mb-4">Founder</Badge>
-                <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-2">{FOUNDER.name}</h2>
-                <p className="text-[var(--brand-primary)] font-semibold mb-5">{FOUNDER.title}</p>
+                <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-2">{FOUNDER.name}</h2>
+                <p className="text-[var(--text-brand)] font-semibold mb-5">{FOUNDER.title}</p>
                 <p className="text-[var(--text-secondary)] leading-relaxed mb-6 text-lg">{FOUNDER.bio}</p>
                 <div className="flex items-center gap-3">
                   <Button asChild variant="outline" size="sm">
@@ -176,7 +176,7 @@ export default function AboutPage() {
                         <h3 className="font-semibold text-[var(--text-primary)]">{exp.company}</h3>
                         <Badge variant="secondary" className="text-xs">{exp.period}</Badge>
                       </div>
-                      <p className="text-[var(--brand-primary)] text-sm mb-2">{exp.role}</p>
+                      <p className="text-[var(--text-brand)] text-sm mb-2">{exp.role}</p>
                       <p className="text-[var(--text-secondary)] text-sm">{exp.description}</p>
                     </div>
                   </div>
@@ -193,7 +193,7 @@ export default function AboutPage() {
           <FadeUp>
             <div className="text-center mb-12">
               <Badge variant="gradient" className="mb-4">Our Values</Badge>
-              <h2 className="text-3xl font-bold text-[var(--text-primary)]">
+              <h2 className="text-heading-2 font-bold text-[var(--text-primary)]">
                 How we work, every single project
               </h2>
             </div>
@@ -216,7 +216,7 @@ export default function AboutPage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeUp>
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                 What we build
               </h2>
               <p className="text-[var(--text-secondary)] max-w-xl mx-auto">

@@ -56,7 +56,7 @@ export function AiDemoWidget() {
     <div className="glass-card rounded-2xl border border-[var(--surface-border)] overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-[var(--surface-border)] bg-gradient-to-r from-[var(--brand-gradient-start)]/10 to-[var(--brand-gradient-end)]/10">
-        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-cta-gradient flex items-center justify-center">
           <Bot className="w-4 h-4 text-white" />
         </div>
         <div>
@@ -73,14 +73,14 @@ export function AiDemoWidget() {
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             {msg.role === "assistant" && (
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-7 h-7 rounded-full bg-cta-gradient flex items-center justify-center shrink-0 mt-0.5">
                 <Bot className="w-3.5 h-3.5 text-white" />
               </div>
             )}
             <div
               className={`rounded-xl px-4 py-2.5 text-sm max-w-xs leading-relaxed ${
                 msg.role === "user"
-                  ? "bg-gradient-to-r from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] text-white rounded-tr-none"
+                  ? "bg-cta-gradient text-white rounded-tr-none"
                   : "bg-[var(--surface-card)] text-[var(--text-secondary)] border border-[var(--surface-border)] rounded-tl-none"
               }`}
             >
@@ -95,7 +95,7 @@ export function AiDemoWidget() {
         ))}
         {loading && (
           <div className="flex gap-3 justify-start">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-full bg-cta-gradient flex items-center justify-center shrink-0">
               <Bot className="w-3.5 h-3.5 text-white" />
             </div>
             <div className="bg-[var(--surface-card)] border border-[var(--surface-border)] rounded-xl rounded-tl-none px-4 py-2.5">
@@ -112,7 +112,7 @@ export function AiDemoWidget() {
             <button
               key={s}
               onClick={() => sendMessage(s)}
-              className="text-xs px-3 py-1.5 rounded-full border border-[var(--brand-primary)]/40 text-[var(--brand-primary)] hover:bg-[var(--brand-primary)]/10 transition-colors"
+              className="text-xs px-3 py-1.5 rounded-full border border-[var(--brand-primary)]/40 text-[var(--text-brand)] hover:bg-[var(--brand-primary)]/10 transition-colors"
             >
               {s}
             </button>

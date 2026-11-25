@@ -51,7 +51,7 @@ export default async function ServiceDetailPage({ params }: Props) {
           <FadeUp>
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--brand-primary)] mb-8 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-brand)] mb-8 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back to Services
             </Link>
@@ -60,11 +60,11 @@ export default async function ServiceDetailPage({ params }: Props) {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
               <div>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center mb-6 shadow-xl">
+                <div className="w-16 h-16 rounded-2xl bg-cta-gradient flex items-center justify-center mb-6 shadow-xl">
                   <Icon className="w-8 h-8 text-white" />
                 </div>
                 <Badge variant="gradient" className="mb-4">{service.shortTitle}</Badge>
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 leading-tight">
+                <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
                   {service.title}
                 </h1>
                 <p className="text-xl text-[var(--text-secondary)] leading-relaxed mb-8">
@@ -126,7 +126,7 @@ export default async function ServiceDetailPage({ params }: Props) {
           <StaggerContainer className="flex flex-wrap justify-center gap-3">
             {service.techStack.map((tech) => (
               <StaggerItem key={tech}>
-                <div className="px-5 py-2.5 rounded-full border border-[var(--surface-border)] bg-[var(--surface-card)] text-sm font-medium text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] transition-colors">
+                <div className="px-5 py-2.5 rounded-full border border-[var(--surface-border)] bg-[var(--surface-card)] text-sm font-medium text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--text-brand)] transition-colors">
                   {tech}
                 </div>
               </StaggerItem>
@@ -140,7 +140,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <FadeUp>
             <Badge variant="gradient" className="mb-6">Why Choose Us</Badge>
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-6">
+            <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-6">
               Senior-level expertise, <span className="gradient-text">startup speed</span>
             </h2>
             <p className="text-[var(--text-secondary)] text-lg leading-relaxed mb-10">
@@ -182,7 +182,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                   >
                     <div className="glass-card rounded-xl p-6 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 hover:shadow-lg transition-all">
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-cta-gradient flex items-center justify-center shrink-0">
                           <OtherIcon className="w-5 h-5 text-white" />
                         </div>
                         <div>

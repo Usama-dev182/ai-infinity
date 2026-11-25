@@ -23,7 +23,7 @@ export default async function CareerSubmissionsPage() {
                 <div>
                   <p className="font-semibold text-[var(--text-primary)]">{a.name}</p>
                   <p className="text-sm text-[var(--text-muted)]">{a.email}</p>
-                  {a.job && <p className="text-xs text-[var(--brand-primary)]">Applying for: {a.job.title}</p>}
+                  {a.job && <p className="text-xs text-[var(--text-brand)]">Applying for: {a.job.title}</p>}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge
@@ -37,10 +37,10 @@ export default async function CareerSubmissionsPage() {
               </div>
               <div className="flex flex-wrap gap-3 text-xs mb-3">
                 {a.linkedinUrl && (
-                  <a href={a.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--brand-primary)] hover:underline">LinkedIn</a>
+                  <a href={a.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--text-brand)] hover:underline">LinkedIn</a>
                 )}
                 {a.portfolioUrl && (
-                  <a href={a.portfolioUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--brand-primary)] hover:underline">Portfolio</a>
+                  <a href={a.portfolioUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--text-brand)] hover:underline">Portfolio</a>
                 )}
               </div>
               {a.coverLetter && (

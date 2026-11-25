@@ -28,7 +28,7 @@ export default function QuotePage() {
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <FadeUp>
               <Badge variant="gradient" className="mb-4">Request a Quote</Badge>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 leading-tight">
+              <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
                 Start your <span className="gradient-text">next project</span>
               </h1>
               <p className="text-xl text-[var(--text-secondary)] mb-10">
@@ -46,10 +46,10 @@ export default function QuotePage() {
               </ul>
 
               <div className="mt-10 glass-card rounded-xl border border-[var(--surface-border)] p-5 flex items-start gap-4">
-                <ArrowRight className="w-5 h-5 text-[var(--brand-primary)] mt-0.5 shrink-0" />
+                <ArrowRight className="w-5 h-5 text-[var(--text-brand)] mt-0.5 shrink-0" />
                 <p className="text-sm text-[var(--text-secondary)]">
                   Prefer a call? Email us at{" "}
-                  <a href="mailto:infousamaali1@gmail.com" className="text-[var(--brand-primary)] hover:underline">
+                  <a href="mailto:infousamaali1@gmail.com" className="text-[var(--text-brand)] hover:underline">
                     infousamaali1@gmail.com
                   </a>{" "}
                   and we&apos;ll schedule a discovery call.

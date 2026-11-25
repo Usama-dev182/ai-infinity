@@ -8,7 +8,7 @@ export default function NewPostPage() {
       <div className="flex items-center gap-3 mb-6">
         <Link
           href="/admin/posts"
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--brand-primary)] transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text-brand)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Back to posts
         </Link>

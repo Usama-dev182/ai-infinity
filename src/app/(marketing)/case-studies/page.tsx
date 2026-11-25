@@ -23,7 +23,7 @@ export default function CaseStudiesPage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <FadeUp>
             <Badge variant="gradient" className="mb-4">Case Studies</Badge>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 max-w-2xl leading-tight">
+            <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6 max-w-2xl">
               Work that <span className="gradient-text">speaks for itself</span>
             </h1>
             <p className="text-xl text-[var(--text-secondary)] max-w-2xl">
@@ -59,7 +59,7 @@ export default function CaseStudiesPage() {
                           <Badge variant="secondary" className="text-xs">+{project.techStack.length - 3}</Badge>
                         )}
                       </div>
-                      <span className="inline-flex items-center text-sm font-medium text-[var(--brand-primary)] gap-1 group-hover:gap-2 transition-all">
+                      <span className="inline-flex items-center text-sm font-medium text-[var(--text-brand)] gap-1 group-hover:gap-2 transition-all">
                         Read case study <ArrowRight className="w-4 h-4" />
                       </span>
                     </div>

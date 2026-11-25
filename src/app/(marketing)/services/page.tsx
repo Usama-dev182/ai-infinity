@@ -4,7 +4,7 @@ import { TrackedLink } from "@/components/analytics/tracked-link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
+import { FadeUp } from "@/components/marketing/animation";
 import { SERVICES } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 
@@ -35,7 +35,7 @@ export default function ServicesPage() {
           <FadeUp>
             <div className="text-center max-w-4xl mx-auto">
               <Badge variant="gradient" className="mb-6">Our Services</Badge>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 leading-tight">
+              <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
                 Engineering Excellence for the{" "}
                 <span className="gradient-text">Age of AI</span>
               </h1>
@@ -62,11 +62,11 @@ export default function ServicesPage() {
                       <div className={`grid lg:grid-cols-2 gap-0 ${isEven ? "" : "lg:flex-row-reverse"}`}>
                         {/* Content */}
                         <div className={`p-8 lg:p-12 ${isEven ? "order-1" : "order-1 lg:order-2"}`}>
-                          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center mb-6 shadow-lg">
+                          <div className="w-14 h-14 rounded-2xl bg-cta-gradient flex items-center justify-center mb-6 shadow-lg">
                             <Icon className="w-7 h-7 text-white" />
                           </div>
                           <Badge variant="gradient" className="mb-4 text-xs">{service.shortTitle}</Badge>
-                          <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text-primary)] mb-4">
+                          <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                             {service.title}
                           </h2>
                           <p className="text-[var(--text-secondary)] leading-relaxed mb-6">
@@ -123,7 +123,7 @@ export default function ServicesPage() {
       <section className="section-padding bg-[var(--surface-bg-subtle)] border-t border-[var(--surface-border)]">
         <div className="container mx-auto max-w-3xl px-4 text-center">
           <FadeUp>
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
               Not sure which service you need?
             </h2>
             <p className="text-[var(--text-secondary)] mb-8">

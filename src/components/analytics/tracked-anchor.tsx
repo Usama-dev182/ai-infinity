@@ -1,15 +1,15 @@
 "use client";
 
-import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { trackEvent } from "@/lib/analytics";
+import type { AnchorHTMLAttributes } from "react";
+import { trackEvent, type AnalyticsParams } from "@/lib/analytics";
 
 interface TrackedAnchorProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
-  children: ReactNode;
   eventName: string;
-  params?: Record<string, string | number | boolean>;
+  params?: AnalyticsParams;
 }
 
-export function TrackedAnchor({ children, eventName, params, onClick, ...props }: TrackedAnchorProps) {
+/** Plain anchor (external, mailto, tel) that records a GA4 event on click. */
+export function TrackedAnchor({ eventName, params, onClick, ...props }: TrackedAnchorProps) {
   return (
     <a
       {...props}
@@ -17,8 +17,6 @@ export function TrackedAnchor({ children, eventName, params, onClick, ...props }
         trackEvent(eventName, params);
         onClick?.(event);
       }}
-    >
-      {children}
-    </a>
+    />
   );
 }

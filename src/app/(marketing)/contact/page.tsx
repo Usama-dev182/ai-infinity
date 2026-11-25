@@ -24,7 +24,7 @@ export default function ContactPage() {
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <FadeUp>
               <Badge variant="gradient" className="mb-4">Get in touch</Badge>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 leading-tight">
+              <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
                 Let&apos;s <span className="gradient-text">talk about</span> your project
               </h1>
               <p className="text-xl text-[var(--text-secondary)] mb-10">
@@ -38,7 +38,7 @@ export default function ContactPage() {
                   className="flex items-center gap-4 group"
                 >
                   <div className="w-10 h-10 rounded-lg bg-[var(--brand-primary)]/10 flex items-center justify-center group-hover:bg-[var(--brand-primary)]/20 transition-colors">
-                    <Mail className="w-5 h-5 text-[var(--brand-primary)]" />
+                    <Mail className="w-5 h-5 text-[var(--text-brand)]" />
                   </div>
                   <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">
                     {SITE.email}
@@ -46,19 +46,19 @@ export default function ContactPage() {
                 </Link>
                 <Link href={SITE.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
                   <div className="w-10 h-10 rounded-lg bg-[var(--brand-primary)]/10 flex items-center justify-center group-hover:bg-[var(--brand-primary)]/20 transition-colors">
-                    <ExternalLink className="w-5 h-5 text-[var(--brand-primary)]" />
+                    <ExternalLink className="w-5 h-5 text-[var(--text-brand)]" />
                   </div>
                   <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">LinkedIn</span>
                 </Link>
                 <Link href={SITE.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
                   <div className="w-10 h-10 rounded-lg bg-[var(--brand-primary)]/10 flex items-center justify-center group-hover:bg-[var(--brand-primary)]/20 transition-colors">
-                  <Code2 className="w-5 h-5 text-[var(--brand-primary)]" />
+                  <Code2 className="w-5 h-5 text-[var(--text-brand)]" />
                 </div>
                   <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">GitHub</span>
                 </Link>
                 <Link href={SITE.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
                   <div className="w-10 h-10 rounded-lg bg-[var(--brand-primary)]/10 flex items-center justify-center group-hover:bg-[var(--brand-primary)]/20 transition-colors">
-                    <ExternalLink className="w-5 h-5 text-[var(--brand-primary)]" />
+                    <ExternalLink className="w-5 h-5 text-[var(--text-brand)]" />
                   </div>
                   <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">Upwork</span>
                 </Link>

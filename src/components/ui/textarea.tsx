@@ -1,26 +1,26 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { FieldMessages, describedBy, fieldClassName } from "@/components/ui/input";
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   error?: string;
+  hint?: string;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, error, ...props }, ref) => {
+  ({ className, error, hint, id, ...props }, ref) => {
+    const ids = describedBy(id, hint, error);
     return (
       <div className="w-full">
         <textarea
-          className={cn(
-            "flex min-h-[120px] w-full rounded-lg border bg-[var(--surface-card)] px-3 py-2 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] transition-colors resize-y",
-            "border-[var(--surface-border)] focus:border-[var(--brand-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]/20",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            error && "border-[var(--color-error)] focus:ring-[var(--color-error)]/20",
-            className
-          )}
+          id={id}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={ids.describedBy}
+          className={cn(fieldClassName(error), "min-h-[120px] py-2.5 resize-y", className)}
           ref={ref}
           {...props}
         />
-        {error && <p className="mt-1 text-xs text-[var(--color-error)]">{error}</p>}
+        <FieldMessages hint={hint} error={error} hintId={ids.hintId} errorId={ids.errorId} />
       </div>
     );
   }

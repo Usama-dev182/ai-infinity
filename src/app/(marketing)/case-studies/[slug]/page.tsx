@@ -43,7 +43,7 @@ export default async function CaseStudyDetailPage({ params }: Props) {
           <FadeUp>
             <Link
               href="/case-studies"
-              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--brand-primary)] mb-8 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-brand)] mb-8 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back to Case Studies
             </Link>
@@ -52,7 +52,7 @@ export default async function CaseStudyDetailPage({ params }: Props) {
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <FadeUp>
               <Badge variant="outline" className="mb-4">{project.industry}</Badge>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-4">
+              <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-4">
                 {project.title}
               </h1>
               <p className="text-xl text-[var(--text-secondary)] mb-8 leading-relaxed">
@@ -166,7 +166,7 @@ export default async function CaseStudyDetailPage({ params }: Props) {
                     <Badge variant="outline" className="mb-3 text-xs">{p.industry}</Badge>
                     <h3 className="font-semibold text-[var(--text-primary)] group-hover:gradient-text mb-2 transition-all">{p.title}</h3>
                     <p className="text-sm text-[var(--text-secondary)] mb-3">{p.description}</p>
-                    <span className="inline-flex items-center text-sm font-medium text-[var(--brand-primary)] gap-1 group-hover:gap-2 transition-all">
+                    <span className="inline-flex items-center text-sm font-medium text-[var(--text-brand)] gap-1 group-hover:gap-2 transition-all">
                       Read case study <ArrowRight className="w-4 h-4" />
                     </span>
                   </Link>

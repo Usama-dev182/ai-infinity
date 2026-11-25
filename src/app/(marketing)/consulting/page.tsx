@@ -281,7 +281,7 @@ export default function ConsultingPage() {
               </FadeUp>
 
               <FadeUp delay={0.1}>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-[var(--text-primary)] mb-6">
+                <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
                   Ship Smarter with{" "}
                   <span className="gradient-text">AI Expertise</span>{" "}
                   in Your Corner
@@ -341,7 +341,7 @@ export default function ConsultingPage() {
             <FadeUp delay={0.3}>
               <div className="glass-card rounded-3xl border border-[var(--surface-border)] p-8 shadow-xl">
                 <div className="flex items-center gap-5 mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] p-0.5 flex-shrink-0 shadow-lg">
+                  <div className="w-16 h-16 rounded-2xl bg-cta-gradient p-0.5 flex-shrink-0 shadow-lg">
                     <div className="w-full h-full rounded-[10px] overflow-hidden">
                       <Image
                         src={FOUNDER.avatar}
@@ -405,7 +405,7 @@ export default function ConsultingPage() {
           <FadeUp>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">What I Help With</Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-extrabold text-[var(--text-primary)] mb-4">
                 Nine Areas Where I Can{" "}
                 <span className="gradient-text">Move the Needle</span>
               </h2>
@@ -422,7 +422,7 @@ export default function ConsultingPage() {
               return (
                 <StaggerItem key={svc.title}>
                   <div className="glass-card rounded-2xl border border-[var(--surface-border)] p-7 h-full hover:border-[var(--brand-primary)]/40 hover:shadow-[0_0_30px_rgba(99,102,241,0.1)] transition-all duration-300 group">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center mb-5 shadow-md group-hover:shadow-lg transition-shadow">
+                    <div className="w-12 h-12 rounded-xl bg-cta-gradient flex items-center justify-center mb-5 shadow-md group-hover:shadow-lg transition-shadow">
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-[var(--text-primary)] mb-3">{svc.title}</h3>
@@ -451,7 +451,7 @@ export default function ConsultingPage() {
           <FadeUp>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">Engagement Options</Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-extrabold text-[var(--text-primary)] mb-4">
                 Choose How We Work{" "}
                 <span className="gradient-text">Together</span>
               </h2>
@@ -467,12 +467,12 @@ export default function ConsultingPage() {
                 <div
                   className={`relative rounded-2xl border p-8 h-full flex flex-col transition-all duration-300 ${
                     tier.highlighted
-                      ? "bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] border-transparent shadow-2xl scale-[1.02]"
+                      ? "bg-cta-gradient border-transparent shadow-2xl scale-[1.02]"
                       : "glass-card border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40"
                   }`}
                 >
                   {tier.badge && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-[var(--brand-primary)] text-xs font-bold px-4 py-1 rounded-full shadow-md whitespace-nowrap">
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white text-[var(--text-brand)] text-xs font-bold px-4 py-1 rounded-full shadow-md whitespace-nowrap">
                       {tier.badge}
                     </span>
                   )}
@@ -486,7 +486,7 @@ export default function ConsultingPage() {
                     <h3 className={`text-2xl font-extrabold mb-1 ${tier.highlighted ? "text-white" : "text-[var(--text-primary)]"}`}>
                       {tier.name}
                     </h3>
-                    <p className={`text-sm font-semibold mb-3 ${tier.highlighted ? "text-white/80" : "text-[var(--brand-primary)]"}`}>
+                    <p className={`text-sm font-semibold mb-3 ${tier.highlighted ? "text-white/80" : "text-[var(--text-brand)]"}`}>
                       {tier.price}
                     </p>
                     <p className={`text-sm leading-relaxed ${tier.highlighted ? "text-white/80" : "text-[var(--text-secondary)]"}`}>
@@ -523,7 +523,7 @@ export default function ConsultingPage() {
                     <Button
                       asChild
                       variant={tier.highlighted ? "outline" : "gradient"}
-                      className={`w-full ${tier.highlighted ? "bg-white text-[var(--brand-primary)] hover:bg-white/90 border-transparent font-semibold" : ""}`}
+                      className={`w-full ${tier.highlighted ? "bg-white text-[var(--text-brand)] hover:bg-white/90 border-transparent font-semibold" : ""}`}
                     >
                       <TrackedLink
                         href={tier.href}
@@ -548,7 +548,7 @@ export default function ConsultingPage() {
           <FadeUp>
             <div className="text-center max-w-3xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">How It Works</Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-extrabold text-[var(--text-primary)] mb-4">
                 From First Message to{" "}
                 <span className="gradient-text">Clear Action Plan</span>
               </h2>
@@ -562,7 +562,7 @@ export default function ConsultingPage() {
             {processSteps.map((step, i) => (
               <StaggerItem key={step.step}>
                 <div className="relative glass-card rounded-2xl border border-[var(--surface-border)] p-7 h-full hover:border-[var(--brand-primary)]/30 transition-all">
-                  <span className="text-5xl font-extrabold text-[var(--brand-primary)]/15 block mb-4 leading-none">
+                  <span className="text-5xl font-extrabold text-[var(--text-brand)]/15 block mb-4 leading-none">
                     {step.step}
                   </span>
                   <h3 className="text-base font-bold text-[var(--text-primary)] mb-3">{step.title}</h3>
@@ -585,7 +585,7 @@ export default function ConsultingPage() {
           <FadeUp>
             <div className="text-center max-w-2xl mx-auto mb-16">
               <Badge variant="gradient" className="mb-4">Client Feedback</Badge>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)]">
+              <h2 className="text-heading-2 font-extrabold text-[var(--text-primary)]">
                 What Clients <span className="gradient-text">Say</span>
               </h2>
             </div>
@@ -618,13 +618,13 @@ export default function ConsultingPage() {
       <section className="section-padding">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeUp>
-            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[var(--brand-gradient-start)] via-[#7c3aed] to-[var(--brand-gradient-end)] p-10 md:p-16 text-center">
+            <div className="relative rounded-3xl overflow-hidden bg-cta-gradient p-10 md:p-16 text-center">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.15),transparent_70%)]" />
               <div className="relative">
                 <Badge className="mb-6 bg-white/20 text-white border-white/30 hover:bg-white/30">
                   Book your first session
                 </Badge>
-                <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                <h2 className="text-heading-2 font-extrabold text-white mb-4">
                   Ready to Move Faster?
                 </h2>
                 <p className="text-white/80 text-lg max-w-2xl mx-auto mb-10">
@@ -642,7 +642,7 @@ export default function ConsultingPage() {
                     <Button
                       variant="outline"
                       size="xl"
-                      className="bg-white text-[var(--brand-primary)] hover:bg-white/90 border-transparent font-semibold"
+                      className="bg-white text-[var(--text-brand)] hover:bg-white/90 border-transparent font-semibold"
                     >
                       <Calendar className="w-5 h-5 mr-2" />
                       Book Free Discovery Call

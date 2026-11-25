@@ -30,7 +30,7 @@ export default async function CareersPage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <FadeUp>
             <Badge variant="gradient" className="mb-4">Careers</Badge>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 max-w-2xl leading-tight">
+            <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6 max-w-2xl">
               Build the future of <span className="gradient-text">intelligent software</span>
             </h1>
             <p className="text-xl text-[var(--text-secondary)] max-w-2xl">

@@ -109,7 +109,7 @@ export function YouTubeCard({ video, featured = false }: YouTubeCardProps) {
         <h3
           className={cn(
             "font-semibold text-[var(--text-primary)] leading-snug mb-2 line-clamp-2",
-            "group-hover:text-[var(--brand-primary)] transition-colors",
+            "group-hover:text-[var(--text-brand)] transition-colors",
             featured ? "text-base" : "text-sm"
           )}
         >
@@ -118,7 +118,7 @@ export function YouTubeCard({ video, featured = false }: YouTubeCardProps) {
         <p className="text-xs text-[var(--text-muted)] leading-relaxed line-clamp-2 mb-3">
           {video.description}
         </p>
-        <div className="flex items-center gap-1 text-xs text-[var(--brand-primary)] font-medium">
+        <div className="flex items-center gap-1 text-xs text-[var(--text-brand)] font-medium">
           {isPending ? (
             <span className="text-[var(--text-muted)]">Video uploading soon</span>
           ) : (

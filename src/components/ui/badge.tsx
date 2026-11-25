@@ -8,19 +8,19 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-[var(--brand-primary)]/10 text-[var(--brand-primary)] border-[var(--brand-primary)]/20",
+          "bg-[var(--brand-primary)]/10 text-[var(--text-brand)] border-[var(--brand-primary)]/20",
         secondary:
           "bg-[var(--surface-bg-muted)] text-[var(--text-secondary)] border-[var(--surface-border)]",
         outline:
           "border-[var(--surface-border)] text-[var(--text-secondary)] bg-transparent",
         success:
-          "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
+          "bg-green-500/10 text-[var(--color-success-text)] border-green-500/20",
         warning:
-          "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+          "bg-amber-500/10 text-[var(--color-warning-text)] border-amber-500/20",
         error:
-          "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
+          "bg-red-500/10 text-[var(--color-error-text)] border-red-500/20",
         gradient:
-          "bg-gradient-to-r from-[var(--brand-gradient-start)]/10 to-[var(--brand-gradient-end)]/10 text-[var(--brand-primary)] border-[var(--brand-primary)]/20",
+          "bg-gradient-to-r from-[var(--brand-gradient-start)]/10 to-[var(--brand-gradient-end)]/10 text-[var(--text-brand)] border-[var(--brand-primary)]/20",
       },
     },
     defaultVariants: {

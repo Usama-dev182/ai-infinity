@@ -2,57 +2,52 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { z } from "zod";
 import { contactSchema } from "@/lib/validators";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { CheckCircle } from "lucide-react";
+import { FormErrorAlert, FormSuccess, HoneypotField } from "@/components/forms/form-feedback";
+import { useFormSubmit, useRenderTimestamp } from "@/components/forms/use-form-submit";
 import { trackContactFormSubmit } from "@/lib/analytics";
 
 type FormData = z.infer<typeof contactSchema>;
 
 export function ContactForm() {
-  const [success, setSuccess] = useState(false);
   const {
     register,
     handleSubmit,
+    setValue,
+    setError,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { _honey: "", _ts: Date.now() },
+    defaultValues: { _honey: "" },
   });
+  useRenderTimestamp(setValue);
+  const { status, errorMessage, submit } = useFormSubmit<FormData>("/api/contact", setError);
 
   const onSubmit = async (data: FormData) => {
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (res.ok) {
-      setSuccess(true);
+    const result = await submit(data);
+    if (result.ok) {
       trackContactFormSubmit();
       reset();
     }
   };
 
-  if (success) {
+  if (status === "success") {
     return (
-      <div className="glass-card rounded-xl border border-[var(--surface-border)] p-8 text-center">
-        <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-[var(--text-primary)] mb-2">Message sent!</h3>
-        <p className="text-[var(--text-secondary)]">We&apos;ll get back to you within 24 hours.</p>
-      </div>
+      <FormSuccess title="Message sent">
+        <p>We&apos;ll get back to you within one business day.</p>
+      </FormSuccess>
     );
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-      {/* Honeypot – hidden from real users */}
-      <input type="text" tabIndex={-1} aria-hidden="true" className="hidden" {...register("_honey")} />
+      <HoneypotField {...register("_honey")} />
       <input type="hidden" {...register("_ts", { valueAsNumber: true })} />
 
       <div className="grid sm:grid-cols-2 gap-5">
@@ -102,6 +97,8 @@ export function ContactForm() {
           {...register("message")}
         />
       </div>
+
+      <FormErrorAlert message={errorMessage} />
 
       <Button type="submit" variant="gradient" size="lg" className="w-full" loading={isSubmitting}>
         {isSubmitting ? "Sending…" : "Send message"}

@@ -18,7 +18,7 @@ export default async function EditPostPage({ params }: Props) {
       <div className="flex items-center gap-3 mb-6">
         <Link
           href="/admin/posts"
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--brand-primary)] transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text-brand)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4" /> Back to posts
         </Link>
@@ -29,7 +29,7 @@ export default async function EditPostPage({ params }: Props) {
             href={`/blog/${post.slug}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-auto inline-flex items-center gap-1.5 text-xs text-[var(--brand-primary)] hover:underline"
+            className="ml-auto inline-flex items-center gap-1.5 text-xs text-[var(--text-brand)] hover:underline"
           >
             View live <ExternalLink className="w-3 h-3" />
           </a>

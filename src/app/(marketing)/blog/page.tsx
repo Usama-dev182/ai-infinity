@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowRight, Clock, Calendar } from "lucide-react";
+import { Clock, Calendar } from "lucide-react";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,7 +47,7 @@ export default async function BlogPage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
           <FadeUp>
             <Badge variant="gradient" className="mb-4">Blog</Badge>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 max-w-2xl">
+            <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6 max-w-2xl">
               Insights on <span className="gradient-text">AI & Engineering</span>
             </h1>
             <p className="text-xl text-[var(--text-secondary)] max-w-2xl">
