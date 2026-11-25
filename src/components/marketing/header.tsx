@@ -9,12 +9,12 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { BrandMark } from "@/components/marketing/brand-logo";
 import { SITE } from "@/content/site";
 import {
-  HEADER_NAV,
   PRIMARY_CTA,
   isActivePath,
   isNavGroup,
+  type NavEntry,
   type NavGroup,
-} from "@/content/navigation";
+} from "@/content/nav-constants";
 import { cn } from "@/lib/utils";
 
 const navItemClass = (active: boolean) =>
@@ -126,7 +126,8 @@ function NavDropdown({ group, pathname }: { group: NavGroup; pathname: string })
   );
 }
 
-export function Header() {
+/** `items` is passed from the server layout so menu data stays out of the client bundle. */
+export function Header({ items }: { items: NavEntry[] }) {
   const pathname = usePathname();
   // The menu is "open" only for the path it was opened on, so navigation closes it
   // without a state update inside an effect.
@@ -181,7 +182,7 @@ export function Header() {
 
           {/* Desktop navigation */}
           <ul className="hidden xl:flex items-center gap-0.5">
-            {HEADER_NAV.map((item) => (
+            {items.map((item) => (
               <li key={item.label}>
                 {isNavGroup(item) ? (
                   <NavDropdown group={item} pathname={pathname} />
@@ -238,7 +239,7 @@ export function Header() {
         className="xl:hidden border-t border-[var(--surface-border)] mt-3 max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain"
       >
         <div className="container-page py-4 flex flex-col gap-5">
-          {HEADER_NAV.map((item) =>
+          {items.map((item) =>
             isNavGroup(item) ? (
               <div key={item.label}>
                 <p className="px-4 pb-1 text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">

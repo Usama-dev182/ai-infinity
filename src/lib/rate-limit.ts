@@ -20,6 +20,8 @@ export const RATE_LIMITS = {
   form: { limit: 5, windowSeconds: 60 },
   "ai-demo": { limit: 10, windowSeconds: 60 },
   "ai-demo-daily": { limit: 60, windowSeconds: 24 * 60 * 60 },
+  // Admin sign-in attempts, keyed separately by IP and by email.
+  login: { limit: 10, windowSeconds: 15 * 60 },
 } as const satisfies Record<string, RateLimitPolicy>;
 
 export type RateLimitKey = keyof typeof RATE_LIMITS;

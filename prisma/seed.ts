@@ -615,8 +615,12 @@ const BLOG_POSTS = [
 ];
 
 async function main() {
-  // Admin user
-  const passwordHash = await hash(process.env.ADMIN_PASSWORD ?? "admin123!", 12);
+  // Admin user — never fall back to a default password.
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword || adminPassword.length < 12) {
+    throw new Error("Set ADMIN_PASSWORD (at least 12 characters) before seeding. No default password is used.");
+  }
+  const passwordHash = await hash(adminPassword, 12);
   await prisma.user.upsert({
     where: { email: "admin@aiinfinitylabs.com" },
     update: {},
