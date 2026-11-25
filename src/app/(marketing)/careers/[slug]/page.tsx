@@ -4,9 +4,9 @@ import Link from "next/link";
 import { ArrowLeft, MapPin, Clock, Building2, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp } from "@/components/marketing/animation";
-import { buildMetadata } from "@/lib/seo";
 import { db } from "@/lib/db";
-import { jobPostingJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { buildMetadata, jobPostingJsonLd } from "@/lib/seo";
 import { CareerApplicationForm } from "@/components/forms/CareerApplicationForm";
 
 interface Props {
@@ -48,10 +48,7 @@ export default async function CareerDetailPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <JsonLd data={jsonLd} />
 
       <section className="relative py-24 bg-gradient-to-b from-[var(--surface-bg-subtle)] to-[var(--surface-bg)]">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

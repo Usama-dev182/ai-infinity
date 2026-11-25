@@ -9,7 +9,7 @@ import { SITE } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Pricing & Engagement Models – AI Infinity Labs",
+  title: "Pricing & Engagement Models",
   description:
     "Transparent pricing and engagement models for AI development, full-stack engineering, and consulting. Fixed-price projects, retainers, and time & materials — no surprises.",
   keywords: [

@@ -13,9 +13,9 @@ Plan: [`website-enhancement-plan.md`](./website-enhancement-plan.md). This file 
 | 4. Industries | Done |
 | 5. Case studies | Done |
 | 6. Interactive experiences | Done |
-| 7. Lead generation | Done (schema change **not applied** to any shared DB) |
-| 8. SEO & social | Not started |
-| 9. Analytics | Not started |
+| 7. Lead generation | Done (schema change **not applied** to any shared DB) — code landed in owner commit `e43c170` ("all changes"), docs in `8af475d` |
+| 8. SEO & social | Done |
+| 9. Analytics | Done |
 | 10. Security & performance | Not started |
 | 11. QA | Not started |
 
@@ -124,6 +124,38 @@ Shared presentation components: `SectionHeading`, `PageHero`, `Section`, `Servic
 **Verified locally (browser + API):** a LinkedIn UTM landing on `/industries/real-estate` → CTA → contact form pre-filled with industry (details auto-expanded) → accessible validation (`aria-invalid` + `aria-describedby`) → success panel → DB row with service, industry, budget, `stage=NEW`, `utm_source=linkedin`, medium, campaign and landing page. GA events: `consultation_started`, `generate_lead` (ids and UTM only). DB down with email unavailable → 503 plus a visible error with an email fallback. Form rate limit 5/min → 429. Legacy quote payload → 200, mapped labels. Malicious attribution dropped, lead kept. Admin: signed-out `/admin/leads` → login; source filter; stage/notes update persisted; legacy URL redirects.
 
 **Deployment order (required):** apply `prisma/sql/20261125_lead_pipeline.sql` (or `prisma db push`) to the production database **before** deploying this branch. Otherwise Prisma inserts fail. Leads still arrive by email, but they are not stored.
+
+## Phase 8 — SEO & social
+
+* **Titles (S1):** `buildMetadata()` emits titles containing the brand as `absolute`, and all page titles were rewritten without brand suffixes, so the brand appears exactly once.
+* **Images (S2, S3):** every page gets a page-specific generated OG/X image (`/api/og?title&description&type`) unless it supplies its own. The OG route was rebuilt with the brand mark and positioning; input is clamped to 110/180/32 chars; cached for a day at the browser and a week at the CDN; the legacy `subtitle` param still works. The broken `/images/og-default.png` references were removed. `public/images/logo.png` (512²) and `src/app/apple-icon.png` (180², file convention) were generated from the existing header mark (`public/images/logo-mark.svg`). The manual `apple-touch-icon`/favicon `<link>`s were removed (Next adds them).
+* **Structured data:** `JsonLd` component escapes `<` (Next.js guide); Organization (`@id`, logo, founder, `sameAs` incl. YouTube, `knowsAbout`) and WebSite (the invalid `SearchAction` removed, S6); `Service` + `BreadcrumbList` on service pages; Breadcrumbs on all listing and detail pages; `Article` + Breadcrumb on blog posts; `WebApplication` on the ROI calculator; job postings now escaped.
+* **Crawling:** `robots.txt` allows `/api/og` (S5) and disallows `/admin` and other `/api/`. The sitemap covers all public routes and drafts are excluded (Phase 5). `X-Robots-Tag: noindex, nofollow` is sent on `/admin/*` and `noindex` on non-OG APIs. The admin layout is `noindex` (S8).
+* **Social:** unverified X handles removed (S7, V12). Google verification meta is emitted only when its env var is set.
+* **CSP:** `'unsafe-eval'` dev-only; added `base-uri`, `form-action`, `object-src 'none'`; allowed YouTube thumbnail hosts (Tech Talks thumbnails would have been blocked once real video IDs are added).
+* Blog post query deduplicated between metadata and page with React `cache()`.
+
+**Verified locally (scripted audit of 26 public pages with a Googlebot UA):** unique titles, brand appears once, one `<h1>` per page, canonical, Twitter card, valid JSON-LD on every page, and all 26 OG images return `200 image/png`. Metadata is in `<head>` for Googlebot, LinkedInBot and Twitterbot (Next's blocking-metadata bot list).
+
+## Phase 9 — Analytics
+
+Reuses the existing GA4 integration. Event catalogue (`src/lib/analytics.ts` → `EVENTS`):
+
+| Event | When | Params (no PII) |
+| --- | --- | --- |
+| `cta_click` | Primary/secondary CTAs everywhere | label, location, destination |
+| `nav_click`, `service_card_click`, `case_study_card_click`, `industry_card_click`, `tool_card_click` | Navigation and cards | slug/label, location |
+| `service_view`, `case_study_view`, `industry_view`, `blog_view` | Detail page views | slug |
+| `demo_started` / `demo_message` / `demo_completed` / `demo_error` | AI advisor | challenge id, industry id, turn, fallback, trigger, status |
+| `roi_calculator_used` | First calculator interaction | location, has_costs, payback bucket |
+| `consultation_started` | First focus in a lead form | form, location |
+| `generate_lead` (+ legacy `contact_form_submit` / `quote_form_submit`) | Successful submission | form, service, industry, utm_source/medium/campaign |
+| `form_submit_error` | Failed submission | form, reason (validation / rate_limited / server / network) |
+| `booking_click` | Booking link (when configured) | location |
+| `social_click`, `outbound_click`, `whatsapp_click` | External links | label, location |
+
+* **Privacy fix:** GA previously loaded on `/admin` and sent full URLs, and the new leads search puts names and emails in the query string. GA now never loads or sends page views on `/admin`, sets the official `ga-disable-<ID>` flag on private paths, and reports only `utm_*` query parameters in `page_location`.
+* Suggested GA4 setup (owner): mark `generate_lead` as a key event; create funnel exploration `cta_click → consultation_started → generate_lead`; segment by `utm_source`. Qualified leads, discovery calls and win rate are tracked in `/admin/leads` (stages), not GA. **No analytics data was available or reported in this work.**
 
 ---
 

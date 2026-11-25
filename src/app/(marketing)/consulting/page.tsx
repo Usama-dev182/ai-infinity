@@ -24,7 +24,7 @@ import { FOUNDER, SITE, VERIFIED_STATS } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "AI Consulting – Strategy, Architecture & Hands-On Guidance | AI Infinity Labs",
+  title: "AI Consulting & Prototyping — Strategy, Architecture, Proof of Concept",
   description:
     "Work directly with Usama Ali for 1-on-1 AI consulting. Get expert guidance on AI strategy, LLM architecture, agentic systems, and full-stack AI product development.",
   keywords: [

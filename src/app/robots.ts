@@ -6,10 +6,12 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        // Social crawlers (e.g. X) honour robots.txt, so OG images must stay fetchable.
+        allow: ["/", "/api/og"],
         disallow: ["/admin", "/api/"],
       },
     ],
     sitemap: `${base}/sitemap.xml`,
+    host: base,
   };
 }

@@ -9,7 +9,7 @@ import { db } from "@/lib/db";
 import { formatDate, calculateReadTime } from "@/lib/utils";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Blog – AI Infinity Labs",
+  title: "Blog — AI Engineering & Automation Insights",
   description:
     "Insights on AI engineering, full-stack development, and building intelligent software systems. Written by practitioners.",
   keywords: [

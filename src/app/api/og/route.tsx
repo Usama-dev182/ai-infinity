@@ -3,11 +3,30 @@ import type { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
+const ZAP_PATH =
+  "M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z";
+
+/** Keeps generated text short and single-line-safe (prevents abuse with huge payloads). */
+function param(searchParams: URLSearchParams, key: string, fallback: string, max: number) {
+  const value = (searchParams.get(key) ?? "").replace(/\s+/g, " ").trim();
+  return (value || fallback).slice(0, max);
+}
+
+/**
+ * Branded Open Graph / X card image: /api/og?title=…&description=…&type=…
+ * Used by buildMetadata() for every page that doesn't supply its own image.
+ */
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const title = searchParams.get("title") ?? "AI Infinity Labs";
-  const description = searchParams.get("description") ?? "Building AI-Powered Products That Matter";
-  const type = searchParams.get("type") ?? "page";
+  const title = param(searchParams, "title", "AI Infinity Labs", 110);
+  const description = param(
+    searchParams,
+    "description",
+    // Legacy param name used by older links.
+    searchParams.get("subtitle") ?? "Building AI-Powered Products That Matter",
+    180
+  );
+  const type = param(searchParams, "type", "", 32);
 
   return new ImageResponse(
     (
@@ -18,122 +37,80 @@ export async function GET(req: NextRequest) {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "linear-gradient(135deg, #0f0f1a 0%, #1a1035 50%, #0f1a35 100%)",
-          padding: "60px 70px",
+          background: "linear-gradient(135deg, #020817 0%, #0f172a 55%, #1e1b4b 100%)",
+          padding: "64px 72px",
           fontFamily: "sans-serif",
         }}
       >
-        {/* Grid pattern */}
         <div
           style={{
             position: "absolute",
-            inset: 0,
-            backgroundImage:
-              "radial-gradient(circle, rgba(99,102,241,0.15) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-        {/* Glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: -100,
-            right: -100,
-            width: 500,
-            height: 500,
+            top: -160,
+            right: -120,
+            width: 560,
+            height: 560,
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%)",
+            background: "radial-gradient(circle, rgba(99,102,241,0.35), transparent 70%)",
           }}
         />
 
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, position: "relative" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div
             style={{
-              width: 48,
-              height: 48,
-              borderRadius: 12,
-              background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+              width: 56,
+              height: 56,
+              borderRadius: 14,
+              background: "linear-gradient(135deg, #6366F1, #06B6D4)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <div style={{ color: "white", fontSize: 24, fontWeight: 700 }}>∞</div>
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d={ZAP_PATH} />
+            </svg>
           </div>
-          <div style={{ color: "white", fontSize: 20, fontWeight: 700, letterSpacing: "-0.5px" }}>
-            AI Infinity Labs
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ color: "#ffffff", fontSize: 26, fontWeight: 700 }}>AI Infinity Labs</div>
+            <div style={{ color: "#a5b4fc", fontSize: 16 }}>AI Product Engineering & Intelligent Automation</div>
           </div>
         </div>
 
-        {/* Content */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 16, position: "relative" }}>
-          {type !== "page" && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          {type && (
             <div
               style={{
                 display: "flex",
+                alignSelf: "flex-start",
                 background: "rgba(99,102,241,0.2)",
-                border: "1px solid rgba(99,102,241,0.4)",
-                borderRadius: 8,
-                padding: "4px 14px",
-                color: "#a5b4fc",
-                fontSize: 14,
-                width: "fit-content",
+                border: "1px solid rgba(129,140,248,0.5)",
+                borderRadius: 999,
+                padding: "6px 16px",
+                color: "#c7d2fe",
+                fontSize: 16,
                 textTransform: "uppercase",
-                letterSpacing: "1px",
+                letterSpacing: "1.5px",
               }}
             >
               {type}
             </div>
           )}
-          <div
-            style={{
-              color: "white",
-              fontSize: 54,
-              fontWeight: 800,
-              lineHeight: 1.1,
-              letterSpacing: "-1px",
-              maxWidth: 900,
-            }}
-          >
+          <div style={{ color: "#ffffff", fontSize: title.length > 60 ? 50 : 60, fontWeight: 800, lineHeight: 1.1, letterSpacing: "-1.5px", maxWidth: 1000 }}>
             {title}
           </div>
-          {description && (
-            <div style={{ color: "#94a3b8", fontSize: 22, maxWidth: 800, lineHeight: 1.4 }}>
-              {description}
-            </div>
-          )}
+          <div style={{ color: "#cbd5e1", fontSize: 24, lineHeight: 1.4, maxWidth: 950 }}>{description}</div>
         </div>
 
-        {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            color: "#64748b",
-            fontSize: 16,
-            position: "relative",
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", color: "#94a3b8", fontSize: 18 }}>
           <span>aiinfinitylabs.com</span>
-          <div
-            style={{
-              display: "flex",
-              gap: 8,
-              alignItems: "center",
-              color: "#a5b4fc",
-              fontSize: 13,
-            }}
-          >
-            AI Integration · Full Stack · Automation
-          </div>
+          <span style={{ color: "#a5b4fc" }}>AI Products · AI Agents · Automation · Full-Stack</span>
         </div>
       </div>
     ),
     {
       width: 1200,
       height: 630,
+      headers: { "Cache-Control": "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400" },
     }
   );
 }

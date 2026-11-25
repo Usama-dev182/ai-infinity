@@ -3,7 +3,7 @@ import { buildMetadata } from "@/lib/seo";
 import { TechTalksClient } from "./tech-talks-client";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Tech Talks – AI Infinity Labs | AI Automation, Agents & LLM Videos",
+  title: "Tech Talks — AI Automation, Agents & LLM Videos",
   description:
     "Watch free video tutorials on Agentic AI, LLM integration, AI automation, vibe coding, and AI SaaS development by Usama Ali — a practicing AI engineer.",
   keywords: [
