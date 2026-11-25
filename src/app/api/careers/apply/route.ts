@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { careerApplicationSchema } from "@/lib/validators";
 import { db } from "@/lib/db";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { sendApplicationNotification } from "@/lib/email";
 import { isValidSubmissionTimestamp } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown";
+  const ip = getClientIp(req.headers);
   const limited = await checkRateLimit("form", ip);
   if (limited) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
@@ -34,7 +34,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid submission." }, { status: 400 });
   }
 
-  await db.careerApplication.create({
+  try {
+    await db.careerApplication.create({
     data: {
       name: data.name,
       email: data.email,
@@ -44,7 +45,11 @@ export async function POST(req: NextRequest) {
       portfolioUrl: data.portfolioUrl || null,
       jobPostingId: data.jobPostingId || null,
     },
-  });
+    });
+  } catch (error) {
+    console.error("[careers] failed to save application:", error instanceof Error ? error.message : "unknown");
+    return NextResponse.json({ error: "We couldn't save your application right now." }, { status: 503 });
+  }
 
   await sendApplicationNotification({ name: data.name, email: data.email });
 

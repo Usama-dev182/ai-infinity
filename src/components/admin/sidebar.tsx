@@ -29,8 +29,7 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/admin/submissions/contact", icon: Inbox, label: "Contact", adminOnly: true },
-  { href: "/admin/submissions/quotes", icon: Inbox, label: "Quotes", adminOnly: true },
+  { href: "/admin/leads", icon: Inbox, label: "Leads", adminOnly: true },
   { href: "/admin/posts", icon: FileText, label: "Blog Posts" },
   { href: "/admin/case-studies", icon: Briefcase, label: "Case Studies" },
   { href: "/admin/jobs", icon: Users, label: "Job Postings" },

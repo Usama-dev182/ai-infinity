@@ -1,5 +1,6 @@
 import { Header } from "@/components/marketing/header";
 import { Footer } from "@/components/marketing/footer";
+import { AttributionCapture } from "@/components/analytics/attribution-capture";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,6 +13,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         {children}
       </main>
       <Footer />
+      <AttributionCapture />
     </>
   );
 }

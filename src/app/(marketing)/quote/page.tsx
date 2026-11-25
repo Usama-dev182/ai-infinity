@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp } from "@/components/marketing/animation";
 import { QuoteForm } from "@/components/forms/QuoteForm";
 import { buildMetadata } from "@/lib/seo";
+import { SITE } from "@/content/site";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Request a Quote – AI Infinity Labs",
+  title: "Request a Quote — AI & Software Project Proposal",
   description:
     "Tell us about your project and get a detailed proposal from AI Infinity Labs within 24–48 hours.",
   canonicalPath: "/quote",
@@ -49,9 +51,10 @@ export default function QuotePage() {
                 <ArrowRight className="w-5 h-5 text-[var(--text-brand)] mt-0.5 shrink-0" />
                 <p className="text-sm text-[var(--text-secondary)]">
                   Prefer a call? Email us at{" "}
-                  <a href="mailto:infousamaali1@gmail.com" className="text-[var(--text-brand)] hover:underline">
-                    infousamaali1@gmail.com
+                  <a href={`mailto:${SITE.email}`} className="text-[var(--text-brand)] hover:underline">
+                    {SITE.email}
                   </a>{" "}
+                  or use the <Link href="/contact?topic=discovery-call" className="text-[var(--text-brand)] hover:underline">contact form</Link>{" "}
                   and we&apos;ll schedule a discovery call.
                 </p>
               </div>

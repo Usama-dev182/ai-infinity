@@ -15,8 +15,8 @@ export default async function AdminDashboard({ searchParams }: Props) {
     db.blogPost.count(),
     db.caseStudy.count(),
     db.jobPosting.count({ where: { status: "OPEN" } }),
-    admin ? db.contactSubmission.count({ where: { status: "NEW" } }) : 0,
-    admin ? db.quoteRequest.count({ where: { status: "NEW" } }) : 0,
+    admin ? db.contactSubmission.count({ where: { stage: "NEW" } }) : 0,
+    admin ? db.quoteRequest.count({ where: { stage: "NEW" } }) : 0,
     admin ? db.careerApplication.count({ where: { status: "NEW" } }) : 0,
   ]);
 
@@ -24,8 +24,7 @@ export default async function AdminDashboard({ searchParams }: Props) {
     { label: "Blog posts", value: posts, icon: FileText, href: "/admin/posts", show: true },
     { label: "Case studies (database)", value: caseStudies, icon: Briefcase, href: "/admin/case-studies", show: true },
     { label: "Open jobs", value: jobs, icon: Users, href: "/admin/jobs", show: true },
-    { label: "New contact messages", value: contacts, icon: Inbox, href: "/admin/submissions/contact", show: admin },
-    { label: "New quote requests", value: quotes, icon: Inbox, href: "/admin/submissions/quotes", show: admin },
+    { label: "New leads", value: contacts + quotes, icon: Inbox, href: "/admin/leads?stage=NEW", show: admin },
     { label: "New applications", value: applications, icon: UserCheck, href: "/admin/submissions/careers", show: admin },
   ].filter((s) => s.show);
 
