@@ -62,7 +62,7 @@ export default async function BlogDetailPage({ params }: Props) {
           <FadeUp>
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--brand-primary)] mb-8 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-brand)] mb-8 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back to Blog
             </Link>
@@ -71,7 +71,7 @@ export default async function BlogDetailPage({ params }: Props) {
               <Badge variant="gradient" className="mb-4 capitalize">{post.category}</Badge>
             )}
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[var(--text-primary)] mb-6 leading-tight tracking-tight">
+            <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
               {post.title}
             </h1>
 
@@ -200,7 +200,7 @@ export default async function BlogDetailPage({ params }: Props) {
                 >
                   <h3 className="font-semibold text-[var(--text-primary)] mb-2 text-sm">Build with AI</h3>
                   <p className="text-xs text-[var(--text-secondary)] mb-4 leading-relaxed">
-                    Ready to deploy AI agents or automate workflows in your business? Let's talk.
+                    Ready to deploy AI agents or automate workflows in your business? Let&apos;s talk.
                   </p>
                   <Button asChild variant="gradient" className="w-full text-sm h-9">
                     <TrackedLink

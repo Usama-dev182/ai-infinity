@@ -3,34 +3,24 @@
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
 
+/**
+ * Both icons are rendered and swapped with the `dark` class, so the server and
+ * client markup match without a "mounted" state.
+ */
 export function ThemeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) {
-    return (
-      <Button variant="ghost" size="icon" aria-label="Toggle theme">
-        <Sun className="h-4 w-4" />
-      </Button>
-    );
-  }
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      aria-label="Toggle theme"
+      aria-label="Toggle colour theme"
+      title="Toggle colour theme"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
-      {resolvedTheme === "dark" ? (
-        <Sun className="h-4 w-4 transition-transform duration-200" />
-      ) : (
-        <Moon className="h-4 w-4 transition-transform duration-200" />
-      )}
+      <Sun aria-hidden="true" className="h-4 w-4 hidden dark:block" />
+      <Moon aria-hidden="true" className="h-4 w-4 dark:hidden" />
     </Button>
   );
 }

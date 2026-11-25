@@ -58,12 +58,12 @@ export default async function CareerDetailPage({ params }: Props) {
           <FadeUp>
             <Link
               href="/careers"
-              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--brand-primary)] mb-8 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-brand)] mb-8 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back to Careers
             </Link>
             <Badge variant="gradient" className="mb-4">We&apos;re hiring</Badge>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6">{job.title}</h1>
+            <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">{job.title}</h1>
             <div className="flex flex-wrap gap-4 text-sm text-[var(--text-secondary)]">
               {job.department && (
                 <span className="flex items-center gap-1.5"><Building2 className="w-4 h-4" />{job.department}</span>

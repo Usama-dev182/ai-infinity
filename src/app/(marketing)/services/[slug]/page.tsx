@@ -1,108 +1,120 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowRight, CheckCircle, ArrowLeft, Code2, Brain, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Users, AlertTriangle } from "lucide-react";
 import { PageEventTracker } from "@/components/analytics/page-event-tracker";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
-import { SERVICES } from "@/content/site";
-import { buildMetadata } from "@/lib/seo";
+import { Section, SectionHeading } from "@/components/marketing/section";
+import { ServiceIconTile } from "@/components/marketing/service-icon";
+import { CaseStudyCard } from "@/components/marketing/case-study-card";
+import { FaqList } from "@/components/marketing/faq-list";
+import { CtaBanner } from "@/components/marketing/cta-banner";
+import { JsonLd } from "@/components/seo/json-ld";
+import { SERVICE_PAGES, getService, serviceHref } from "@/content/services";
+import { getPublishedCaseStudies } from "@/lib/content/case-studies";
+import { caseStudiesForService } from "@/lib/content/case-study-model";
+import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
 
-const serviceIcons = { Code2, Brain, Zap };
+export const revalidate = 300;
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  return SERVICES.map((s) => ({ slug: s.slug }));
+export function generateStaticParams() {
+  return SERVICE_PAGES.map((s) => ({ slug: s.slug }));
 }
+
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const service = SERVICES.find((s) => s.slug === slug);
-  if (!service) return {};
+  const service = getService(slug);
+  if (!service || service.href) return {};
   return buildMetadata({
-    title: `${service.title} – AI Infinity Labs`,
-    description: service.description,
+    title: service.metaTitle,
+    description: service.metaDescription,
     keywords: service.keywords,
     canonicalPath: `/services/${service.slug}`,
+    ogType: "Service",
   });
 }
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
-  const service = SERVICES.find((s) => s.slug === slug);
-  if (!service) notFound();
+  const service = getService(slug);
+  if (!service || service.href) notFound();
 
-  const Icon = serviceIcons[service.icon as keyof typeof serviceIcons];
-  const otherServices = SERVICES.filter((s) => s.slug !== slug);
+  const related = service.related.map(getService).filter((s) => s !== undefined);
+  const caseStudies = caseStudiesForService(await getPublishedCaseStudies(), service.slug).slice(0, 3);
+  const quoteHref = `/contact?service=${service.slug}`;
 
   return (
     <>
       <PageEventTracker eventName="service_view" params={{ service: service.slug }} />
+      <JsonLd
+        data={[
+          serviceJsonLd(service),
+          breadcrumbJsonLd([
+            { name: "Services", path: "/services" },
+            { name: service.title, path: `/services/${service.slug}` },
+          ]),
+        ]}
+      />
 
       {/* Hero */}
-      <section className="relative py-24 lg:py-32 bg-gradient-to-b from-[var(--surface-bg-subtle)] to-[var(--surface-bg)]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.1),transparent_60%)]" />
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
-          <FadeUp>
-            <Link
+      <section className="relative border-b border-[var(--surface-border)] bg-gradient-to-b from-[var(--surface-bg-subtle)] to-[var(--surface-bg)]">
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.08),transparent_60%)]" />
+        <div className="relative container-page py-14 lg:py-20">
+          <nav aria-label="Breadcrumb" className="mb-8">
+            <TrackedLink
               href="/services"
-              className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)] hover:text-[var(--brand-primary)] mb-8 transition-colors"
+              eventName="nav_click"
+              params={{ label: "Back to services", location: `service_detail:${service.slug}`, destination: "/services" }}
+              className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)]"
             >
-              <ArrowLeft className="w-4 h-4" /> Back to Services
-            </Link>
-          </FadeUp>
-
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <FadeUp>
-              <div>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center mb-6 shadow-xl">
-                  <Icon className="w-8 h-8 text-white" />
-                </div>
-                <Badge variant="gradient" className="mb-4">{service.shortTitle}</Badge>
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 leading-tight">
-                  {service.title}
-                </h1>
-                <p className="text-xl text-[var(--text-secondary)] leading-relaxed mb-8">
-                  {service.description}
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <Button asChild variant="gradient" size="lg">
-                    <TrackedLink
-                      href="/quote"
-                      eventName="cta_click"
-                      params={{ label: "Get a Quote", location: `service_detail:${service.slug}`, destination: "/quote" }}
-                    >
-                      Get a Quote <ArrowRight className="w-4 h-4 ml-2" />
-                    </TrackedLink>
-                  </Button>
-                  <Button asChild variant="outline" size="lg">
-                    <TrackedLink
-                      href="/contact"
-                      eventName="cta_click"
-                      params={{ label: "Talk to Us", location: `service_detail:${service.slug}`, destination: "/contact" }}
-                    >
-                      Talk to Us
-                    </TrackedLink>
-                  </Button>
-                </div>
+              <ArrowLeft aria-hidden="true" className="w-4 h-4" /> All services
+            </TrackedLink>
+          </nav>
+          <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 items-start">
+            <div>
+              <ServiceIconTile name={service.icon} size="lg" />
+              <h1 className="mt-6 text-heading-1 font-extrabold text-[var(--text-primary)]">{service.title}</h1>
+              <p className="mt-3 text-lg font-medium text-[var(--text-brand)]">{service.tagline}</p>
+              <p className="mt-5 text-lead text-[var(--text-secondary)] max-w-2xl">{service.description}</p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                <Button asChild variant="gradient" size="lg">
+                  <TrackedLink
+                    href={quoteHref}
+                    eventName="cta_click"
+                    params={{ label: "Discuss Your Project", location: `service_detail:${service.slug}:hero`, destination: quoteHref }}
+                  >
+                    Discuss Your Project <ArrowRight aria-hidden="true" className="w-4 h-4" />
+                  </TrackedLink>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <TrackedLink
+                    href="/case-studies"
+                    eventName="cta_click"
+                    params={{ label: "Explore Our Work", location: `service_detail:${service.slug}:hero`, destination: "/case-studies" }}
+                  >
+                    Explore Our Work
+                  </TrackedLink>
+                </Button>
               </div>
-            </FadeUp>
-
-            <FadeUp delay={0.2}>
-              <div className="glass-card rounded-2xl p-8 border border-[var(--surface-border)]">
-                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-5">
-                  What&apos;s included
-                </p>
-                <ul className="space-y-4">
-                  {service.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 shrink-0" />
-                      <span className="text-sm text-[var(--text-secondary)]">{f}</span>
+            </div>
+            <FadeUp delay={0.1}>
+              <div className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-7">
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-4">
+                  Capabilities
+                </h2>
+                <ul className="space-y-3">
+                  {service.capabilities.map((c) => (
+                    <li key={c} className="flex items-start gap-3 text-[var(--text-secondary)]">
+                      <CheckCircle2 aria-hidden="true" className="w-5 h-5 mt-0.5 shrink-0 text-[var(--text-brand)]" />
+                      {c}
                     </li>
                   ))}
                 </ul>
@@ -112,94 +124,177 @@ export default async function ServiceDetailPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Tech Stack */}
-      <section className="section-padding bg-[var(--surface-bg-subtle)] border-y border-[var(--surface-border)]">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Audience & problems */}
+      <Section labelledBy="fit-heading">
+        <SectionHeading id="fit-heading" eyebrow="Is this for you?" title="Who it's for and what it solves" />
+        <div className="grid lg:grid-cols-2 gap-6">
+          <FadeUp className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-7">
+            <h3 className="flex items-center gap-2 text-heading-3 font-semibold text-[var(--text-primary)]">
+              <Users aria-hidden="true" className="w-5 h-5 text-[var(--text-brand)]" /> Who it&apos;s for
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {service.audience.map((a) => (
+                <li key={a} className="flex gap-3 text-[var(--text-secondary)]">
+                  <span aria-hidden="true" className="mt-2.5 w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] shrink-0" />
+                  {a}
+                </li>
+              ))}
+            </ul>
+          </FadeUp>
+          <FadeUp delay={0.1} className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-7">
+            <h3 className="flex items-center gap-2 text-heading-3 font-semibold text-[var(--text-primary)]">
+              <AlertTriangle aria-hidden="true" className="w-5 h-5 text-[var(--text-brand)]" /> Problems we solve
+            </h3>
+            <ul className="mt-5 space-y-3">
+              {service.problems.map((p) => (
+                <li key={p} className="flex gap-3 text-[var(--text-secondary)]">
+                  <span aria-hidden="true" className="mt-2.5 w-1.5 h-1.5 rounded-full bg-[var(--brand-secondary)] shrink-0" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </FadeUp>
+        </div>
+      </Section>
+
+      {/* Solution & approach */}
+      <Section muted labelledBy="approach-heading">
+        <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12">
           <FadeUp>
-            <div className="text-center mb-10">
-              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">Technology Stack</h2>
-              <p className="text-[var(--text-secondary)]">
-                We use the right tools for the job — modern, proven, and production-ready.
-              </p>
+            <Badge variant="gradient" className="mb-4">Our approach</Badge>
+            <h2 id="approach-heading" className="text-heading-2 font-bold text-[var(--text-primary)]">
+              How we&apos;d solve it
+            </h2>
+            <div className="mt-5 space-y-4 text-[var(--text-secondary)]">
+              {service.solution.map((p) => (
+                <p key={p}>{p}</p>
+              ))}
             </div>
           </FadeUp>
-          <StaggerContainer className="flex flex-wrap justify-center gap-3">
-            {service.techStack.map((tech) => (
-              <StaggerItem key={tech}>
-                <div className="px-5 py-2.5 rounded-full border border-[var(--surface-border)] bg-[var(--surface-card)] text-sm font-medium text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)] transition-colors">
-                  {tech}
+          <StaggerContainer className="grid sm:grid-cols-2 gap-4 content-start">
+            {service.approach.map((step, i) => (
+              <StaggerItem key={step.title}>
+                <div className="h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6">
+                  <span className="font-mono text-sm font-semibold text-[var(--text-brand)]">0{i + 1}</span>
+                  <h3 className="mt-1 font-semibold text-[var(--text-primary)]">{step.title}</h3>
+                  <p className="mt-2 text-meta text-[var(--text-secondary)]">{step.description}</p>
                 </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
         </div>
-      </section>
+      </Section>
 
-      {/* Keywords / SEO section */}
-      <section className="section-padding">
-        <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-          <FadeUp>
-            <Badge variant="gradient" className="mb-6">Why Choose Us</Badge>
-            <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-6">
-              Senior-level expertise, <span className="gradient-text">startup speed</span>
+      {/* Use cases & deliverables */}
+      <Section labelledBy="usecases-heading">
+        <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-12">
+          <div>
+            <h2 id="usecases-heading" className="text-heading-2 font-bold text-[var(--text-primary)] mb-8">
+              Typical use cases
             </h2>
-            <p className="text-[var(--text-secondary)] text-lg leading-relaxed mb-10">
-              Our team brings 5+ years of hands-on engineering experience across global projects — delivering
-              enterprise quality at pace. Every engagement comes with clear communication, code reviews, and
-              results you can measure.
-            </p>
-            <Button asChild variant="gradient" size="lg">
-              <TrackedLink
-                href="/quote"
-                eventName="cta_click"
-                params={{ label: "Start Your Project", location: `service_detail:${service.slug}`, destination: "/quote" }}
-              >
-                Start Your Project
-              </TrackedLink>
-            </Button>
-          </FadeUp>
-        </div>
-      </section>
-
-      {/* Other services */}
-      <section className="section-padding bg-[var(--surface-bg-subtle)] border-t border-[var(--surface-border)]">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-8 text-center">
-              Explore Other Services
-            </h2>
-          </FadeUp>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {otherServices.map((s) => {
-              const OtherIcon = serviceIcons[s.icon as keyof typeof serviceIcons];
-              return (
-                <StaggerItem key={s.slug}>
-                  <TrackedLink
-                    href={`/services/${s.slug}`}
-                    className="group block"
-                    eventName="service_card_click"
-                    params={{ slug: s.slug, location: `service_detail:${service.slug}:other_services` }}
-                  >
-                    <div className="glass-card rounded-xl p-6 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 hover:shadow-lg transition-all">
-                      <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center shrink-0">
-                          <OtherIcon className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-[var(--text-primary)] group-hover:gradient-text mb-1 transition-all">
-                            {s.title}
-                          </h3>
-                          <p className="text-sm text-[var(--text-secondary)]">{s.tagline}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </TrackedLink>
+            <StaggerContainer className="grid sm:grid-cols-2 gap-4">
+              {service.useCases.map((u) => (
+                <StaggerItem key={u.title}>
+                  <div className="h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6">
+                    <h3 className="font-semibold text-[var(--text-primary)]">{u.title}</h3>
+                    <p className="mt-2 text-meta text-[var(--text-secondary)]">{u.description}</p>
+                  </div>
                 </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
+              ))}
+            </StaggerContainer>
+          </div>
+          <FadeUp>
+            <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-8">What you receive</h2>
+            <ul className="space-y-3 rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-7">
+              {service.deliverables.map((d) => (
+                <li key={d} className="flex items-start gap-3 text-[var(--text-secondary)]">
+                  <CheckCircle2 aria-hidden="true" className="w-5 h-5 mt-0.5 shrink-0 text-[var(--color-success-text)]" />
+                  {d}
+                </li>
+              ))}
+            </ul>
+          </FadeUp>
         </div>
-      </section>
+      </Section>
+
+      {/* Technologies */}
+      <Section muted labelledBy="tech-heading">
+        <SectionHeading
+          id="tech-heading"
+          eyebrow="Technologies"
+          title="Tools we commonly use"
+          description="Chosen per project for quality, cost, maintainability and your existing stack."
+        />
+        <ul className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+          {service.techStack.map((tech) => (
+            <li
+              key={tech}
+              className="px-4 py-2 rounded-full border border-[var(--surface-border)] bg-[var(--surface-card)] text-sm font-medium text-[var(--text-secondary)]"
+            >
+              {tech}
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      {/* Related case studies */}
+      {caseStudies.length > 0 && (
+        <Section labelledBy="related-work-heading">
+          <SectionHeading id="related-work-heading" eyebrow="Related work" title="Case studies" />
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {caseStudies.map((study) => (
+              <StaggerItem key={study.slug}>
+                <CaseStudyCard study={study} location={`service_detail:${service.slug}`} />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </Section>
+      )}
+
+      {/* FAQ */}
+      {service.faqs.length > 0 && (
+        <Section muted={caseStudies.length > 0} labelledBy="service-faq-heading">
+          <div className="max-w-3xl mx-auto">
+            <SectionHeading id="service-faq-heading" eyebrow="FAQ" title={`${service.shortTitle} questions`} />
+            <FaqList items={service.faqs} />
+          </div>
+        </Section>
+      )}
+
+      {/* Related services */}
+      {related.length > 0 && (
+        <Section labelledBy="related-services-heading">
+          <h2 id="related-services-heading" className="text-heading-3 font-bold text-[var(--text-primary)] mb-6">
+            Related services
+          </h2>
+          <ul className="grid md:grid-cols-3 gap-4">
+            {related.map((s) => (
+              <li key={s.slug}>
+                <TrackedLink
+                  href={serviceHref(s)}
+                  eventName="service_card_click"
+                  params={{ slug: s.slug, location: `service_detail:${service.slug}:related` }}
+                  className="group flex items-start gap-4 h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-5 hover:border-[var(--brand-primary)]/40 transition-colors"
+                >
+                  <ServiceIconTile name={s.icon} size="sm" />
+                  <span>
+                    <span className="block font-semibold text-[var(--text-primary)] group-hover:text-[var(--text-brand)]">
+                      {s.title}
+                    </span>
+                    <span className="block mt-1 text-meta text-[var(--text-secondary)]">{s.tagline}</span>
+                  </span>
+                </TrackedLink>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
+
+      <CtaBanner
+        location={`service_detail:${service.slug}:final`}
+        title={`Let's talk about your ${service.shortTitle.toLowerCase()} project`}
+        primary={{ label: "Discuss Your Project", href: quoteHref }}
+      />
     </>
   );
 }

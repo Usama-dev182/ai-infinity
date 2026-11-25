@@ -1,7 +1,10 @@
-import { Zap, Code2, PlayCircle, ExternalLink, Mail, MessageCircle, MapPin, Phone } from "lucide-react";
+import { Code2, PlayCircle, ExternalLink, Mail, MessageCircle, MapPin, Phone } from "lucide-react";
 import { TrackedAnchor } from "@/components/analytics/tracked-anchor";
 import { TrackedLink } from "@/components/analytics/tracked-link";
-import { SITE, SERVICES, NAV_ITEMS } from "@/content/site";
+import { SITE } from "@/content/site";
+import { SERVICES, serviceHref } from "@/content/services";
+import { FOOTER_LINKS } from "@/content/navigation";
+import { BrandMark } from "@/components/marketing/brand-logo";
 import { Separator } from "@/components/ui/separator";
 
 const legalLinks = [
@@ -20,7 +23,7 @@ const socialLinks = [
 export function Footer() {
   return (
     <footer className="bg-[var(--surface-bg-subtle)] border-t border-[var(--surface-border)]">
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+      <div className="container-page py-14">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand column */}
           <div className="lg:col-span-2">
@@ -30,14 +33,11 @@ export function Footer() {
               eventName="nav_click"
               params={{ label: SITE.name, location: "footer_logo", destination: "/" }}
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center">
-                <Zap className="w-4 h-4 text-white" />
-              </div>
+              <BrandMark />
               <span className="font-bold text-lg text-[var(--text-primary)]">{SITE.name}</span>
             </TrackedLink>
             <p className="text-[var(--text-secondary)] text-sm max-w-xs leading-relaxed mb-6">
-              Building AI-powered products that matter — from enterprise-grade full-stack applications to
-              cutting-edge LLM integrations and agentic AI systems.
+              {SITE.positioning}. {SITE.description}
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map(({ icon: Icon, href, label }) => (
@@ -49,9 +49,9 @@ export function Footer() {
                   target={href.startsWith("mailto") ? undefined : "_blank"}
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-9 h-9 rounded-lg border border-[var(--surface-border)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--brand-primary)] hover:border-[var(--brand-primary)] transition-colors"
+                  className="w-10 h-10 rounded-lg border border-[var(--surface-border)] flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-brand)] hover:border-[var(--brand-primary)] transition-colors"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon aria-hidden="true" className="w-4 h-4" />
                 </TrackedAnchor>
               ))}
             </div>
@@ -59,17 +59,17 @@ export function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
+            <h2 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
               Services
-            </h3>
+            </h2>
             <ul className="space-y-3">
               {SERVICES.map((s) => (
                 <li key={s.slug}>
                   <TrackedLink
-                    href={`/services/${s.slug}`}
+                    href={serviceHref(s)}
                     eventName="service_card_click"
                     params={{ slug: s.slug, location: "footer_services" }}
-                    className="text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                    className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
                   >
                     {s.title}
                   </TrackedLink>
@@ -80,17 +80,17 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h3 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
+            <h2 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
               Company
-            </h3>
+            </h2>
             <ul className="space-y-3">
-              {NAV_ITEMS.map((item) => (
+              {FOOTER_LINKS.map((item) => (
                 <li key={item.href}>
                   <TrackedLink
                     href={item.href}
                     eventName="nav_click"
                     params={{ label: item.label, location: "footer_company", destination: item.href }}
-                    className="text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                    className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
                   >
                     {item.label}
                   </TrackedLink>
@@ -101,18 +101,18 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
+            <h2 className="font-semibold text-[var(--text-primary)] text-sm mb-4 uppercase tracking-wider">
               Contact
-            </h3>
+            </h2>
             <ul className="space-y-4">
               <li>
                 <TrackedAnchor
                   href={`mailto:${SITE.email}`}
                   eventName="social_click"
                   params={{ label: "Email", location: "footer_contact", destination: `mailto:${SITE.email}` }}
-                  className="flex items-start gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                  className="flex items-start gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
                 >
-                  <Mail className="w-4 h-4 mt-0.5 shrink-0 text-[var(--brand-primary)]" />
+                  <Mail className="w-4 h-4 mt-0.5 shrink-0 text-[var(--text-brand)]" />
                   <span className="break-all">{SITE.email}</span>
                 </TrackedAnchor>
               </li>
@@ -121,9 +121,9 @@ export function Footer() {
                   href={`tel:${SITE.phone.replace(/\s/g, "")}`}
                   eventName="social_click"
                   params={{ label: "Phone", location: "footer_contact", destination: SITE.phone }}
-                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
                 >
-                  <Phone className="w-4 h-4 shrink-0 text-[var(--brand-primary)]" />
+                  <Phone className="w-4 h-4 shrink-0 text-[var(--text-brand)]" />
                   {SITE.phone}
                 </TrackedAnchor>
               </li>
@@ -134,9 +134,9 @@ export function Footer() {
                   params={{ label: "WhatsApp", location: "footer_contact", destination: SITE.whatsapp }}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 text-sm text-[#25D366] hover:text-[#25D366]/80 transition-colors"
+                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4 shrink-0" />
+                  <MessageCircle className="w-4 h-4 shrink-0 text-[var(--text-brand)]" />
                   WhatsApp Us
                 </TrackedAnchor>
               </li>
@@ -147,9 +147,9 @@ export function Footer() {
                   params={{ label: "LinkedIn", location: "footer_contact", destination: SITE.linkedin }}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
                 >
-                  <ExternalLink className="w-4 h-4 shrink-0 text-[var(--brand-primary)]" />
+                  <ExternalLink className="w-4 h-4 shrink-0 text-[var(--text-brand)]" />
                   LinkedIn
                 </TrackedAnchor>
               </li>
@@ -158,9 +158,9 @@ export function Footer() {
                   href="/contact"
                   eventName="nav_click"
                   params={{ label: "Contact Page", location: "footer_contact", destination: "/contact" }}
-                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                  className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"
                 >
-                  <MapPin className="w-4 h-4 shrink-0 text-[var(--brand-primary)]" />
+                  <MapPin className="w-4 h-4 shrink-0 text-[var(--text-brand)]" />
                   Get in Touch
                 </TrackedLink>
               </li>

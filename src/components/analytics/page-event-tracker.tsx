@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, type AnalyticsParams } from "@/lib/analytics";
 
 interface PageEventTrackerProps {
   eventName: string;
-  params?: Record<string, string | number | boolean>;
+  params?: AnalyticsParams;
 }
 
 export function PageEventTracker({ eventName, params }: PageEventTrackerProps) {

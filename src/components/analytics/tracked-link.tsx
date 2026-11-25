@@ -1,19 +1,16 @@
 "use client";
 
-import Link, { type LinkProps } from "next/link";
-import type { ReactNode } from "react";
-import { trackEvent } from "@/lib/analytics";
+import Link from "next/link";
+import type { ComponentProps } from "react";
+import { trackEvent, type AnalyticsParams } from "@/lib/analytics";
 
-interface TrackedLinkProps extends LinkProps {
-  children: ReactNode;
-  className?: string;
+type TrackedLinkProps = ComponentProps<typeof Link> & {
   eventName: string;
-  params?: Record<string, string | number | boolean>;
-  target?: string;
-  rel?: string;
-}
+  params?: AnalyticsParams;
+};
 
-export function TrackedLink({ children, eventName, params, onClick, ...props }: TrackedLinkProps & { onClick?: React.MouseEventHandler<HTMLAnchorElement> }) {
+/** `next/link` that records a GA4 event on click. Accepts every Link/anchor prop. */
+export function TrackedLink({ eventName, params, onClick, ...props }: TrackedLinkProps) {
   return (
     <Link
       {...props}
@@ -21,8 +18,6 @@ export function TrackedLink({ children, eventName, params, onClick, ...props }: 
         trackEvent(eventName, params);
         onClick?.(event);
       }}
-    >
-      {children}
-    </Link>
+    />
   );
 }

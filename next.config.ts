@@ -41,6 +41,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/home", destination: "/", permanent: true },
+      // The consulting service lives on its existing page.
+      { source: "/services/ai-consulting", destination: "/consulting", permanent: true },
     ];
   },
 };

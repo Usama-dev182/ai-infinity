@@ -35,7 +35,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[var(--surface-bg)] px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] flex items-center justify-center mx-auto mb-4">
+          <div className="w-14 h-14 rounded-2xl bg-cta-gradient flex items-center justify-center mx-auto mb-4">
             <Bot className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">Admin Login</h1>

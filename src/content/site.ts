@@ -1,11 +1,16 @@
-// Brand content, static seed data, and site copy
-// All AI/SEO-targeted keyword copy lives here so it's consistent
+// Brand content and shared site copy.
+//
+// Claims policy: statistics and testimonials carry a `verified` flag. Only items the owner
+// has confirmed (with evidence they are happy to stand behind) may be set to `true`;
+// unverified items stay in source for review but are never rendered.
+// See docs/implementation-progress.md → "Owner verification checklist".
 
 export const SITE = {
   name: "AI Infinity Labs",
   tagline: "Building AI-Powered Products That Matter",
+  positioning: "AI Product Engineering & Intelligent Automation",
   description:
-    "We build cutting-edge AI integrations, agentic AI systems, and full-stack web applications that help businesses scale, automate intelligently, and innovate faster.",
+    "We design, build, and deploy intelligent software, AI agents, and scalable digital products that solve real business problems — from idea to production.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://aiinfinitylabs.com",
   email: "infousamaali1@gmail.com",
   phone: "+92 309 073 0852",
@@ -14,6 +19,14 @@ export const SITE = {
   github: "https://github.com/Usama-dev182",
   upwork: "https://www.upwork.com/freelancers/~012a332067f71fa1bd",
   youtube: "https://www.youtube.com/@Techtalkswithusamaali",
+  /**
+   * X (Twitter) handles. Left undefined until the owner confirms the accounts exist and
+   * belong to the company — an unverified handle attributes social cards to someone else.
+   */
+  xSite: undefined as string | undefined,
+  xCreator: undefined as string | undefined,
+  /** Optional scheduling link (e.g. Cal.com / Calendly) — configured via env, never hard-coded. */
+  bookingUrl: process.env.NEXT_PUBLIC_BOOKING_URL || undefined,
 };
 
 export const FOUNDER = {
@@ -25,177 +38,64 @@ export const FOUNDER = {
   linkedin: "https://www.linkedin.com/in/info-usama-ali/",
 };
 
-export const STATS = [
-  { value: "5+", label: "Years Experience" },
-  { value: "50+", label: "Projects Delivered" },
-  { value: "20+", label: "Happy Clients" },
-  { value: "3", label: "Core Services" },
+export interface StatItem {
+  value: string;
+  label: string;
+  verified: boolean;
+}
+
+export const STATS: StatItem[] = [
+  // Consistent with the founder timeline on /about (2021 → present).
+  { value: "5+", label: "Years Experience", verified: true },
+  { value: "50+", label: "Projects Delivered", verified: false },
+  { value: "20+", label: "Happy Clients", verified: false },
+  { value: "6", label: "Service Areas", verified: true },
 ];
 
-export const SERVICES = [
-  {
-    slug: "full-stack-development",
-    title: "Full Stack Development",
-    shortTitle: "Full Stack",
-    icon: "Code2",
-    tagline: "Modern, performant web applications at scale",
-    description:
-      "From React/Next.js frontends to Node.js/FastAPI backends — we build end-to-end digital products that are fast, scalable, and maintainable.",
-    keywords: [
-      "full stack development company",
-      "React TypeScript development",
-      "Next.js development agency",
-      "custom web application development",
-      "Node.js backend development",
-    ],
-    techStack: ["React", "Next.js", "Vue.js", "Nuxt.js", "TypeScript", "Node.js", "Python", "FastAPI", "Django", "PostgreSQL", "Redis"],
-    features: [
-      "Pixel-perfect UI implementation from Figma designs",
-      "RESTful & GraphQL API design and integration",
-      "Database architecture and optimisation",
-      "CI/CD pipeline setup and cloud deployment",
-      "Performance optimisation (Core Web Vitals)",
-      "Code review and team mentoring",
-    ],
-  },
-  {
-    slug: "ai-integrations",
-    title: "AI Integrations",
-    shortTitle: "AI Integrations",
-    icon: "Brain",
-    tagline: "LLM and AI capabilities embedded into your products",
-    description:
-      "We integrate OpenAI, Cohere, Hugging Face, and other LLMs directly into your existing systems — RAG pipelines, conversational UIs, semantic search, and AI-first product features.",
-    keywords: [
-      "AI integration services",
-      "LLM integration development",
-      "OpenAI integration agency",
-      "RAG system development",
-      "AI-powered web applications",
-    ],
-    techStack: ["OpenAI", "Cohere", "LangChain", "LlamaIndex", "Pinecone", "Weaviate", "FAISS", "Python"],
-    features: [
-      "LLM integration (OpenAI, Cohere, Hugging Face)",
-      "RAG (Retrieval-Augmented Generation) pipelines",
-      "Vector database setup and management",
-      "Prompt engineering and optimisation",
-      "Conversational UI and chatbot development",
-      "AI cost monitoring and optimisation",
-    ],
-  },
-  {
-    slug: "ai-automation",
-    title: "AI Automation & Agentic AI",
-    shortTitle: "AI Automation",
-    icon: "Zap",
-    tagline: "Multi-step AI agents that work while you sleep",
-    description:
-      "We design and build agentic AI systems — autonomous agents with planner/executor patterns, tool invocations, and fallback logic — to automate complex business workflows end-to-end.",
-    keywords: [
-      "AI automation agency",
-      "agentic AI development company",
-      "AI business automation",
-      "autonomous AI agents",
-      "workflow automation with AI",
-    ],
-    techStack: [
-      "LangGraph",
-      "CrewAI",
-      "AutoGen",
-      "PydanticAI",
-      "LangChain Agents",
-      "LlamaIndex",
-      "OpenAI Agents SDK",
-      "Python",
-      "FastAPI",
-      "Playwright",
-      "Zapier",
-      "Make",
-      "n8n",
-    ],
-    features: [
-      "Multi-step agentic AI system design",
-      "Planner + executor + tool-invocation architecture",
-      "Business process automation with AI",
-      "Document processing and data extraction agents",
-      "Browser automation, QA, and repetitive task execution",
-      "CRM, helpdesk, and back-office workflow orchestration",
-      "Human-in-the-loop approval flows for sensitive actions",
-      "Monitoring, retries, guardrails, and fallback design",
-      "Slack/email/CRM automation workflows",
-      "Adversarial testing and safety controls",
-    ],
-  },
-];
+export const VERIFIED_STATS = STATS.filter((s) => s.verified);
 
-export const PORTFOLIO = [
+/**
+ * Credibility facts that link to public evidence (case studies, profiles, channels).
+ * Prefer these over unverifiable numbers.
+ */
+export const CREDENTIALS = [
   {
-    slug: "daspire-platform",
-    title: "Daspire",
-    client: "Daspire",
-    industry: "SaaS / Data",
-    description:
-      "Redesigned and optimised the Daspire platform for enhanced user engagement and performance, implementing a modern frontend architecture with improved data visualisation.",
-    outcomes: [
-      { label: "Performance", value: "40%", description: "faster page loads" },
-      { label: "UX", value: "Redesigned", description: "complete UI overhaul" },
-    ],
-    services: ["Full Stack Development"],
-    techStack: ["React", "TypeScript", "Node.js"],
-    url: "https://www.daspire.com/",
-    featured: true,
+    title: "Founder-led engineering",
+    description: "Led by Usama Ali, a full-stack and AI engineer with prior roles at eBrainX Solutions and Techling.",
+    href: "/about",
+    linkLabel: "About the founder",
   },
   {
-    slug: "cohere-saas",
-    title: "Cohere",
-    client: "Cohere",
-    industry: "SaaS / Collaboration",
-    description:
-      "Architected the frontend for a SaaS platform focused on seamless virtual collaboration, building scalable components and optimising API integrations.",
-    outcomes: [
-      { label: "Architecture", value: "Scalable", description: "feature-based component system" },
-      { label: "Integrations", value: "10+", description: "API integrations delivered" },
-    ],
-    services: ["Full Stack Development"],
-    techStack: ["React", "TypeScript", "Redux"],
-    url: "https://www.cohere.live/",
-    featured: true,
+    title: "Shipped client platforms",
+    description: "Frontend and platform engineering for SaaS products including Daspire, Cohere and Cazvid.",
+    href: "/case-studies",
+    linkLabel: "See case studies",
   },
   {
-    slug: "cazvid-job-board",
-    title: "Cazvid",
-    client: "Cazvid",
-    industry: "HR Tech / Job Board",
-    description:
-      "Contributed to the world's largest video resume-based job board, focusing on user journey optimisations and UI performance across a high-traffic global platform.",
-    outcomes: [
-      { label: "Users", value: "Global", description: "international user base" },
-      { label: "Focus", value: "Performance", description: "UI speed optimisations" },
-    ],
-    services: ["Full Stack Development"],
-    techStack: ["React", "TypeScript", "REST APIs"],
-    url: "https://desktop.cazvid.app/en/auth",
-    featured: true,
+    title: "Independent client profile",
+    description: "Client work and history on Upwork, available to review before you get in touch.",
+    href: "https://www.upwork.com/freelancers/~012a332067f71fa1bd",
+    linkLabel: "View Upwork profile",
   },
   {
-    slug: "ai-support-automation",
-    title: "AI Customer Support Automation",
-    client: "E-commerce SaaS Client",
-    industry: "AI Automation / E-commerce",
-    description:
-      "Designed and built a multi-agent AI system that automatically classifies, prioritises, and drafts responses to 500+ inbound customer support emails per day — integrating directly with the client's helpdesk and CRM.",
-    outcomes: [
-      { label: "Tickets Automated", value: "70%", description: "of tier-1 support volume" },
-      { label: "Response Time", value: "6 hrs → 4 min", description: "average first response" },
-    ],
-    services: ["AI Automation & Agentic AI", "AI Integrations"],
-    techStack: ["Python", "OpenAI", "LangChain", "FastAPI", "PostgreSQL", "n8n"],
-    url: null,
-    featured: true,
+    title: "Engineering in public",
+    description: "Practical videos and articles on AI agents, LLM integration and automation.",
+    href: "/tech-talks",
+    linkLabel: "Watch Tech Talks",
   },
-];
+] as const;
 
-export const TESTIMONIALS = [
+export interface TestimonialItem {
+  id: number;
+  quote: string;
+  author: string;
+  title: string;
+  company: string;
+  /** Must be confirmed by the owner (real person, permission to publish) before display. */
+  verified: boolean;
+}
+
+export const TESTIMONIALS: TestimonialItem[] = [
   {
     id: 1,
     quote:
@@ -203,7 +103,7 @@ export const TESTIMONIALS = [
     author: "Alex Carter",
     title: "CTO",
     company: "Daspire",
-    avatar: "/images/testimonials/client-1.jpg",
+    verified: false,
   },
   {
     id: 2,
@@ -212,7 +112,7 @@ export const TESTIMONIALS = [
     author: "Sarah Mitchell",
     title: "Head of Product",
     company: "Nexus Labs",
-    avatar: "/images/testimonials/client-2.jpg",
+    verified: false,
   },
   {
     id: 3,
@@ -221,7 +121,7 @@ export const TESTIMONIALS = [
     author: "James Okafor",
     title: "Founder",
     company: "Brightline Digital",
-    avatar: "/images/testimonials/client-3.jpg",
+    verified: false,
   },
   {
     id: 4,
@@ -230,9 +130,11 @@ export const TESTIMONIALS = [
     author: "Priya Nair",
     title: "VP Operations",
     company: "ScaleStack",
-    avatar: "/images/testimonials/client-4.jpg",
+    verified: false,
   },
 ];
+
+export const VERIFIED_TESTIMONIALS = TESTIMONIALS.filter((t) => t.verified);
 
 export const TECH_STACK_BADGES = [
   "React",
@@ -259,18 +161,6 @@ export const TECH_STACK_BADGES = [
   "AWS",
 ];
 
-export const NAV_ITEMS = [
-  { label: "Services", href: "/services" },
-  { label: "Products", href: "/products" },
-  { label: "Case Studies", href: "/case-studies" },
-  { label: "Blog", href: "/blog" },
-  { label: "Tech Talks", href: "/tech-talks" },
-  { label: "Consulting", href: "/consulting" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "About", href: "/about" },
-  { label: "Careers", href: "/careers" },
-];
-
 export const BLOG_CATEGORIES = [
   "AI & Machine Learning",
   "Full Stack Development",
@@ -295,33 +185,33 @@ export const JOB_DEPARTMENTS = [
 export const PROCESS_STEPS = [
   {
     step: "01",
-    title: "Discovery & Planning",
+    title: "Discover",
     description:
-      "We understand your goals, define acceptance criteria, and plan the architecture before writing a single line of code.",
+      "We clarify the business problem, users, data and constraints, and agree what success looks like before any build starts.",
   },
   {
     step: "02",
-    title: "Design & Architecture",
+    title: "Validate",
     description:
-      "We design system architecture, component hierarchy, and data models — with scalability and maintainability built in from day one.",
+      "We test the riskiest assumptions early — often with a focused prototype on representative data — so decisions are based on evidence.",
   },
   {
     step: "03",
-    title: "Build & Iterate",
+    title: "Architect",
     description:
-      "Agile sprints with regular demos and feedback loops. You see progress every week — not just at the end.",
+      "We design the system: data model, integrations, security, and how AI components are evaluated, monitored and kept within budget.",
   },
   {
     step: "04",
-    title: "Test & Optimise",
+    title: "Build & iterate",
     description:
-      "Comprehensive testing, performance optimisation, and code review before any code ships to production.",
+      "We deliver in short iterations with regular demos, code review and automated tests, so you see working software throughout.",
   },
   {
     step: "05",
-    title: "Deploy & Support",
+    title: "Launch & improve",
     description:
-      "CI/CD automated deployments, monitoring, and ongoing support to ensure your product performs at scale.",
+      "We deploy with monitoring and documentation, then iterate on real usage — or hand over cleanly to your team.",
   },
 ];
 
@@ -329,7 +219,7 @@ export const FAQ_ITEMS = [
   {
     question: "Do you work with early-stage startups?",
     answer:
-      "Yes. A significant portion of our work is with pre-seed and seed-stage founders. We're experienced at scoping MVPs tightly, making pragmatic technology choices that don't create expensive re-architecture later, and moving fast without the shortcuts that hurt you at scale.",
+      "Yes. We help founders scope MVPs tightly, make pragmatic technology choices that avoid expensive re-architecture later, and move quickly without the shortcuts that hurt at scale.",
   },
   {
     question: "Do you offer fixed-price or hourly engagements?",
@@ -362,15 +252,14 @@ export const FAQ_ITEMS = [
       "Yes. We regularly work with existing React, Next.js, and Python codebases — adding new features, fixing architectural debt, or integrating AI capabilities. We do a brief code audit at the start of any extension engagement to understand what we're working with.",
   },
   {
+    question: "Which industries do you work with?",
+    answer:
+      "We're industry-agnostic: the engineering patterns behind AI products, agents and automation apply across sectors. Real estate and PropTech is one area where we have hands-on conversational AI experience, alongside SaaS and other business software.",
+  },
+  {
     question: "Which countries do you work with?",
     answer:
-      "Globally. Our clients span the UK, USA, Canada, UAE, and Australia. All communication is async-friendly, we adapt to your time zone for meetings, and we use tools like Linear, Slack, and Loom to keep projects moving regardless of location.",
+      "We work with clients internationally. Communication is async-friendly, we adapt to your time zone for meetings, and we use tools like Slack and Loom to keep projects moving regardless of location.",
   },
 ];
 
-export const CLIENT_LOGOS = [
-  { name: "Daspire", url: "https://www.daspire.com/", industry: "SaaS / Data" },
-  { name: "Cazvid", url: "https://desktop.cazvid.app/en/auth", industry: "HR Tech" },
-  { name: "Cohere", url: "https://www.cohere.live/", industry: "Collaboration SaaS" },
-  { name: "Upwork", url: "https://www.upwork.com/freelancers/~012a332067f71fa1bd", industry: "Verified Platform" },
-];

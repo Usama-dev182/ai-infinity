@@ -1,22 +1,17 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { AdminSidebar } from "@/components/admin/sidebar";
 
-export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/admin/login");
-  }
+// Admin is private: never indexed, never followed (also enforced via X-Robots-Tag in next.config.ts).
+export const metadata: Metadata = {
+  title: { default: "Admin", template: "%s | Admin — AI Infinity Labs" },
+  robots: { index: false, follow: false, nocache: true },
+};
 
-  return (
-    <div className="min-h-screen flex bg-[var(--surface-bg-subtle)]">
-      <AdminSidebar user={session.user} />
-      <main className="flex-1 min-w-0">
-        <div className="max-w-7xl mx-auto p-6 lg:p-8">
-          {children}
-        </div>
-      </main>
-    </div>
-  );
+/**
+ * Root admin layout — intentionally unauthenticated so /admin/login can render.
+ * Authentication is enforced by app/admin/(dashboard)/layout.tsx and inside every
+ * admin API route / server action.
+ */
+export default function AdminRootLayout({ children }: { children: ReactNode }) {
+  return children;
 }

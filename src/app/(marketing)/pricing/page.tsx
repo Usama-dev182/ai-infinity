@@ -137,7 +137,7 @@ export default function PricingPage() {
           <FadeUp>
             <div className="text-center max-w-3xl mx-auto">
               <Badge variant="gradient" className="mb-4">Pricing</Badge>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-[var(--text-primary)] mb-6 leading-tight">
+              <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
                 Transparent Pricing.{" "}
                 <span className="gradient-text">No Surprises.</span>
               </h1>
@@ -161,7 +161,7 @@ export default function PricingPage() {
                   <div
                     className={`h-full rounded-2xl border flex flex-col p-8 transition-all hover:shadow-xl ${
                       model.highlight
-                        ? "bg-gradient-to-br from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] border-transparent text-white shadow-[0_0_60px_rgba(99,102,241,0.3)]"
+                        ? "bg-cta-gradient border-transparent text-white shadow-[0_0_60px_rgba(99,102,241,0.3)]"
                         : "glass-card border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40"
                     }`}
                   >
@@ -175,7 +175,7 @@ export default function PricingPage() {
                         model.highlight ? "bg-white/20" : "bg-[var(--brand-primary)]/10"
                       }`}
                     >
-                      <Icon className={`w-6 h-6 ${model.highlight ? "text-white" : "text-[var(--brand-primary)]"}`} />
+                      <Icon className={`w-6 h-6 ${model.highlight ? "text-white" : "text-[var(--text-brand)]"}`} />
                     </div>
 
                     <h2 className={`text-xl font-bold mb-1 ${model.highlight ? "text-white" : "text-[var(--text-primary)]"}`}>
@@ -206,7 +206,7 @@ export default function PricingPage() {
                       asChild
                       variant={model.highlight ? "secondary" : "gradient"}
                       size="lg"
-                      className={`w-full ${model.highlight ? "bg-white text-[var(--brand-primary)] hover:bg-white/90 font-bold" : ""}`}
+                      className={`w-full ${model.highlight ? "bg-white text-[var(--text-brand)] hover:bg-white/90 font-bold" : ""}`}
                     >
                       <TrackedLink
                         href={model.cta}
@@ -230,7 +230,7 @@ export default function PricingPage() {
           <FadeUp>
             <div className="text-center max-w-2xl mx-auto mb-12">
               <Badge variant="gradient" className="mb-4">Indicative Ranges</Badge>
-              <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                 What Does a Typical Project Cost?
               </h2>
               <p className="text-[var(--text-secondary)]">
@@ -246,7 +246,7 @@ export default function PricingPage() {
                 <div className="glass-card rounded-xl border border-[var(--surface-border)] p-6 hover:border-[var(--brand-primary)]/40 hover:shadow-lg transition-all">
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <h3 className="font-semibold text-[var(--text-primary)] text-sm leading-snug">{ex.type}</h3>
-                    <span className="text-xs text-[var(--brand-primary)] font-bold whitespace-nowrap">{ex.range}</span>
+                    <span className="text-xs text-[var(--text-brand)] font-bold whitespace-nowrap">{ex.range}</span>
                   </div>
                   <p className="text-xs text-[var(--text-secondary)] leading-relaxed mb-3">{ex.description}</p>
                   <span className="inline-flex items-center gap-1 text-xs text-[var(--text-muted)]">
@@ -275,12 +275,12 @@ export default function PricingPage() {
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
                   <Badge variant="gradient" className="mb-4">Our Commitments</Badge>
-                  <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-4">
+                  <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
                     What You Can Always{" "}
                     <span className="gradient-text">Count On</span>
                   </h2>
                   <p className="text-[var(--text-secondary)] leading-relaxed">
-                    We'd rather turn down a project than do it badly. Every engagement comes with a set of
+                    We&apos;d rather turn down a project than do it badly. Every engagement comes with a set of
                     standard commitments — not in the fine print, just in how we work.
                   </p>
                 </div>
@@ -303,7 +303,7 @@ export default function PricingPage() {
         <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
           <FadeUp>
             <Badge variant="gradient" className="mb-4">Ready to Start?</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold text-[var(--text-primary)] mb-4">
+            <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
               Get a Proposal in <span className="gradient-text">48 Hours</span>
             </h2>
             <p className="text-[var(--text-secondary)] text-lg mb-8">

@@ -49,7 +49,7 @@ export function TechTalksClient() {
           </FadeUp>
 
           <FadeUp delay={0.1}>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight text-[var(--text-primary)] mb-6 max-w-3xl">
+            <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6 max-w-3xl">
               Learn{" "}
               <span className="gradient-text">AI & Automation</span>
               {" "}from a Practitioner
@@ -105,8 +105,8 @@ export function TechTalksClient() {
                 className={cn(
                   "shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 border",
                   activeCategory === cat
-                    ? "bg-gradient-to-r from-[var(--brand-gradient-start)] to-[var(--brand-gradient-end)] text-white border-transparent shadow-md"
-                    : "border-[var(--surface-border)] text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--brand-primary)]"
+                    ? "bg-cta-gradient text-white border-transparent shadow-md"
+                    : "border-[var(--surface-border)] text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--text-brand)]"
                 )}
               >
                 {cat}
@@ -185,14 +185,14 @@ export function TechTalksClient() {
       <section className="section-padding border-t border-[var(--surface-border)]">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeUp>
-            <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-[var(--brand-gradient-start)] via-[#7c3aed] to-[var(--brand-gradient-end)] p-10 md:p-14 text-center">
+            <div className="relative rounded-3xl overflow-hidden bg-cta-gradient p-10 md:p-14 text-center">
               {/* subtle radial shine */}
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.15),transparent_70%)]" />
               <div className="relative">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm mb-6">
                   <PlayCircle className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
+                <h2 className="text-heading-2 font-extrabold text-white mb-4">
                   Subscribe & Level Up Your AI Skills
                 </h2>
                 <p className="text-white/80 text-lg max-w-xl mx-auto mb-8">
@@ -209,7 +209,7 @@ export function TechTalksClient() {
                   <Button
                     variant="outline"
                     size="xl"
-                    className="bg-white text-[var(--brand-primary)] hover:bg-white/90 border-transparent font-semibold"
+                    className="bg-white text-[var(--text-brand)] hover:bg-white/90 border-transparent font-semibold"
                   >
                     <PlayCircle className="w-5 h-5 mr-2" />
                     Subscribe on YouTube
