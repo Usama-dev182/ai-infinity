@@ -8,6 +8,9 @@ import { INDUSTRIES } from "@/content/industries";
 import { HEADER_NAV, FOOTER_LINKS, isNavGroup } from "@/content/navigation";
 import { STATS, TESTIMONIALS, VERIFIED_STATS, VERIFIED_TESTIMONIALS } from "@/content/site";
 import {
+  caseStudiesForIndustry,
+  caseStudiesForService,
+  featuredCaseStudies,
   isPublished,
   mapDbCaseStudy,
   mergeCaseStudies,
@@ -16,6 +19,25 @@ import {
   type DbCaseStudyRow,
 } from "@/lib/content/case-study-model";
 import { ogImageUrl, resolveTitle, stripBrandSuffix } from "@/lib/seo";
+
+const dbRow: DbCaseStudyRow = {
+  slug: "db-study",
+  title: "DB Study",
+  description: "Summary",
+  content: "Para one.\n\nPara two.",
+  clientName: "Client",
+  clientIndustry: "SaaS",
+  coverImage: null,
+  services: ["Full Stack Development", "ai-agents", "unknown"],
+  techStack: ["Next.js"],
+  outcomes: [{ label: "Speed", value: "2x", description: "faster" }, { label: "Hidden", value: "?", verified: false }, "bad"],
+  featured: false,
+  status: "PUBLISHED",
+  metaTitle: null,
+  metaDescription: null,
+  keywords: [],
+  updatedAt: new Date(0),
+};
 
 test("existing service URLs are preserved", () => {
   for (const slug of ["full-stack-development", "ai-integrations", "ai-automation"]) {
@@ -32,12 +54,65 @@ test("every cross-reference between content modules resolves", () => {
   }
 });
 
+const REAL_ESTATE = "real-estate-conversational-ai";
+
 test("the real-estate case study stays approval-gated", () => {
-  const re = CASE_STUDIES.find((c) => c.slug === "real-estate-conversational-ai");
+  const re = CASE_STUDIES.find((c) => c.slug === REAL_ESTATE);
   assert.ok(re);
+  // Flip to "published" + featured only after the owner explicitly approves publication.
   assert.equal(re.status, "draft", "must stay draft until the owner approves publication");
+  assert.equal(re.featured, false);
   assert.equal(re.outcomes.length, 0, "no outcomes without verification");
-  assert.ok(re.capabilities?.every((c) => c.status === "unconfirmed"));
+  assert.deepEqual(re.techStack, [], "no technology claims until the stack is confirmed");
+});
+
+test("the real-estate case study is anonymised and only states owner-confirmed capabilities", () => {
+  const re = CASE_STUDIES.find((c) => c.slug === REAL_ESTATE)!;
+  assert.equal(re.role, "Lead Platform Architect & Engineer");
+  assert.ok(!re.clientUrl, "no private or client URLs");
+  assert.match(re.client, /confidential/i);
+  assert.ok(!/https?:\/\//.test(JSON.stringify({ ...re, cover: undefined })), "no URLs anywhere in the copy");
+  assert.ok(re.capabilities?.length);
+  // Statuses confirmed by the owner on 2026-11-25.
+  assert.ok(re.capabilities!.every((c) => c.status === "implemented"));
+  assert.match(re.architecture!.caption, /illustrative/i);
+});
+
+test("once approved, the real-estate case study appears everywhere it should", () => {
+  // Simulates the approved state without changing the content: same entry, published + featured.
+  const approved = CASE_STUDIES.map((c) => (c.slug === REAL_ESTATE ? { ...c, status: "published" as const, featured: true } : c));
+  const published = approved.filter(isPublished);
+  assert.ok(published.some((c) => c.slug === REAL_ESTATE), "case studies listing");
+  assert.ok(featuredCaseStudies(published).some((c) => c.slug === REAL_ESTATE), "homepage featured section");
+  const industry = INDUSTRIES.find((i) => i.slug === "real-estate")!;
+  assert.ok(caseStudiesForIndustry(published, industry).some((c) => c.slug === REAL_ESTATE), "real estate industry page");
+  const re = published.find((c) => c.slug === REAL_ESTATE)!;
+  for (const service of re.services) {
+    // Service pages show the first three matches.
+    assert.ok(caseStudiesForService(published, service).slice(0, 3).some((c) => c.slug === REAL_ESTATE), `service page ${service}`);
+  }
+  assert.ok(re.seo?.title && re.seo.description, "custom SEO metadata");
+});
+
+test("drafts never reach public selections", () => {
+  const drafts = CASE_STUDIES.filter((c) => c.status === "draft");
+  const published = CASE_STUDIES.filter(isPublished);
+  for (const d of drafts) {
+    assert.ok(!published.includes(d));
+    assert.ok(!featuredCaseStudies(published).includes(d));
+  }
+  const dbDraft = mapDbCaseStudy({ ...dbRow, slug: "db-draft", status: "DRAFT" });
+  assert.ok(!mergeCaseStudies(CASE_STUDIES, [dbDraft]).filter(isPublished).some((c) => c.slug === "db-draft"));
+});
+
+test("case study covers exist, and freelance work is labelled as such", () => {
+  for (const c of CASE_STUDIES) {
+    if (c.cover?.src.startsWith("/")) assert.ok(existsSync(path.join(process.cwd(), "public", c.cover.src)), `${c.slug} cover`);
+  }
+  assert.ok(existsSync(path.join(process.cwd(), "public/images/case-studies/fallback.svg")));
+  for (const slug of ["daspire-platform", "cohere-saas", "cazvid-job-board"]) {
+    assert.match(CASE_STUDIES.find((c) => c.slug === slug)!.engagement ?? "", /freelance/i, slug);
+  }
 });
 
 test("no unverified claim is exposed through the verified selectors", () => {
@@ -63,24 +138,6 @@ test("navigation only links to routes that exist", () => {
   }
 });
 
-const dbRow: DbCaseStudyRow = {
-  slug: "db-study",
-  title: "DB Study",
-  description: "Summary",
-  content: "Para one.\n\nPara two.",
-  clientName: "Client",
-  clientIndustry: "SaaS",
-  coverImage: null,
-  services: ["Full Stack Development", "ai-agents", "unknown"],
-  techStack: ["Next.js"],
-  outcomes: [{ label: "Speed", value: "2x", description: "faster" }, { label: "Hidden", value: "?", verified: false }, "bad"],
-  featured: false,
-  status: "PUBLISHED",
-  metaTitle: null,
-  metaDescription: null,
-  keywords: [],
-  updatedAt: new Date(0),
-};
 
 test("database case studies map to the content model", () => {
   const c = mapDbCaseStudy(dbRow);

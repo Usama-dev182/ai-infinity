@@ -42,6 +42,8 @@ export const EVENTS = {
   leadSubmitted: "generate_lead",
   formError: "form_submit_error",
   bookingClick: "booking_click",
+  /** Share button on a case study or service page: { network, location, campaign }. */
+  shareClick: "share_click",
 } as const;
 
 export type LeadFormName = "contact" | "quote" | "career";

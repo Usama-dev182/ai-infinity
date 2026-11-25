@@ -24,6 +24,7 @@ import { SERVICES, serviceHref } from "@/content/services";
 import { INDUSTRIES } from "@/content/industries";
 import { PRIMARY_CTA, SECONDARY_CTA } from "@/content/navigation";
 import { getPublishedCaseStudies } from "@/lib/content/case-studies";
+import { featuredCaseStudies } from "@/lib/content/case-study-model";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
@@ -85,7 +86,7 @@ const CAPABILITY_GROUPS = [
 
 export default async function HomePage() {
   const caseStudies = await getPublishedCaseStudies();
-  const featured = caseStudies.filter((c) => c.featured).slice(0, 3);
+  const featured = featuredCaseStudies(caseStudies);
   const detailedIndustry = INDUSTRIES.find((i) => i.hasDetailPage);
   const otherIndustries = INDUSTRIES.filter((i) => !i.hasDetailPage);
   // Only verified/working profile URLs are defined (see SOCIAL_PROFILES).
