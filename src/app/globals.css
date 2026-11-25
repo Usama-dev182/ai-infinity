@@ -278,12 +278,14 @@ p { text-wrap: pretty; }
 
 /* ─────────────────────────────────────────────────────────────
    Reveal-on-scroll (progressive enhancement)
-   Content is visible by default. JS only hides elements that start
-   below the fold (.reveal-pending) and reveals them on intersection.
+   Content is visible by default. RevealObserver (one IntersectionObserver)
+   hides only elements that start below the fold (.reveal-pending) and
+   reveals them on intersection.
    Without JS, or with reduced motion, nothing is ever hidden.
 ───────────────────────────────────────────────────────────── */
-.reveal,
-.reveal-stagger > * {
+/* Transition only on the way in: hiding below-the-fold content is instant and free. */
+.reveal:not(.reveal-pending),
+.reveal-stagger:not(.reveal-pending) > * {
   transition:
     opacity var(--motion-duration) ease-out,
     transform var(--motion-duration) ease-out;

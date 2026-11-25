@@ -23,7 +23,8 @@ export function GoogleAnalytics() {
     // Official GA opt-out flag: also stops enhanced-measurement history events if the script
     // was loaded earlier in the session and the visitor navigates into a private area.
     (window as unknown as Record<string, boolean>)[`ga-disable-${GA_ID}`] = privatePath;
-    if (privatePath || typeof window.gtag !== "function") return;
+    if (privatePath) return;
+    const gtag = ensureGtagQueue();
 
     // Only campaign parameters are kept; anything else in the query string is dropped.
     const kept = new URLSearchParams();
@@ -34,7 +35,7 @@ export function GoogleAnalytics() {
     const query = kept.toString();
     const pagePath = query ? `${pathname}?${query}` : pathname;
 
-    window.gtag("event", "page_view", {
+    gtag("event", "page_view", {
       page_title: document.title,
       page_location: `${window.location.origin}${pagePath}`,
       page_path: pagePath,
@@ -43,18 +44,26 @@ export function GoogleAnalytics() {
 
   if (!enabled || privatePath) return null;
 
-  return (
-    <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', '${GA_ID}', { send_page_view: false });
-        `}
-      </Script>
-    </>
-  );
+  // gtag.js (~150 KB) loads once the page is idle, so it never competes with hydration.
+  // Events sent before then wait in the dataLayer queue and are processed when it loads.
+  return <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="lazyOnload" />;
+}
+
+/**
+ * Installs the standard gtag queue (the snippet Google documents) if it isn't there yet.
+ * `gtag.js` reads the queued `arguments` objects when it loads.
+ */
+function ensureGtagQueue(): (...args: unknown[]) => void {
+  const w = window as unknown as { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void };
+  if (typeof w.gtag === "function") return w.gtag;
+  const queue = (w.dataLayer = w.dataLayer || []);
+  const gtag = function gtag() {
+    // gtag.js expects the Arguments object itself, not an array copy.
+    // eslint-disable-next-line prefer-rest-params
+    queue.push(arguments);
+  } as (...args: unknown[]) => void;
+  w.gtag = gtag;
+  gtag("js", new Date());
+  gtag("config", GA_ID, { send_page_view: false });
+  return gtag;
 }
