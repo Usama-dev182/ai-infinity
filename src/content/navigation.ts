@@ -2,26 +2,10 @@
 
 import { SERVICES, serviceHref } from "@/content/services";
 import { INDUSTRY_PAGES } from "@/content/industries";
+import type { NavEntry, NavLink } from "@/content/nav-constants";
 
-export interface NavLink {
-  label: string;
-  href: string;
-  description?: string;
-}
-
-export interface NavGroup {
-  label: string;
-  /** Optional landing page for the group (shown as the first mobile link). */
-  href?: string;
-  children: NavLink[];
-}
-
-export type NavEntry = NavLink | NavGroup;
-
-export const isNavGroup = (item: NavEntry): item is NavGroup => "children" in item;
-
-export const PRIMARY_CTA = { label: "Discuss Your Project", href: "/contact" } as const;
-export const SECONDARY_CTA = { label: "Explore Our Work", href: "/case-studies" } as const;
+export type { NavEntry, NavGroup, NavLink } from "@/content/nav-constants";
+export { PRIMARY_CTA, SECONDARY_CTA, isActivePath, isNavGroup } from "@/content/nav-constants";
 
 export const HEADER_NAV: NavEntry[] = [
   {
@@ -82,6 +66,3 @@ export const FOOTER_LINKS: NavLink[] = [
   { label: "Careers", href: "/careers" },
 ];
 
-export function isActivePath(pathname: string, href: string) {
-  return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
-}

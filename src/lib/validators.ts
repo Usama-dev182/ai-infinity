@@ -8,7 +8,7 @@ import {
   TIMELINE_OPTIONS,
   type LeadStageValue,
 } from "@/content/lead-options";
-import { attributionSchema } from "@/lib/leads/attribution";
+import { attributionSchema } from "@/lib/leads/attribution-schema";
 
 // ─── Shared lead fields ───────────────────────────────────────────────────────
 

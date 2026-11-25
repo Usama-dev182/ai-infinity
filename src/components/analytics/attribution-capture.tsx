@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   ATTRIBUTION_STORAGE_KEY,
-  attributionSchema,
   buildAttribution,
+  cleanAttribution,
   mergeAttribution,
   type Attribution,
 } from "@/lib/leads/attribution";
@@ -15,7 +15,7 @@ export function readAttribution(): Attribution | undefined {
   try {
     const raw = window.sessionStorage.getItem(ATTRIBUTION_STORAGE_KEY);
     if (!raw) return undefined;
-    return attributionSchema.safeParse(JSON.parse(raw)).data;
+    return cleanAttribution(JSON.parse(raw));
   } catch {
     return undefined;
   }

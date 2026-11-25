@@ -4,33 +4,52 @@
 //
 // Privacy: no cookies; stored in sessionStorage for the visit only; query strings are
 // stripped from landing page and referrer; only sent with a form the visitor submits.
-
-import { z } from "zod";
+//
+// This module is deliberately dependency-free (no zod) because it runs on every page.
+// The server re-validates with `attributionSchema` (attribution-schema.ts).
 
 export const ATTRIBUTION_STORAGE_KEY = "ail_attribution_v1";
 
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
 
-const utmValue = z
-  .string()
-  .trim()
-  .max(150)
-  .regex(/^[\w\s.\-+/:%@()&,]*$/u, "Invalid characters");
+export const UTM_VALUE_PATTERN = /^[\w\s.\-+/:%@()&,]*$/u;
+export const LANDING_PAGE_PATTERN = /^\/[^\s?#]*$/;
 
-export const attributionSchema = z
-  .object({
-    utmSource: utmValue.optional(),
-    utmMedium: utmValue.optional(),
-    utmCampaign: utmValue.optional(),
-    utmContent: utmValue.optional(),
-    utmTerm: utmValue.optional(),
-    landingPage: z.string().trim().max(300).regex(/^\/[^\s?#]*$/, "Must be a path").optional(),
-    referrer: z.string().trim().max(300).url().optional(),
-    capturedAt: z.string().max(40).optional(),
-  })
-  .strip();
+export interface Attribution {
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmContent?: string;
+  utmTerm?: string;
+  landingPage?: string;
+  referrer?: string;
+  capturedAt?: string;
+}
 
-export type Attribution = z.infer<typeof attributionSchema>;
+const isHttpUrl = (value: string) => {
+  try {
+    return /^https?:$/.test(new URL(value).protocol);
+  } catch {
+    return false;
+  }
+};
+
+/** Keeps only well-formed fields (same rules as the server schema). Never throws. */
+export function cleanAttribution(input: unknown): Attribution | undefined {
+  if (!input || typeof input !== "object") return undefined;
+  const raw = input as Record<string, unknown>;
+  const out: Attribution = {};
+  for (const key of ["utmSource", "utmMedium", "utmCampaign", "utmContent", "utmTerm"] as const) {
+    const v = raw[key];
+    if (typeof v === "string" && v.trim() && v.length <= 150 && UTM_VALUE_PATTERN.test(v)) out[key] = v.trim();
+  }
+  if (typeof raw.landingPage === "string" && raw.landingPage.length <= 300 && LANDING_PAGE_PATTERN.test(raw.landingPage)) {
+    out.landingPage = raw.landingPage;
+  }
+  if (typeof raw.referrer === "string" && raw.referrer.length <= 300 && isHttpUrl(raw.referrer)) out.referrer = raw.referrer;
+  if (typeof raw.capturedAt === "string" && raw.capturedAt.length <= 40) out.capturedAt = raw.capturedAt;
+  return out;
+}
 
 const toCamel: Record<(typeof UTM_KEYS)[number], keyof Attribution> = {
   utm_source: "utmSource",
@@ -64,7 +83,7 @@ export function buildAttribution(input: { href: string; referrer?: string; now?:
     const value = url.searchParams.get(key)?.trim();
     if (value) (result as Record<string, string>)[toCamel[key]] = value.slice(0, 150);
   }
-  return attributionSchema.safeParse(result).data ?? { landingPage: result.landingPage };
+  return cleanAttribution(result) ?? { landingPage: result.landingPage };
 }
 
 export const hasCampaign = (a?: Attribution) => Boolean(a?.utmSource || a?.utmMedium || a?.utmCampaign);
