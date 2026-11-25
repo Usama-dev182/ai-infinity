@@ -5,13 +5,14 @@ import { ArrowRight, Code2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
-import { FOUNDER, SITE, STATS, SERVICES } from "@/content/site";
+import { FOUNDER, SITE, VERIFIED_STATS } from "@/content/site";
+import { SERVICES, serviceHref } from "@/content/services";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "About – AI Infinity Labs",
+  title: "About Us — Founder-Led AI Product Engineering",
   description:
-    "Meet the team behind AI Infinity Labs. We're a boutique software agency specialising in AI integrations, full-stack web development, and agentic AI automation.",
+    "Meet the team behind AI Infinity Labs: a founder-led AI product engineering company building intelligent software, AI agents and automation for clients across industries.",
   keywords: [
     "AI software agency",
     "about AI Infinity Labs",
@@ -91,8 +92,8 @@ export default function AboutPage() {
       {/* Stats bar */}
       <section className="border-y border-[var(--surface-border)] bg-[var(--surface-bg-subtle)]">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 divide-x divide-[var(--surface-border)]">
-            {STATS.map((stat) => (
+          <StaggerContainer className="grid grid-cols-2 divide-x divide-[var(--surface-border)] max-w-2xl mx-auto">
+            {VERIFIED_STATS.map((stat) => (
               <StaggerItem key={stat.label}>
                 <div className="py-10 px-4 text-center">
                   <div className="text-4xl font-extrabold gradient-text mb-1">{stat.value}</div>
@@ -220,15 +221,15 @@ export default function AboutPage() {
                 What we build
               </h2>
               <p className="text-[var(--text-secondary)] max-w-xl mx-auto">
-                Three core practices, all underpinned by modern engineering standards.
+                Six connected service areas, from AI strategy to production software.
               </p>
             </div>
           </FadeUp>
-          <StaggerContainer className="grid md:grid-cols-3 gap-6 mb-12">
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {SERVICES.map((s) => (
               <StaggerItem key={s.slug}>
-                <Link href={`/services/${s.slug}`} className="group block glass-card rounded-xl p-6 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 transition-all">
-                  <h3 className="font-semibold text-[var(--text-primary)] group-hover:gradient-text mb-2 transition-all">{s.title}</h3>
+                <Link href={serviceHref(s)} className="group block glass-card rounded-xl p-6 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 transition-all">
+                  <h3 className="font-semibold text-[var(--text-primary)] group-hover:text-[var(--text-brand)] mb-2 transition-colors">{s.title}</h3>
                   <p className="text-sm text-[var(--text-secondary)]">{s.tagline}</p>
                 </Link>
               </StaggerItem>
@@ -236,8 +237,8 @@ export default function AboutPage() {
           </StaggerContainer>
           <div className="text-center">
             <Button asChild variant="gradient" size="lg">
-              <Link href="/quote">
-                Work with us <ArrowRight className="w-4 h-4 ml-2" />
+              <Link href="/contact">
+                Discuss Your Project <ArrowRight aria-hidden="true" className="w-4 h-4" />
               </Link>
             </Button>
           </div>

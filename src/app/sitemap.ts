@@ -1,53 +1,81 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
-import { SERVICES, PORTFOLIO } from "@/content/site";
+import { SERVICE_PAGES } from "@/content/services";
+import { INDUSTRY_PAGES } from "@/content/industries";
+import { getPublishedCaseStudies } from "@/lib/content/case-studies";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://aiinfinitylabs.com";
 
+// Regenerate hourly so newly published posts, jobs and case studies appear without a redeploy.
+export const revalidate = 3600;
+
+type Freq = NonNullable<MetadataRoute.Sitemap[number]["changeFrequency"]>;
+
+const STATIC_ROUTES: { path: string; priority: number; changeFrequency: Freq }[] = [
+  { path: "", priority: 1.0, changeFrequency: "weekly" },
+  { path: "/services", priority: 0.9, changeFrequency: "monthly" },
+  { path: "/industries", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/case-studies", priority: 0.85, changeFrequency: "weekly" },
+  { path: "/consulting", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/pricing", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/about", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/contact", priority: 0.7, changeFrequency: "monthly" },
+  { path: "/quote", priority: 0.6, changeFrequency: "monthly" },
+  { path: "/blog", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/tech-talks", priority: 0.6, changeFrequency: "weekly" },
+  { path: "/products", priority: 0.5, changeFrequency: "monthly" },
+  { path: "/careers", priority: 0.5, changeFrequency: "weekly" },
+  { path: "/privacy", priority: 0.2, changeFrequency: "yearly" },
+  { path: "/terms", priority: 0.2, changeFrequency: "yearly" },
+];
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [posts, jobs] = await Promise.all([
-    db.blogPost.findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } }).catch(() => []),
+  const now = new Date();
+  const [posts, jobs, caseStudies] = await Promise.all([
+    db.blogPost
+      .findMany({ where: { status: "PUBLISHED" }, select: { slug: true, updatedAt: true } })
+      .catch(() => []),
     db.jobPosting.findMany({ where: { status: "OPEN" }, select: { slug: true, updatedAt: true } }).catch(() => []),
+    getPublishedCaseStudies(),
   ]);
 
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: BASE, lastModified: new Date(), changeFrequency: "weekly", priority: 1.0 },
-    { url: `${BASE}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/services`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/case-studies`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.85 },
-    { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/careers`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/quote`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+  return [
+    ...STATIC_ROUTES.map((r) => ({
+      url: `${BASE}${r.path}`,
+      lastModified: now,
+      changeFrequency: r.changeFrequency,
+      priority: r.priority,
+    })),
+    ...SERVICE_PAGES.map((s) => ({
+      url: `${BASE}/services/${s.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
+    ...INDUSTRY_PAGES.map((i) => ({
+      url: `${BASE}/industries/${i.slug}`,
+      lastModified: now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+    // Drafts are excluded by getPublishedCaseStudies().
+    ...caseStudies.map((c) => ({
+      url: `${BASE}/case-studies/${c.slug}`,
+      lastModified: c.updatedAt ?? now,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+    ...posts.map((p) => ({
+      url: `${BASE}/blog/${p.slug}`,
+      lastModified: p.updatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+    ...jobs.map((j) => ({
+      url: `${BASE}/careers/${j.slug}`,
+      lastModified: j.updatedAt,
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    })),
   ];
-
-  const serviceRoutes: MetadataRoute.Sitemap = SERVICES.map((s) => ({
-    url: `${BASE}/services/${s.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: 0.9,
-  }));
-
-  const caseStudyRoutes: MetadataRoute.Sitemap = PORTFOLIO.map((p) => ({
-    url: `${BASE}/case-studies/${p.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
-
-  const blogRoutes: MetadataRoute.Sitemap = posts.map((p) => ({
-    url: `${BASE}/blog/${p.slug}`,
-    lastModified: p.updatedAt,
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
-
-  const jobRoutes: MetadataRoute.Sitemap = jobs.map((j) => ({
-    url: `${BASE}/careers/${j.slug}`,
-    lastModified: j.updatedAt,
-    changeFrequency: "weekly",
-    priority: 0.65,
-  }));
-
-  return [...staticRoutes, ...serviceRoutes, ...caseStudyRoutes, ...blogRoutes, ...jobRoutes];
 }

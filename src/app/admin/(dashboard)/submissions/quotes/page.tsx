@@ -1,8 +1,10 @@
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/authz";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 
 export default async function QuoteSubmissionsPage() {
+  await requireAdmin();
   const quotes = await db.quoteRequest.findMany({ orderBy: { createdAt: "desc" } });
 
   return (

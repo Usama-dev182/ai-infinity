@@ -56,7 +56,7 @@ export default function ContactPage() {
                 </div>
                   <span className="text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] transition-colors">GitHub</span>
                 </Link>
-                <Link href={SITE.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
+                <Link href={SITE.upwork} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
                   <div className="w-10 h-10 rounded-lg bg-[var(--brand-primary)]/10 flex items-center justify-center group-hover:bg-[var(--brand-primary)]/20 transition-colors">
                     <ExternalLink className="w-5 h-5 text-[var(--text-brand)]" />
                   </div>

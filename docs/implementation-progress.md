@@ -8,10 +8,10 @@ Plan: [`website-enhancement-plan.md`](./website-enhancement-plan.md). This file 
 | --- | --- |
 | 0. Audit & plan | Done |
 | 1. Design system & UX | Done |
-| 2. Positioning & homepage | Not started |
-| 3. Services | Not started |
-| 4. Industries | Not started |
-| 5. Case studies | Not started |
+| 2. Positioning & homepage | Done |
+| 3. Services | Done |
+| 4. Industries | Done |
+| 5. Case studies | Done |
 | 6. Interactive experiences | Not started |
 | 7. Lead generation | Not started |
 | 8. SEO & social | Not started |
@@ -41,3 +41,66 @@ Changed files: `docs/website-enhancement-plan.md`, `docs/implementation-progress
 * **Navigation config** moved to `src/content/navigation.ts` (header + footer share one source). The primary CTA is "Discuss Your Project" → `/contact`.
 
 **Verified (local, Playwright + system Chrome):** the skip link is the first tab stop; Enter opens the dropdown and focus moves into it; Escape closes it and returns focus to the button; the mobile menu scrolls at 360×560 and closes on Escape; with JS disabled, no section content is hidden (the 4 remaining zero-opacity nodes are hover-only logo captions removed in Phase 2).
+
+## Phases 2–5 — Positioning, services, industries, case studies
+
+Committed together because they share the new content model.
+
+### Content architecture (SOLID: content, data access and presentation separated)
+
+| Module | Responsibility |
+| --- | --- |
+| `src/content/services.ts` | Typed service catalogue (6 categories) — single source for home, `/services`, service pages, nav, footer. |
+| `src/content/industries.ts` | Industries; only `hasDetailPage` industries get a route. |
+| `src/content/case-studies.ts` | Code-managed case studies with `status`, role, contributions, capability status, architecture layers, verified outcomes, SEO. |
+| `src/lib/content/case-study-model.ts` | Pure logic (no I/O): DB row mapping, merge (code wins on slug conflicts), publication filter, verified outcomes. Unit-testable. |
+| `src/lib/content/case-studies.ts` | Repository (`server-only`): merges code entries with Prisma `CaseStudy` rows; DB failures degrade to code-only content. |
+| `src/content/site.ts` | Brand copy; `STATS`/`TESTIMONIALS` carry `verified` flags; `CREDENTIALS` link to public evidence. |
+| `src/content/navigation.ts` | Header/footer navigation derived from the catalogues. |
+
+Shared presentation components: `SectionHeading`, `PageHero`, `Section`, `ServiceIcon(Tile)`, `CaseStudyCard`, `CaseStudyArticle`, `FaqList`, `CtaBanner`, `IllustrativeWorkflow`, `JsonLd`, `BrandMark`.
+
+### Phase 2 — Homepage
+* Positioning: "AI Product Engineering & Intelligent Automation". The tagline "Building AI-Powered Products That Matter" is kept as the H1, and the description matches the brief.
+* Hero: "Discuss Your Project" → `/contact` and "Explore Our Work" → `/case-studies`. Floating status cards and the "92% on-time delivery" bar are replaced by an `IllustrativeWorkflow` labelled **"Illustrative … Not client data."** The H1 is not animated, so LCP doesn't wait for JS.
+* Sections: hero → credibility (evidence links) → featured work → 6 services → problems/solutions (5) → industries → process → technical capabilities → testimonials (**verified only, currently hidden**) → founder → FAQ → final CTA. The interactive advisor section is added in Phase 6.
+* Removed the unverifiable "Trusted by clients across 5+ countries", the stats bar (50+/20+), and the "Trusted by teams at" logo strip (it listed Upwork as a client).
+
+### Phase 3 — Services
+* Existing URLs preserved: `/services/full-stack-development` (now "Full-Stack Engineering"), `/services/ai-integrations` ("Applied AI & LLM Engineering"), `/services/ai-automation` ("Intelligent Business Automation").
+* New: `/services/ai-product-engineering`, `/services/ai-agents`. "AI Consulting & Prototyping" points to the existing `/consulting` page (a duplicate page would be thin). `/services/ai-consulting` permanently redirects to `/consulting`.
+* Each service page covers capabilities, audience, problems, proposed solution, approach steps, use cases, deliverables, technologies, related **published** case studies, FAQ, related services, CTA, plus `Service` and `BreadcrumbList` JSON-LD. Copy describes approach and capabilities only, with no outcome claims.
+
+### Phase 4 — Industries
+* `/industries` (specialisations + other sectors that link to services, with no thin pages) and `/industries/real-estate` (challenges, potential solutions, approach, related services, related published case studies, FAQ, CTA). Other industries return 404 by design (`dynamicParams = false`).
+
+### Phase 5 — Case studies & admin
+* Public pages now use the repository. Drafts 404 publicly and are excluded from the sitemap. Generic achievements are no longer appended to every project; outcomes render only when `verified: true`.
+* **New draft:** `real-estate-conversational-ai`. Anonymised ("Real estate technology venture (confidential)"), role "Lead Platform Architect & Engineer", every capability marked **"Status to be confirmed"**, and a public-safe generic architecture. No names, URLs, prompts, screenshots or metrics.
+* Admin login loop fixed (R1): the guarded layout moved to the `app/admin/(dashboard)` route group (URLs unchanged); `app/admin/layout.tsx` is unauthenticated and `noindex`. `src/lib/authz.ts` adds `requireSession`/`requireAdmin`. Contact, quote and application pages now require the `ADMIN` role (R6).
+* Admin case studies page lists code and DB entries with source, status, verified-outcome count, and an authenticated **Preview** (`/admin/case-studies/preview/[slug]`). Dead links (`/admin/case-studies/new`, `/admin/jobs/new`, `/admin/settings`) removed (R5).
+* Fixed: the contact page "Upwork" link pointed to LinkedIn.
+
+**Verified locally:** every new route returns 200; the draft case study returns 404 publicly and is absent from the sitemap; the admin preview redirects to login when signed out and renders after login (local seeded test user); `/admin/login` renders (no loop); no horizontal overflow at 360/390/1024/1440; titles no longer repeat the brand; with JS disabled, 0 content elements are hidden; the desktop nav moved to ≥1280px after the logo wrapped at 1024px.
+
+---
+
+## Owner verification checklist
+
+Nothing below is rendered until confirmed. Flip the flag (or edit the copy) only with evidence you are comfortable publishing.
+
+| # | Item | Location | Current state |
+| --- | --- | --- | --- |
+| V1 | Stats "50+ Projects Delivered", "20+ Happy Clients" | `src/content/site.ts` `STATS` | `verified: false` (hidden) |
+| V2 | "5+ Years Experience" | `STATS` | shown — consistent with founder timeline; please confirm |
+| V3 | 4 homepage testimonials (named people/companies; avatar files never existed) | `TESTIMONIALS` | hidden — need real quotes + permission |
+| V4 | 3 consulting testimonials | `consulting/page.tsx` | hidden |
+| V5 | Daspire "40% faster page loads", "Redesigned" | `case-studies.ts` | hidden |
+| V6 | Cohere "10+ API integrations", "Scalable" | `case-studies.ts` | hidden |
+| V7 | Cazvid "Global", "Performance"; "world's largest" wording removed from summary | `case-studies.ts` | hidden |
+| V8 | AI Support Automation: whole project + "500+ emails/day", "70% tier-1", "6 hrs → 4 min" | `case-studies.ts` | **case study still published** with neutral summary; outcomes hidden. Confirm the project or unpublish. |
+| V9 | Real-estate case study: every capability status, the "Active engagement" status, client approval to publish an anonymised case study | `case-studies.ts` | `status: "draft"` |
+| V10 | About page: "reducing LCP by 40%" (eBrainX role) | `about/page.tsx` | still shown (career history) — please confirm |
+| V11 | Business terms in FAQ/pricing: NDA "always", 30-day bug-fix warranty, start "within 1–2 weeks", "proposal within 48 hours" | `site.ts`, `pricing`, `quote` | still shown — confirm they reflect current terms |
+| V12 | X/Twitter handles `@aiinfinitylabs`, `@usamaali` (previously hard-coded) | `SITE.xSite/xCreator` | removed until confirmed |
+| V13 | Seeded blog posts contain ROI/performance statements | database | **not modified** — review in admin |

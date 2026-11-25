@@ -1,239 +1,175 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, CheckCircle, Code2, Brain, Zap, Star, ChevronRight, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, ArrowUpRight, CheckCircle2, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { TrackedLink } from "@/components/analytics/tracked-link";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
-import { SERVICES, STATS, PORTFOLIO, TESTIMONIALS, TECH_STACK_BADGES, PROCESS_STEPS, SITE, FAQ_ITEMS, CLIENT_LOGOS } from "@/content/site";
+import { Section, SectionHeading } from "@/components/marketing/section";
+import { ServiceIconTile } from "@/components/marketing/service-icon";
+import { CaseStudyCard } from "@/components/marketing/case-study-card";
+import { FaqList } from "@/components/marketing/faq-list";
+import { CtaBanner } from "@/components/marketing/cta-banner";
+import { IllustrativeWorkflow } from "@/components/marketing/illustrative-workflow";
+import {
+  CREDENTIALS,
+  FAQ_ITEMS,
+  FOUNDER,
+  PROCESS_STEPS,
+  SITE,
+  VERIFIED_TESTIMONIALS,
+} from "@/content/site";
+import { SERVICES, serviceHref } from "@/content/services";
+import { INDUSTRIES } from "@/content/industries";
+import { PRIMARY_CTA, SECONDARY_CTA } from "@/content/navigation";
+import { getPublishedCaseStudies } from "@/lib/content/case-studies";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 300;
+
 export const metadata: Metadata = buildMetadata({
-  title: "AI Infinity Labs – AI Integration & Full Stack Development Agency",
-  description:
-    "We build cutting-edge AI integrations, agentic AI systems, RAG pipelines, and full-stack web applications that help businesses scale and automate intelligently. Based in Pakistan, serving global clients.",
+  title: "AI Infinity Labs – AI Product Engineering & Intelligent Automation",
+  description: SITE.description,
   keywords: [
-    "AI integration services",
-    "AI automation agency",
-    "agentic AI development company",
-    "full stack development company",
-    "React TypeScript development",
-    "Next.js agency",
-    "LLM integration",
-    "RAG system development",
-    "AI-powered web applications",
-    "custom software development Pakistan",
+    "AI product engineering",
+    "custom AI SaaS development",
+    "AI agent development",
+    "applied AI engineering",
+    "LLM integration services",
+    "intelligent workflow automation",
+    "conversational AI development",
   ],
   canonicalPath: "/",
-  ogImage: "/api/og?title=AI+Infinity+Labs&subtitle=Building+AI-Powered+Products+That+Matter",
 });
 
-const serviceIcons = { Code2, Brain, Zap };
+const PROBLEMS = [
+  {
+    problem: "Leads wait hours for a reply, and sales time goes to contacts who aren't ready.",
+    title: "Lead qualification",
+    solution: "AI-assisted capture, scoring and routing, with drafted first responses and automatic CRM updates.",
+    service: "ai-automation",
+  },
+  {
+    problem: "Support teams answer the same questions repeatedly while urgent requests queue up.",
+    title: "Customer support",
+    solution: "Assistants grounded in your knowledge base that triage, draft replies and escalate to people.",
+    service: "ai-agents",
+  },
+  {
+    problem: "Hours lost each week copying data between CRM, email, spreadsheets and internal tools.",
+    title: "Manual operations",
+    solution: "Workflow automation with validation, alerts and an exception queue for edge cases.",
+    service: "ai-automation",
+  },
+  {
+    problem: "Invoices, forms and contracts are read and re-keyed by hand before anything can happen.",
+    title: "Document processing",
+    solution: "Extraction into validated structured data, with low-confidence items routed for review.",
+    service: "ai-integrations",
+  },
+  {
+    problem: "A promising AI product idea with no clear path from prototype to production.",
+    title: "Building an AI SaaS product",
+    solution: "Feasibility, prototyping and MVP engineering on an architecture you can keep scaling.",
+    service: "ai-product-engineering",
+  },
+] as const;
 
-export default function HomePage() {
+const CAPABILITY_GROUPS = [
+  { title: "AI & LLMs", items: ["OpenAI", "Anthropic Claude", "Google Gemini", "LangChain", "LlamaIndex", "pgvector"] },
+  { title: "Agents & automation", items: ["OpenAI Agents SDK", "LangGraph", "PydanticAI", "Model Context Protocol", "n8n", "Make.com"] },
+  { title: "Product engineering", items: ["React", "Next.js", "TypeScript", "Node.js", "Python", "FastAPI"] },
+  { title: "Data & infrastructure", items: ["PostgreSQL", "Redis", "Prisma", "Docker", "Vercel", "AWS"] },
+] as const;
+
+export default async function HomePage() {
+  const caseStudies = await getPublishedCaseStudies();
+  const featured = caseStudies.filter((c) => c.featured).slice(0, 3);
+  const detailedIndustry = INDUSTRIES.find((i) => i.hasDetailPage);
+  const otherIndustries = INDUSTRIES.filter((i) => !i.hasDetailPage);
+
   return (
     <>
-      {/* ─── HERO ───────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface-bg)] via-[var(--surface-bg-subtle)] to-[var(--surface-bg)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.12),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(6,182,212,0.08),transparent_60%)]" />
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage:
-              "linear-gradient(var(--text-primary) 1px, transparent 1px), linear-gradient(90deg, var(--text-primary) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-
-        <div className="relative container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-28 lg:py-36">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left content */}
+      {/* ─── 1. HERO ────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden border-b border-[var(--surface-border)]">
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-[var(--surface-bg-subtle)] to-[var(--surface-bg)]" />
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.12),transparent_55%)]" />
+        <div className="relative container-page pt-14 pb-16 lg:pt-24 lg:pb-24">
+          <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-center">
             <div>
-              <FadeUp>
-                <Badge variant="gradient" className="mb-6 px-3 py-1 text-xs">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  AI-First Software Agency · Lahore, Pakistan
-                </Badge>
-              </FadeUp>
-
-              <FadeUp delay={0.1}>
-                <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)] mb-6">
-                  Building{" "}
-                  <span className="gradient-text">AI-Powered</span>{" "}
-                  Products That{" "}
-                  <span className="gradient-text">Matter</span>
-                </h1>
-              </FadeUp>
-
-              <FadeUp delay={0.2}>
-                <p className="text-lg text-[var(--text-secondary)] leading-relaxed mb-8 max-w-xl">
-                  We craft enterprise-grade AI integrations, agentic workflows, and full-stack web
-                  applications — using React, Next.js, Python, and cutting-edge LLM technology — that help
-                  businesses scale and automate intelligently.
-                </p>
-              </FadeUp>
-
-              <FadeUp delay={0.3}>
-                <div className="flex flex-wrap gap-3 mb-8">
-                  {["AI Integrations", "Agentic AI", "Full Stack Dev", "RAG Systems"].map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-4 py-1.5 rounded-full text-xs font-medium bg-[var(--surface-bg-muted)] text-[var(--text-secondary)] border border-[var(--surface-border)]"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </FadeUp>
-
-              <FadeUp delay={0.4}>
-                <div className="flex flex-wrap gap-4">
-                  <Button asChild variant="gradient" size="xl" className="group">
-                    <Link href="/quote">
-                      Request a Quote
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline" size="xl">
-                    <Link href="/case-studies">View Our Work</Link>
-                  </Button>
-                </div>
-              </FadeUp>
-
-              <FadeUp delay={0.5}>
-                <div className="mt-10 flex items-center gap-2 text-sm text-[var(--text-muted)]">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <Star key={n} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
-                  <span className="ml-1">
-                    Trusted by clients across 5+ countries on Upwork
-                  </span>
-                </div>
-              </FadeUp>
+              <Badge variant="gradient" className="mb-6">
+                {SITE.positioning}
+              </Badge>
+              <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)]">
+                Building <span className="gradient-text">AI-Powered</span> Products That Matter
+              </h1>
+              <p className="mt-6 text-lead text-[var(--text-secondary)] max-w-2xl">{SITE.description}</p>
+              <div className="mt-9 flex flex-col sm:flex-row gap-3">
+                <Button asChild variant="gradient" size="xl">
+                  <TrackedLink
+                    href={PRIMARY_CTA.href}
+                    eventName="cta_click"
+                    params={{ label: PRIMARY_CTA.label, location: "home_hero", destination: PRIMARY_CTA.href }}
+                  >
+                    {PRIMARY_CTA.label}
+                    <ArrowRight aria-hidden="true" className="w-5 h-5" />
+                  </TrackedLink>
+                </Button>
+                <Button asChild variant="outline" size="xl">
+                  <TrackedLink
+                    href={SECONDARY_CTA.href}
+                    eventName="cta_click"
+                    params={{ label: SECONDARY_CTA.label, location: "home_hero", destination: SECONDARY_CTA.href }}
+                  >
+                    {SECONDARY_CTA.label}
+                  </TrackedLink>
+                </Button>
+              </div>
+              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-meta text-[var(--text-secondary)]">
+                {["Founder-led, senior engineering", "From prototype to production", "Industry-agnostic"].map((item) => (
+                  <li key={item} className="flex items-center gap-2">
+                    <CheckCircle2 aria-hidden="true" className="w-4 h-4 text-[var(--text-brand)]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-
-            {/* Right — floating glass cards */}
-            <div className="hidden lg:block relative h-[520px]">
-              <FadeUp delay={0.2}>
-                <div className="absolute top-0 right-0 w-80 glass-card rounded-2xl p-6 glow">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center">
-                      <Brain className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--text-primary)]">AI Integration</p>
-                      <p className="text-xs text-[var(--text-muted)]">LLM · RAG · Agents</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    {["OpenAI GPT-4o integrated", "RAG pipeline live", "Vector DB connected"].map((item) => (
-                      <div key={item} className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
-                        <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </FadeUp>
-
-              <FadeUp delay={0.35}>
-                <div className="absolute top-52 left-0 w-72 glass-card rounded-2xl p-5">
-                  <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">
-                    Tech Stack
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {["React", "Next.js", "TypeScript", "Python", "OpenAI", "LangChain"].map((t) => (
-                      <span
-                        key={t}
-                        className="text-xs px-2.5 py-1 rounded-full bg-[var(--brand-primary)]/10 text-[var(--text-brand)] border border-[var(--brand-primary)]/20"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </FadeUp>
-
-              <FadeUp delay={0.5}>
-                <div className="absolute bottom-0 right-10 w-64 glass-card rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold text-[var(--text-primary)]">Project Delivery</p>
-                    <span className="text-xs text-green-500 font-medium">✓ On time</span>
-                  </div>
-                  <div className="w-full bg-[var(--surface-bg-muted)] rounded-full h-2 mb-2">
-                    <div className="bg-gradient-to-r from-indigo-500 to-cyan-500 h-2 rounded-full w-[92%]" />
-                  </div>
-                  <p className="text-xs text-[var(--text-muted)]">92% on-time delivery rate</p>
-                </div>
-              </FadeUp>
-            </div>
+            <FadeUp delay={0.1}>
+              <IllustrativeWorkflow />
+            </FadeUp>
           </div>
         </div>
       </section>
 
-      {/* ─── STATS BAR ──────────────────────────────────────────── */}
-      <section className="border-y border-[var(--surface-border)] bg-[var(--surface-bg-subtle)]">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-          <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {STATS.map((stat) => (
-              <StaggerItem key={stat.label} className="text-center">
-                <p className="text-4xl font-extrabold gradient-text mb-1">{stat.value}</p>
-                <p className="text-sm text-[var(--text-muted)]">{stat.label}</p>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      {/* ─── SERVICES BENTO ─────────────────────────────────────── */}
-      <section className="section-padding">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <Badge variant="gradient" className="mb-4">What We Do</Badge>
-              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
-                Services Built for the{" "}
-                <span className="gradient-text">AI Era</span>
-              </h2>
-              <p className="text-[var(--text-secondary)] text-lg">
-                From pixel-perfect frontends to production-grade AI systems — we deliver end-to-end
-                engineering excellence.
-              </p>
-            </div>
-          </FadeUp>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SERVICES.map((service) => {
-              const Icon = serviceIcons[service.icon as keyof typeof serviceIcons];
+      {/* ─── 2. CREDIBILITY ─────────────────────────────────────── */}
+      <section aria-labelledby="credibility-heading" className="border-b border-[var(--surface-border)] bg-[var(--surface-bg-subtle)]">
+        <div className="container-page py-10">
+          <h2 id="credibility-heading" className="sr-only">
+            Why teams work with us
+          </h2>
+          <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {CREDENTIALS.map((c) => {
+              const external = c.href.startsWith("http");
               return (
-                <StaggerItem key={service.slug}>
-                  <Link href={`/services/${service.slug}`} className="group block h-full">
-                    <div className="glass-card h-full rounded-2xl p-7 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                      <div className="w-12 h-12 rounded-xl bg-cta-gradient flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-md">
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:gradient-text transition-all">
-                        {service.title}
-                      </h3>
-                      <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-5">
-                        {service.description}
-                      </p>
-                      <div className="flex flex-wrap gap-1.5 mb-5">
-                        {service.techStack.slice(0, 4).map((tech) => (
-                          <Badge key={tech} variant="secondary" className="text-xs">
-                            {tech}
-                          </Badge>
-                        ))}
-                      </div>
-                      <div className="flex items-center gap-1 text-sm text-[var(--text-brand)] font-medium">
-                        Learn more <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </div>
-                  </Link>
+                <StaggerItem key={c.title}>
+                  <p className="font-semibold text-[var(--text-primary)]">{c.title}</p>
+                  <p className="mt-1 text-meta text-[var(--text-secondary)]">{c.description}</p>
+                  <TrackedLink
+                    href={c.href}
+                    target={external ? "_blank" : undefined}
+                    rel={external ? "noopener noreferrer" : undefined}
+                    eventName="cta_click"
+                    params={{ label: c.linkLabel, location: "home_credibility", destination: c.href }}
+                    className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-[var(--text-brand)] hover:underline"
+                  >
+                    {c.linkLabel}
+                    {external ? (
+                      <ArrowUpRight aria-hidden="true" className="w-3.5 h-3.5" />
+                    ) : (
+                      <ArrowRight aria-hidden="true" className="w-3.5 h-3.5" />
+                    )}
+                    {external && <span className="sr-only">(opens in a new tab)</span>}
+                  </TrackedLink>
                 </StaggerItem>
               );
             })}
@@ -241,279 +177,296 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── TECH STACK ─────────────────────────────────────────── */}
-      <section className="py-14 bg-[var(--surface-bg-subtle)] border-y border-[var(--surface-border)] overflow-hidden">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <p className="text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-8">
-              Technologies We Master
-            </p>
-          </FadeUp>
-          <div className="flex flex-wrap justify-center gap-3">
-            {TECH_STACK_BADGES.map((tech) => (
-              <span
-                key={tech}
-                className="px-5 py-2.5 rounded-full text-sm font-medium border border-[var(--surface-border)] bg-[var(--surface-card)] text-[var(--text-secondary)] hover:border-[var(--brand-primary)] hover:text-[var(--text-brand)] transition-colors cursor-default"
+      {/* ─── 3. FEATURED WORK ───────────────────────────────────── */}
+      {featured.length > 0 && (
+        <Section labelledBy="work-heading">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+            <SectionHeading
+              id="work-heading"
+              eyebrow="Featured work"
+              title="Engineering we've shipped"
+              description="Selected client platforms and systems. Each case study describes our role and the work itself."
+              align="left"
+              className="mb-0 lg:mb-0"
+            />
+            <Button asChild variant="outline" className="shrink-0">
+              <TrackedLink
+                href="/case-studies"
+                eventName="cta_click"
+                params={{ label: "All case studies", location: "home_work", destination: "/case-studies" }}
               >
-                {tech}
-              </span>
-            ))}
+                All case studies <ArrowRight aria-hidden="true" className="w-4 h-4" />
+              </TrackedLink>
+            </Button>
           </div>
-        </div>
-      </section>
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featured.map((study) => (
+              <StaggerItem key={study.slug}>
+                <CaseStudyCard study={study} location="home_featured" />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </Section>
+      )}
 
-      {/* ─── PORTFOLIO ──────────────────────────────────────────── */}
-      <section className="section-padding">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <div className="flex items-end justify-between mb-12 flex-wrap gap-4">
-              <div>
-                <Badge variant="gradient" className="mb-4">Case Studies</Badge>
-                <h2 className="text-heading-2 font-bold text-[var(--text-primary)]">
-                  Real Projects, <span className="gradient-text">Real Impact</span>
-                </h2>
+      {/* ─── 4. SERVICES ────────────────────────────────────────── */}
+      <Section muted labelledBy="services-heading">
+        <SectionHeading
+          id="services-heading"
+          eyebrow="What we do"
+          title={
+            <>
+              AI product engineering, <span className="gradient-text">end to end</span>
+            </>
+          }
+          description="Six connected service areas — so the strategy, the AI and the software around it are designed by the same team."
+        />
+        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {SERVICES.map((service) => (
+            <StaggerItem key={service.slug}>
+              <TrackedLink
+                href={serviceHref(service)}
+                eventName="service_card_click"
+                params={{ slug: service.slug, location: "home_services" }}
+                className="group flex flex-col h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-7 hover:border-[var(--brand-primary)]/40 hover:shadow-lg transition-[border-color,box-shadow]"
+              >
+                <ServiceIconTile name={service.icon} />
+                <h3 className="mt-5 text-xl font-bold text-[var(--text-primary)] group-hover:text-[var(--text-brand)] transition-colors">
+                  {service.title}
+                </h3>
+                <p className="mt-3 text-meta text-[var(--text-secondary)] flex-1">{service.description}</p>
+                <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-[var(--text-brand)]">
+                  Explore {service.shortTitle}
+                  <ArrowRight aria-hidden="true" className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+              </TrackedLink>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
+      </Section>
+
+      {/* ─── 5. PROBLEMS → SOLUTIONS ────────────────────────────── */}
+      <Section labelledBy="problems-heading">
+        <SectionHeading
+          id="problems-heading"
+          eyebrow="Business problems we solve"
+          title="Start from the problem, not the model"
+          description="The most valuable AI work usually removes a specific bottleneck. These are the ones we're asked about most."
+        />
+        <StaggerContainer className="grid lg:grid-cols-2 gap-5 max-w-6xl mx-auto">
+          {PROBLEMS.map((p) => {
+            const service = SERVICES.find((s) => s.slug === p.service);
+            return (
+              <StaggerItem key={p.title} className="h-full">
+                <article className="h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6">
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">{p.title}</h3>
+                  <dl className="mt-3 space-y-3 text-meta">
+                    <div>
+                      <dt className="font-medium text-[var(--text-muted)]">The problem</dt>
+                      <dd className="text-[var(--text-secondary)]">{p.problem}</dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-[var(--text-muted)]">How we approach it</dt>
+                      <dd className="text-[var(--text-primary)]">{p.solution}</dd>
+                    </div>
+                  </dl>
+                  {service && (
+                    <TrackedLink
+                      href={serviceHref(service)}
+                      eventName="service_card_click"
+                      params={{ slug: service.slug, location: "home_problems" }}
+                      className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-[var(--text-brand)] hover:underline"
+                    >
+                      {service.title} <ArrowRight aria-hidden="true" className="w-3.5 h-3.5" />
+                    </TrackedLink>
+                  )}
+                </article>
+              </StaggerItem>
+            );
+          })}
+        </StaggerContainer>
+      </Section>
+
+      {/* ─── 6. INDUSTRIES ──────────────────────────────────────── */}
+      <Section muted labelledBy="industries-heading">
+        <SectionHeading
+          id="industries-heading"
+          eyebrow="Industries"
+          title="Industry-agnostic engineering, with real specialisation"
+          description="The patterns behind AI products and automation transfer across sectors. Real estate and PropTech is where we have hands-on conversational AI experience."
+        />
+        <div className="grid lg:grid-cols-[1.2fr_1fr] gap-6 max-w-6xl mx-auto">
+          {detailedIndustry && (
+            <FadeUp className="h-full">
+              <TrackedLink
+                href={`/industries/${detailedIndustry.slug}`}
+                eventName="industry_card_click"
+                params={{ slug: detailedIndustry.slug, location: "home_industries" }}
+                className="group flex flex-col h-full rounded-2xl border border-[var(--brand-primary)]/30 bg-[var(--surface-card)] p-8 hover:shadow-lg transition-shadow"
+              >
+                <Badge variant="default" className="w-fit mb-4">Specialisation</Badge>
+                <h3 className="text-heading-3 font-bold text-[var(--text-primary)]">{detailedIndustry.name}</h3>
+                <p className="mt-3 text-[var(--text-secondary)] flex-1">{detailedIndustry.shortDescription}</p>
+                <span className="mt-6 inline-flex items-center gap-1 font-medium text-[var(--text-brand)]">
+                  Explore real estate AI
+                  <ArrowRight aria-hidden="true" className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+              </TrackedLink>
+            </FadeUp>
+          )}
+          <StaggerContainer className="grid gap-4">
+            {otherIndustries.map((industry) => (
+              <StaggerItem key={industry.slug}>
+                <div className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-5">
+                  <h3 className="font-semibold text-[var(--text-primary)]">{industry.name}</h3>
+                  <p className="mt-1 text-meta text-[var(--text-secondary)]">{industry.shortDescription}</p>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </Section>
+
+      {/* ─── 7. PROCESS ─────────────────────────────────────────── */}
+      <Section labelledBy="process-heading">
+        <SectionHeading
+          id="process-heading"
+          eyebrow="How we deliver"
+          title="An engineering process built to reduce risk early"
+          description="We validate the hardest assumptions first, then build in short, visible iterations."
+        />
+        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          {PROCESS_STEPS.map((step) => (
+            <StaggerItem key={step.step}>
+              <div className="h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6">
+                <span className="font-mono text-sm font-semibold text-[var(--text-brand)]">{step.step}</span>
+                <h3 className="mt-2 font-semibold text-[var(--text-primary)]">{step.title}</h3>
+                <p className="mt-2 text-meta text-[var(--text-secondary)]">{step.description}</p>
               </div>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
+      </Section>
+
+      {/* ─── 8. TECHNICAL CAPABILITIES ──────────────────────────── */}
+      <Section muted labelledBy="capabilities-heading">
+        <SectionHeading
+          id="capabilities-heading"
+          eyebrow="Technical capabilities"
+          title="Proven tools, chosen for the problem"
+          description="We're model- and vendor-agnostic, and choose the simplest stack that meets your quality, cost and compliance needs."
+        />
+        <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {CAPABILITY_GROUPS.map((group) => (
+            <StaggerItem key={group.title}>
+              <div className="h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6">
+                <h3 className="font-semibold text-[var(--text-primary)] mb-4">{group.title}</h3>
+                <ul className="flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <li key={item}>
+                      <Badge variant="secondary">{item}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
+      </Section>
+
+      {/* ─── 9. TESTIMONIALS (verified only) ────────────────────── */}
+      {VERIFIED_TESTIMONIALS.length > 0 && (
+        <Section labelledBy="testimonials-heading">
+          <SectionHeading id="testimonials-heading" eyebrow="Client feedback" title="What clients say" />
+          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {VERIFIED_TESTIMONIALS.map((t) => (
+              <StaggerItem key={t.id}>
+                <figure className="h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-7">
+                  <Quote aria-hidden="true" className="w-6 h-6 text-[var(--text-brand)] mb-4" />
+                  <blockquote className="text-[var(--text-secondary)]">&ldquo;{t.quote}&rdquo;</blockquote>
+                  <figcaption className="mt-5 text-meta">
+                    <span className="font-semibold text-[var(--text-primary)]">{t.author}</span>
+                    <span className="text-[var(--text-muted)]">
+                      {" "}
+                      — {t.title}, {t.company}
+                    </span>
+                  </figcaption>
+                </figure>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </Section>
+      )}
+
+      {/* ─── 10. FOUNDER ────────────────────────────────────────── */}
+      <Section labelledBy="founder-heading">
+        <div className="grid md:grid-cols-[auto_1fr] gap-10 lg:gap-14 items-center max-w-5xl mx-auto">
+          <FadeUp>
+            <div className="w-48 h-60 sm:w-56 sm:h-72 rounded-2xl overflow-hidden border border-[var(--surface-border)] shadow-md mx-auto">
+              <Image
+                src={FOUNDER.avatar}
+                alt={`Portrait of ${FOUNDER.name}`}
+                width={224}
+                height={288}
+                sizes="(min-width: 640px) 224px, 192px"
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+          </FadeUp>
+          <FadeUp delay={0.1}>
+            <Badge variant="gradient" className="mb-4">Who you&apos;ll work with</Badge>
+            <h2 id="founder-heading" className="text-heading-2 font-bold text-[var(--text-primary)]">
+              {FOUNDER.name}
+            </h2>
+            <p className="mt-1 font-medium text-[var(--text-brand)]">{FOUNDER.title}</p>
+            <p className="mt-5 text-[var(--text-secondary)]">{FOUNDER.bio}</p>
+            <p className="mt-4 text-[var(--text-secondary)]">
+              Every engagement is led by a senior engineer, from the first discovery conversation to production.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild variant="outline">
-                <Link href="/case-studies">
-                  View All Work <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
+                <TrackedLink href="/about" eventName="cta_click" params={{ label: "About us", location: "home_founder", destination: "/about" }}>
+                  About AI Infinity Labs
+                </TrackedLink>
+              </Button>
+              <Button asChild variant="ghost">
+                <TrackedLink
+                  href={FOUNDER.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  eventName="social_click"
+                  params={{ label: "LinkedIn", location: "home_founder", destination: FOUNDER.linkedin }}
+                >
+                  LinkedIn <ArrowUpRight aria-hidden="true" className="w-4 h-4" />
+                  <span className="sr-only">(opens in a new tab)</span>
+                </TrackedLink>
               </Button>
             </div>
           </FadeUp>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {PORTFOLIO.filter((p) => p.featured).map((project) => (
-              <StaggerItem key={project.slug}>
-                <Card className="group h-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40">
-                  {/* Cover placeholder */}
-                  <div className="h-48 bg-gradient-to-br from-[var(--brand-gradient-start)]/20 to-[var(--brand-gradient-end)]/20 flex items-center justify-center border-b border-[var(--surface-border)]">
-                    <span className="text-2xl font-bold gradient-text">{project.title[0]}</span>
-                  </div>
-                  <CardContent className="p-6">
-                    <Badge variant="secondary" className="mb-3 text-xs">{project.industry}</Badge>
-                    <h3 className="font-bold text-lg text-[var(--text-primary)] mb-2 group-hover:gradient-text transition-all">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.techStack.map((t) => (
-                        <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
-                      ))}
-                    </div>
-                    <Link
-                      href={`/case-studies/${project.slug}`}
-                      className="inline-flex items-center gap-1 text-sm font-medium text-[var(--text-brand)] hover:underline"
-                    >
-                      Read case study <ChevronRight className="w-3.5 h-3.5" />
-                    </Link>
-                  </CardContent>
-                </Card>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
         </div>
-      </section>
+      </Section>
 
-      {/* ─── PROCESS ────────────────────────────────────────────── */}
-      <section className="section-padding bg-[var(--surface-bg-subtle)] border-y border-[var(--surface-border)]">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <Badge variant="gradient" className="mb-4">Our Process</Badge>
-              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
-                How We <span className="gradient-text">Work</span>
-              </h2>
-              <p className="text-[var(--text-secondary)] text-lg">
-                A structured, agile-driven process that keeps you informed at every step.
-              </p>
-            </div>
-          </FadeUp>
-
-          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {PROCESS_STEPS.map((step) => (
-              <StaggerItem key={step.step}>
-                <div className="text-center lg:text-left">
-                  <div className="w-12 h-12 rounded-full bg-cta-gradient flex items-center justify-center text-white font-bold text-sm mb-4 mx-auto lg:mx-0 shadow-md">
-                    {step.step}
-                  </div>
-                  <h3 className="font-semibold text-[var(--text-primary)] mb-2">{step.title}</h3>
-                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{step.description}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
+      {/* ─── 11. FAQ ────────────────────────────────────────────── */}
+      <Section muted labelledBy="faq-heading">
+        <div className="max-w-3xl mx-auto">
+          <SectionHeading id="faq-heading" eyebrow="FAQ" title="Questions we're often asked" />
+          <FaqList items={FAQ_ITEMS} />
+          <p className="mt-8 text-center text-[var(--text-secondary)]">
+            Something else?{" "}
+            <TrackedLink
+              href="/contact"
+              eventName="cta_click"
+              params={{ label: "Ask us directly", location: "home_faq", destination: "/contact" }}
+              className="font-medium text-[var(--text-brand)] hover:underline"
+            >
+              Ask us directly
+            </TrackedLink>
+          </p>
         </div>
-      </section>
+      </Section>
 
-      {/* ─── TESTIMONIALS ───────────────────────────────────────── */}
-      <section className="section-padding">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <Badge variant="gradient" className="mb-4">Testimonials</Badge>
-              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
-                What Clients <span className="gradient-text">Say</span>
-              </h2>
-            </div>
-          </FadeUp>
-
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t) => (
-              <StaggerItem key={t.id}>
-                <div className="glass-card rounded-2xl p-7 h-full border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/30 hover:shadow-lg transition-all">
-                  <div className="flex gap-0.5 mb-4">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <Star key={n} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-6 italic">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                      {t.author[0]}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm text-[var(--text-primary)]">{t.author}</p>
-                      <p className="text-xs text-[var(--text-muted)]">
-                        {t.title}, {t.company}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      {/* ─── CLIENT LOGO STRIP ──────────────────────────────────── */}
-      <section className="py-12 bg-[var(--surface-bg-subtle)] border-y border-[var(--surface-border)]">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <p className="text-center text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-8">
-              Trusted by teams at
-            </p>
-          </FadeUp>
-          <FadeUp delay={0.1}>
-            <div className="flex flex-wrap items-center justify-center gap-8 lg:gap-16">
-              {CLIENT_LOGOS.map((logo) => (
-                <a
-                  key={logo.name}
-                  href={logo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex flex-col items-center gap-1.5"
-                  aria-label={logo.name}
-                >
-                  <span className="text-xl font-extrabold text-[var(--text-muted)] group-hover:text-[var(--text-brand)] transition-colors tracking-tight">
-                    {logo.name}
-                  </span>
-                  <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-                    {logo.industry}
-                  </span>
-                </a>
-              ))}
-              <div className="flex flex-col items-center gap-1.5">
-                <span className="text-xl font-extrabold text-[var(--text-muted)] tracking-tight">
-                  + More
-                </span>
-                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">
-                  Global clients
-                </span>
-              </div>
-            </div>
-          </FadeUp>
-        </div>
-      </section>
-
-      {/* ─── FAQ ────────────────────────────────────────────────── */}
-      <section className="section-padding">
-        <div className="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <div className="text-center mb-12">
-              <Badge variant="gradient" className="mb-4">FAQ</Badge>
-              <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-4">
-                Questions We Get <span className="gradient-text">All the Time</span>
-              </h2>
-              <p className="text-[var(--text-secondary)]">
-                Straight answers — no sales fluff.
-              </p>
-            </div>
-          </FadeUp>
-          <StaggerContainer className="space-y-3">
-            {FAQ_ITEMS.map((faq) => (
-              <StaggerItem key={faq.question}>
-                <details className="group glass-card rounded-xl border border-[var(--surface-border)] overflow-hidden">
-                  <summary className="flex items-center justify-between gap-4 p-5 cursor-pointer list-none select-none hover:bg-[var(--surface-bg-muted)]/50 transition-colors">
-                    <span className="font-semibold text-[var(--text-primary)] text-sm leading-snug">
-                      {faq.question}
-                    </span>
-                    <ChevronRight className="w-4 h-4 text-[var(--text-muted)] shrink-0 transition-transform duration-200 group-open:rotate-90" />
-                  </summary>
-                  <div className="px-5 pb-5 pt-0">
-                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </details>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-          <FadeUp>
-            <p className="text-center text-sm text-[var(--text-muted)] mt-8">
-              More questions?{" "}
-              <Link href="/contact" className="text-[var(--text-brand)] hover:underline font-medium">
-                Just ask us directly →
-              </Link>
-            </p>
-          </FadeUp>
-        </div>
-      </section>
-
-      {/* ─── CTA BANNER ─────────────────────────────────────────── */}
-      <section className="section-padding">
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeUp>
-            <div className="relative rounded-3xl overflow-hidden bg-cta-gradient p-12 lg:p-20 text-center shadow-2xl glow">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.1),transparent_70%)]" />
-              <div className="relative">
-                <Badge className="mb-6 bg-white/20 text-white border-white/30">
-                  Let&apos;s Build Together
-                </Badge>
-                <h2 className="text-heading-2 font-extrabold text-white mb-6">
-                  Have an AI or software project in mind?
-                </h2>
-                <p className="text-white/80 text-lg mb-10 max-w-2xl mx-auto">
-                  Whether it&apos;s a full-stack web app, an LLM integration, or an autonomous AI workflow —
-                  let&apos;s talk about what we can build together.
-                </p>
-                <div className="flex flex-wrap gap-4 justify-center">
-                  <Button
-                    asChild
-                    size="xl"
-                    className="bg-white text-[var(--text-brand)] font-bold hover:bg-white/90 shadow-lg"
-                  >
-                    <Link href="/quote">
-                      Request a Quote <ArrowRight className="w-5 h-5 ml-2" />
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="xl"
-                    variant="outline"
-                    className="border-white/50 text-white hover:bg-white/10 hover:border-white"
-                  >
-                    <Link href="/contact">Contact Us</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </FadeUp>
-        </div>
-      </section>
+      {/* ─── 12. FINAL CTA ──────────────────────────────────────── */}
+      <CtaBanner location="home_final" />
     </>
   );
 }

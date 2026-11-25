@@ -163,8 +163,8 @@ export function Header() {
         mobileOpen
           ? "bg-[var(--surface-bg)] border-b border-[var(--surface-border)] shadow-md py-3"
           : scrolled
-            ? "glass-card border-b border-[var(--surface-border)] shadow-md py-3"
-            : "bg-transparent py-4 lg:py-5"
+            ? "header-surface border-b border-[var(--surface-border)] shadow-sm py-3"
+            : "bg-transparent py-4 xl:py-5"
       )}
     >
       <nav aria-label="Main" className="container-page">
@@ -176,11 +176,11 @@ export function Header() {
             params={{ label: SITE.name, location: "header_logo", destination: "/" }}
           >
             <BrandMark />
-            <span className="font-bold text-lg text-[var(--text-primary)]">{SITE.name}</span>
+            <span className="font-bold text-lg text-[var(--text-primary)] whitespace-nowrap">{SITE.name}</span>
           </TrackedLink>
 
           {/* Desktop navigation */}
-          <ul className="hidden lg:flex items-center gap-0.5">
+          <ul className="hidden xl:flex items-center gap-0.5">
             {HEADER_NAV.map((item) => (
               <li key={item.label}>
                 {isNavGroup(item) ? (
@@ -200,7 +200,7 @@ export function Header() {
             ))}
           </ul>
 
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden xl:flex items-center gap-2">
             <ThemeToggle />
             <Button asChild variant="gradient">
               <TrackedLink
@@ -214,7 +214,7 @@ export function Header() {
           </div>
 
           {/* Mobile controls */}
-          <div className="flex lg:hidden items-center gap-1">
+          <div className="flex xl:hidden items-center gap-1">
             <ThemeToggle />
             <Button
               ref={menuButtonRef}
@@ -235,7 +235,7 @@ export function Header() {
       <div
         id="mobile-menu"
         hidden={!mobileOpen}
-        className="lg:hidden border-t border-[var(--surface-border)] mt-3 max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain"
+        className="xl:hidden border-t border-[var(--surface-border)] mt-3 max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain"
       >
         <div className="container-page py-4 flex flex-col gap-5">
           {HEADER_NAV.map((item) =>

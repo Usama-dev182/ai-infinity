@@ -1,8 +1,10 @@
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/authz";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 
 export default async function CareerSubmissionsPage() {
+  await requireAdmin();
   const applications = await db.careerApplication.findMany({
     orderBy: { createdAt: "desc" },
     include: { job: { select: { title: true } } },

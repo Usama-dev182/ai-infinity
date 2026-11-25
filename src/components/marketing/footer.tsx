@@ -1,7 +1,8 @@
 import { Code2, PlayCircle, ExternalLink, Mail, MessageCircle, MapPin, Phone } from "lucide-react";
 import { TrackedAnchor } from "@/components/analytics/tracked-anchor";
 import { TrackedLink } from "@/components/analytics/tracked-link";
-import { SITE, SERVICES } from "@/content/site";
+import { SITE } from "@/content/site";
+import { SERVICES, serviceHref } from "@/content/services";
 import { FOOTER_LINKS } from "@/content/navigation";
 import { BrandMark } from "@/components/marketing/brand-logo";
 import { Separator } from "@/components/ui/separator";
@@ -36,8 +37,7 @@ export function Footer() {
               <span className="font-bold text-lg text-[var(--text-primary)]">{SITE.name}</span>
             </TrackedLink>
             <p className="text-[var(--text-secondary)] text-sm max-w-xs leading-relaxed mb-6">
-              Building AI-powered products that matter — from enterprise-grade full-stack applications to
-              cutting-edge LLM integrations and agentic AI systems.
+              {SITE.positioning}. {SITE.description}
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map(({ icon: Icon, href, label }) => (
@@ -66,7 +66,7 @@ export function Footer() {
               {SERVICES.map((s) => (
                 <li key={s.slug}>
                   <TrackedLink
-                    href={`/services/${s.slug}`}
+                    href={serviceHref(s)}
                     eventName="service_card_click"
                     params={{ slug: s.slug, location: "footer_services" }}
                     className="text-sm text-[var(--text-secondary)] hover:text-[var(--text-brand)] transition-colors"

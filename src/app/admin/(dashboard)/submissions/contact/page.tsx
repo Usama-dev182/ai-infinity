@@ -1,8 +1,10 @@
 import { db } from "@/lib/db";
+import { requireAdmin } from "@/lib/authz";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 
 export default async function ContactSubmissionsPage() {
+  await requireAdmin();
   const submissions = await db.contactSubmission.findMany({
     orderBy: { createdAt: "desc" },
   });

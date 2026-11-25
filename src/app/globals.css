@@ -225,6 +225,13 @@ p { text-wrap: pretty; }
   border: 1px solid var(--glass-border);
 }
 
+/* Sticky header surface — near-opaque so content scrolling underneath never competes with nav text */
+.header-surface {
+  background-color: color-mix(in srgb, var(--surface-bg) 95%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+
 /* Glow effect */
 .glow {
   box-shadow: var(--shadow-glow);
@@ -292,7 +299,7 @@ p { text-wrap: pretty; }
 .reveal-stagger > *:nth-child(5) { transition-delay: 0.32s; }
 .reveal-stagger > *:nth-child(n + 6) { transition-delay: 0.4s; }
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion: reduce), print {
   .reveal.reveal-pending,
   .reveal-stagger.reveal-pending > * {
     opacity: 1;

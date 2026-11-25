@@ -1,5 +1,8 @@
 // Site navigation — single source for header (desktop + mobile) and footer.
 
+import { SERVICES, serviceHref } from "@/content/services";
+import { INDUSTRY_PAGES } from "@/content/industries";
+
 export interface NavLink {
   label: string;
   href: string;
@@ -25,9 +28,16 @@ export const HEADER_NAV: NavEntry[] = [
     label: "Services",
     href: "/services",
     children: [
-      { label: "All Services", href: "/services", description: "AI product engineering, agents, automation" },
-      { label: "AI Consulting", href: "/consulting", description: "Strategy, architecture and prototyping" },
-      { label: "Pricing", href: "/pricing", description: "Engagement models" },
+      { label: "All services", href: "/services", description: "Overview of how we can help" },
+      ...SERVICES.map((s) => ({ label: s.title, href: serviceHref(s) })),
+    ],
+  },
+  {
+    label: "Industries",
+    href: "/industries",
+    children: [
+      ...INDUSTRY_PAGES.map((i) => ({ label: i.name, href: `/industries/${i.slug}`, description: i.shortDescription })),
+      { label: "All industries", href: "/industries", description: "Sectors we work with" },
     ],
   },
   {
@@ -44,6 +54,7 @@ export const HEADER_NAV: NavEntry[] = [
       { label: "Tech Talks", href: "/tech-talks", description: "Video series on YouTube" },
     ],
   },
+  { label: "Pricing", href: "/pricing" },
   {
     label: "Company",
     children: [
@@ -57,6 +68,7 @@ export const HEADER_NAV: NavEntry[] = [
 /** Flat list used by the footer "Company" column. */
 export const FOOTER_LINKS: NavLink[] = [
   { label: "Services", href: "/services" },
+  { label: "Industries", href: "/industries" },
   { label: "Case Studies", href: "/case-studies" },
   { label: "Consulting", href: "/consulting" },
   { label: "Pricing", href: "/pricing" },

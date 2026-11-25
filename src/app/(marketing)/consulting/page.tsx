@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { TrackedAnchor } from "@/components/analytics/tracked-anchor";
-import { FOUNDER, SITE, STATS } from "@/content/site";
+import { FOUNDER, SITE, VERIFIED_STATS } from "@/content/site";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -231,24 +231,28 @@ const processSteps = [
   },
 ];
 
-const testimonials = [
+// Unverified: hidden until the owner confirms each quote is real and approved for publication.
+const testimonials: { quote: string; author: string; company: string; verified: boolean }[] = [
   {
     quote:
       "Usama helped us go from a vague 'add AI' brief to a concrete RAG architecture shipped in 3 weeks. Genuinely one of the sharpest AI engineers I've worked with.",
     author: "Product Lead",
     company: "B2B SaaS, London",
+    verified: false,
   },
   {
     quote:
       "The architecture review alone saved us from a six-figure mistake. The feedback was direct, actionable, and immediately applicable.",
     author: "CTO",
     company: "FinTech Startup",
+    verified: false,
   },
   {
     quote:
       "Best investment we made all quarter. Our team went from 'AI-curious' to shipping agents in under a month after Usama's workshop.",
     author: "Engineering Manager",
     company: "E-commerce Platform",
+    verified: false,
   },
 ];
 
@@ -355,18 +359,13 @@ export default function ConsultingPage() {
                   <div>
                     <p className="font-bold text-[var(--text-primary)] text-lg">{FOUNDER.name}</p>
                     <p className="text-sm text-[var(--text-muted)]">{FOUNDER.title}</p>
-                    <div className="flex items-center gap-0.5 mt-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
                   </div>
                 </div>
                 <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-6">
                   {FOUNDER.bio}
                 </p>
                 <div className="grid grid-cols-2 gap-3">
-                  {STATS.map((s) => (
+                  {VERIFIED_STATS.map((s) => (
                     <div
                       key={s.label}
                       className="bg-[var(--surface-bg-muted)] rounded-xl p-4 text-center border border-[var(--surface-border)]"
@@ -388,8 +387,7 @@ export default function ConsultingPage() {
           <div className="flex flex-wrap items-center justify-center gap-8 text-sm text-[var(--text-muted)]">
             {[
               "⚡ Rapid turnaround",
-              "🏆 20+ happy clients",
-              "🌍 UK · US · EU · MENA",
+              "🌍 Remote, international clients",
               "🔒 NDA-friendly",
               "📅 Flexible scheduling",
             ].map((item) => (
@@ -579,7 +577,8 @@ export default function ConsultingPage() {
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ───────────────────────────────────────── */}
+      {/* ─── TESTIMONIALS (verified only) ───────────────────────── */}
+      {testimonials.some((t) => t.verified) && (
       <section className="section-padding bg-[var(--surface-bg-subtle)]">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeUp>
@@ -592,7 +591,7 @@ export default function ConsultingPage() {
           </FadeUp>
 
           <StaggerContainer className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t) => (
+            {testimonials.filter((t) => t.verified).map((t) => (
               <StaggerItem key={t.author}>
                 <div className="glass-card rounded-2xl border border-[var(--surface-border)] p-7 h-full hover:border-[var(--brand-primary)]/30 transition-all flex flex-col">
                   <div className="flex items-center gap-0.5 mb-5">
@@ -613,6 +612,7 @@ export default function ConsultingPage() {
           </StaggerContainer>
         </div>
       </section>
+      )}
 
       {/* ─── BOTTOM CTA ─────────────────────────────────────────── */}
       <section className="section-padding">
