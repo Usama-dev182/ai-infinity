@@ -309,7 +309,61 @@ Branched from `main` after PR #4 was merged. Owner answers received on 2026-11-2
 
 ### 5. Performance (mobile)
 
-DEFERRED_ADVISOR_PLACEHOLDER
+Measured with Lighthouse 13.6 (mobile, system Chrome, local `next start` and a local DB), using
+**alternating A/B runs** (baseline, candidate, baseline, …) so machine drift affects both sides
+equally. This machine's speed varies a lot (Lighthouse benchmark index 330–700 across the session),
+so absolute numbers move between sessions; compare within a table. Runs use Lighthouse's default 4×
+CPU slowdown and a 1.2× slowdown calibrated for this machine; the default over-penalises this
+hardware relative to Lighthouse's reference device.
+
+**a) Batched reveal animations + deferred Google Analytics** (commit `ac35dc9`):
+- **Reveals:** one IntersectionObserver for the whole page. It classifies elements without forcing
+  layout and only writes classes inside the observer callback. Style and layout work dropped 46%.
+- **GA:** `gtag.js` loads with `lazyOnload`; events queue in a standard `dataLayer` stub until then.
+
+| Homepage, mobile | Score (median) | TBT (median) |
+| --- | --- | --- |
+| Before, 4× | 70.5 | 2,786 ms |
+| After, 4× | 71 | 2,433 ms |
+| Before, 1.2× (two sessions) | 90 / 96 | 413 / 240 ms |
+| After, 1.2× (two sessions) | 97 / 99 | 201 / 148 ms |
+
+**b) Deferred homepage AI Solution Advisor** (`DeferredAdvisor`):
+- The advisor is still server-rendered: markup in the HTML, no layout shift, visible without
+  JavaScript.
+- Its code is behind `React.lazy` + `Suspense`, and the lazy import resolves only when the advisor
+  comes within 800 px of the viewport. Until then React keeps the server HTML in place (selective
+  hydration), so the advisor's script and hydration work leave the initial load.
+- Initial JavaScript is 245.7 → 241.2 KB gz.
+- The tool page `/tools/ai-solution-advisor` still loads it immediately.
+- An E2E test checks the advisor is not hydrated before scrolling, then works after.
+
+| Homepage, mobile, 5 alternating pairs | Score (median) | TBT median (range) | LCP | CLS |
+| --- | --- | --- | --- | --- |
+| Baseline, 4× | 76 | 1,242 ms (1,014–1,351) | 1.16 s | 0 |
+| Deferred advisor, 4× | 77 | 1,126 ms (1,111–1,274) | 1.14 s | 0 |
+| Baseline, 1.2× | 96 | 243 ms (66–1,028) | 0.94 s | 0 |
+| Deferred advisor, 1.2× | 98 | 150 ms (60–304) | 0.94 s | 0 |
+
+The gain is small (about 100 ms TBT) but consistent in direction, with no regressions, so it was kept.
+
+**Evaluated and not kept:** per-section `Suspense` boundaries showed no measurable benefit.
+
+**Where the remaining cost is:** framework and React runtime start-up dominates mobile TBT. A
+near-empty page (`/terms`) scores 74–77 at 4× on this machine, so the homepage is close to that floor.
+- **Target:** 90+ is reached at the calibrated 1.2× setting (97–99). At Lighthouse's default 4×
+  slowdown on this hardware it is not; reaching it would mean removing content or interactivity,
+  which the brief ruled out.
+- **Next options**, if field data (Vercel Speed Insights / CrUX INP) shows a need:
+  - trim homepage sections: 1,012 DOM elements; the React Server Component payload is about half
+    the HTML;
+  - reduce the 76 inline SVG icons.
+
+*Process note:* one A/B round was discarded after the candidate build was found to include the real
+GA ID; the local `.env.local` had been picked up. Only the corrected round is reported above. That
+round sent about 12 `localhost` page views to the production GA property, and its build read published
+content from the production database during static generation (read-only; no writes are reachable
+from build-time code). Local builds now always export the test environment first.
 
 ### 6. Production readiness
 
@@ -332,14 +386,40 @@ DEFERRED_ADVISOR_PLACEHOLDER
     password, build, `next start`, the full Playwright suite (system Chrome), and traces uploaded on failure;
   - no third-party keys, so graceful degradation is tested too.
 
-QA_RESULTS_PLACEHOLDER
+Final run on 2026-11-26, against a **fresh** database created the way CI does it (`prisma db push`
++ seed in the local test container), with no OpenAI, Upstash, GA or real Resend keys:
+
+| Check | Result |
+| --- | --- |
+| `npm run lint` | **0 errors**, 1 pre-existing warning (`BlogPostForm` `watch()`) |
+| `npm run typecheck` | Pass |
+| `npm test` | **46/46 pass** (was 37) |
+| `npm run build` | Pass, 57 routes |
+| `npm run test:e2e` (system Chrome, `next start`) | **41/41 pass**, none skipped (was 39) |
+
+New E2E tests cover two things:
+- the social → case study → service → contact → admin lead journey;
+- the deferred homepage advisor: server-rendered, hydrates on scroll, works.
+
+Accessibility:
+- axe (WCAG 2.0–2.2 A/AA) shows **0 violations** on the 10 key public pages in light and dark,
+  including the redesigned case study and the service pages with share links.
+- The draft preview: 0 violations in light and dark.
+- `/admin/campaign-links`: one `link-in-text-block` issue was found and fixed (the inline link is
+  now underlined).
+- **Keyboard:** the share and copy controls are reachable, show a 2 px focus outline, Enter copies
+  the tagged URL, and "Link copied" is announced through a live region.
+
+Screenshots at 390, 768 and 1440 px in light and dark (draft preview, `/case-studies`, a case
+study, a service page, the homepage) showed no horizontal overflow and no broken images. They were
+not committed.
 
 ---
 
 ## Known issues & limitations
 
 1. **Live LLM path not exercised.** The local `OPENAI_API_KEY` is a placeholder (401). The success path was verified against a mock OpenAI-compatible server, and failure → fallback was verified for real. Test on a preview deployment.
-2. **Mobile lab TBT ≈ 2.3 s** (same as baseline). See the Phase 10 recommendations.
+2. **Mobile lab TBT at Lighthouse's default 4× slowdown** is still dominated by framework start-up (homepage 76–77 vs about 75 for a near-empty page on this machine). At the calibrated 1.2× setting the homepage scores 97–99. See [final enhancements §5](#5-performance-mobile).
 3. **One residual high advisory chain** (`prisma` CLI → `@prisma/config` → `effect`, build tooling only). `sharp` is resolved; see the follow-up section.
 4. **In-memory rate limiting is per instance.** Keep Upstash configured in production. Without proxy headers (`x-real-ip`/`x-forwarded-for`), all clients share one bucket — fine on Vercel; check if self-hosting.
 5. **Leads view** paginates 50 per page, up to page 100 (5,000 leads per filter). Beyond that, narrow the filters; switch to cursor paging if volumes grow that large.
