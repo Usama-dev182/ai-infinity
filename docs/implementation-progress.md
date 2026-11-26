@@ -1,4 +1,4 @@
-# Implementation Progress — `feature/ai-product-engineering-growth`
+# Implementation Progress — `feature/ai-product-engineering-growth` and `feature/final-enhancements`
 
 Plan: [`website-enhancement-plan.md`](./website-enhancement-plan.md). This file is updated at the end of each phase.
 
@@ -19,6 +19,7 @@ Plan: [`website-enhancement-plan.md`](./website-enhancement-plan.md). This file 
 | 10. Security & performance | Done (1 residual advisory documented) |
 | 11. QA | Done — 37 unit + 39 E2E tests passing |
 | Follow-up | Done — unused dependencies removed, `sharp` advisory resolved, leads pagination |
+| Final enhancements (`feature/final-enhancements`) | Done, **not merged**: real-estate case study (draft, awaiting approval), case study visuals, social and credibility fixes, campaign links, performance, CI, deployment checklist. See the [final enhancements](#final-enhancements--featurefinal-enhancements) section |
 
 ## Phase 0 — Audit & plan
 
@@ -215,6 +216,126 @@ Screenshots: before/after at 360, 390, 768, 1024 and 1440 px (light; dark at 390
 
 ---
 
+## Final enhancements — `feature/final-enhancements`
+
+Branched from `main` after PR #4 was merged. Owner answers received on 2026-11-25:
+- All four capability groups of the real-estate platform are implemented. (The "in progress"
+  answer listed the same four groups; this is treated as "implemented, under active development"
+  and still needs confirming.)
+- Daspire, Cohere and Cazvid were the founder's freelance contracts.
+- The AI Customer Support Automation case study is real and stays.
+
+### 1. Real-estate conversational AI case study (draft)
+
+* The existing `real-estate-conversational-ai` entry was enriched in place; there is no duplicate.
+  It is framed as an intelligent conversational AI **platform**, with the role Lead Platform Architect & Engineer.
+* Sections:
+  - business challenge;
+  - product vision;
+  - engineering contribution (11 items);
+  - 11 capabilities, grouped Core platform / Accounts & data / AI & continuity / Handoff & scale;
+  - an illustrative architecture (actors, 4 layers, 3 key flows);
+  - architectural considerations;
+  - intended business benefits, labelled as goals, not measured results;
+  - current status and lessons learned.
+* **Confidentiality:**
+  - No client name, URLs, prompts, internal diagrams or screenshots, and no ROI.
+  - The client's own intelligence and learning approach is explicitly attributed to the client and not described.
+  - `techStack` stays empty until the owner confirms it.
+  - A unit test fails if any URL appears in the case study copy.
+* **Still `status: "draft"`, `featured: false`.** A unit test simulates the approved state and proves
+  the entry would appear on the homepage "Featured work", `/case-studies`, `/industries/real-estate`
+  and its service pages. A second test keeps every draft out of public selections. Publication steps
+  are in [`deployment-checklist.md`](./deployment-checklist.md#13-publishing-the-real-estate-case-study-only-after-explicit-owner-approval).
+
+### 2. Case study visuals
+
+* **Covers:**
+  - original SVG illustrations (1200×675, brand indigo/cyan/purple on navy, no text, no client
+    material) for all five case studies, plus a branded fallback (`public/images/case-studies/`);
+  - `CaseStudyCover` gives a fixed 16:9 frame (no layout shift), lazy `next/image` (`preload` only
+    for the article hero) and a gradient background if an image fails;
+  - covers are decorative (empty alt) in cards and described in articles.
+* **Cards:**
+  - cover, industry badge, project type, engagement line ("Founder's freelance project");
+  - consistent height;
+  - `case_study_card_click` unchanged.
+* **Article:**
+  - hero with cover and fact strip (client, role, engagement, industry);
+  - capabilities grouped by status (only non-empty groups render);
+  - `ArchitectureDiagram`, which is HTML rather than an image: real text, theme-aware, reflows on
+    phones, labelled "Illustrative", with a caption;
+  - considerations, intended benefits;
+  - a contextual CTA (`/contact?topic=case-study&service=…&industry=…`) plus the advisor;
+  - share links.
+* **Checked:**
+  - Screenshots at 390, 768 and 1440 px in light and dark: no horizontal overflow, no broken images.
+  - CLS 0.0001 on `/case-studies` while covers load.
+  - The draft preview passes axe with 0 violations in light and dark.
+
+### 3. Credibility and social profiles
+
+* Each social profile URL was checked before linking, and the result is recorded in `SOCIAL_PROFILES` (`src/content/site.ts`):
+  - **GitHub:** verified.
+  - **LinkedIn:** "Profile Not Found". Hidden.
+  - **YouTube:** 404. Hidden; Tech Talks says videos are on the way.
+  - **X:** no account. Hidden.
+  - **Upwork:** blocks automated checks (403), so it is unconfirmed. Kept.
+
+  Hidden profiles are removed from the header and footer, contact, about, the homepage founder
+  block and the Organization `sameAs`. A unit test enforces this.
+* Daspire, Cohere and Cazvid are labelled as the founder's freelance work, with softened summaries.
+  The founder bio and eBrainX role descriptions were toned down.
+
+### 4. Social distribution and lead attribution
+
+* `src/lib/campaign.ts`:
+  - `campaignUrl` and `campaignKey` (`case-study-<slug>`, `service-<slug>`, …);
+  - values always pass the attribution capture's allowed pattern (unit-tested round trip, including the server schema).
+* Share links (LinkedIn, X, copy link) on case study and service pages:
+  - shared URLs carry `utm_medium=share&utm_source=<network>&utm_campaign=<page>`;
+  - a new `share_click` event;
+  - the copy button confirms through a live region.
+* **Admin → Campaign links** (`/admin/campaign-links`): ready-to-copy UTM links for LinkedIn, X,
+  YouTube and Upwork for every published case study, service, industry page and tool.
+* New lead entry points, `case-study` and `service-page`, show in the leads dashboard. No schema
+  change: `entryPoint` is a text column.
+* **Journey verified end to end (E2E, local DB):**
+  1. A LinkedIn campaign link lands on a case study.
+  2. The visitor follows the related service, then the service CTA.
+  3. They submit the contact form.
+  4. The lead appears in Admin → Leads with source `linkedin`, `social / case-study-daspire-platform`,
+     the landing page and entry point "Service page".
+
+### 5. Performance (mobile)
+
+DEFERRED_ADVISOR_PLACEHOLDER
+
+### 6. Production readiness
+
+* `prisma/sql/20261125_lead_pipeline.sql` was tested on a throwaway local database:
+  - starting from the pre-migration schema with an existing lead, it was applied **twice**;
+  - the second run was a no-op;
+  - the existing row kept its data and got `stage = NEW`;
+  - `prisma migrate diff` against `schema.prisma` reported **"No difference detected."**
+* New [`deployment-checklist.md`](./deployment-checklist.md): Neon branch backup, preview and apply
+  the migration, an env var table (what breaks without each one), admin password rotation, Upstash,
+  OpenAI, Resend, booking URL, GA, Search Console, the post-deploy smoke test, rollback, privacy and
+  consent decisions, and the steps to publish the real-estate case study.
+* **Nothing was run against production.** No migration, deploy, push or merge was performed.
+
+### 7. CI and QA
+
+* New `.github/workflows/ci.yml`, on pull requests and pushes to `main`:
+  - **checks** job: lint, typecheck, unit tests;
+  - **e2e** job: a throwaway Postgres 16 service, `prisma db push`, seed with a CI-only admin
+    password, build, `next start`, the full Playwright suite (system Chrome), and traces uploaded on failure;
+  - no third-party keys, so graceful degradation is tested too.
+
+QA_RESULTS_PLACEHOLDER
+
+---
+
 ## Known issues & limitations
 
 1. **Live LLM path not exercised.** The local `OPENAI_API_KEY` is a placeholder (401). The success path was verified against a mock OpenAI-compatible server, and failure → fallback was verified for real. Test on a preview deployment.
@@ -223,7 +344,7 @@ Screenshots: before/after at 360, 390, 768, 1024 and 1440 px (light; dark at 390
 4. **In-memory rate limiting is per instance.** Keep Upstash configured in production. Without proxy headers (`x-real-ip`/`x-forwarded-for`), all clients share one bucket — fine on Vercel; check if self-hosting.
 5. **Leads view** paginates 50 per page, up to page 100 (5,000 leads per filter). Beyond that, narrow the filters; switch to cursor paging if volumes grow that large.
 6. **DB case study editor** (`/admin/case-studies/new`) does not exist. Code-managed case studies are the primary path; DB rows are still merged and rendered if created.
-7. **Consent banner** not implemented (GA runs without a prior opt-in). Owner/legal decision.
+7. **Consent banner** not implemented (GA runs without a prior opt-in). Owner/legal decision; options are in [`deployment-checklist.md` §12](./deployment-checklist.md#12-privacy-and-consent-owner-and-legal-decisions).
 8. **OG image font** is the renderer's default regular weight (bundling Geist would add a font fetch per image).
 9. Unused dependencies have been removed (see the follow-up section). `@radix-ui/react-separator`, `react-slot` and `react-toast` are still used and were kept.
 10. **Process note:** an owner commit `e43c170` ("all changes") was made and pushed mid-session; it contains the Phase 7 code. History was not rewritten.
@@ -236,7 +357,9 @@ Screenshots: before/after at 360, 390, 768, 1024 and 1440 px (light; dark at 390
 | **P0** | Confirm the production admin password is not the old seed default (the old seed fell back to a hard-coded password when `ADMIN_PASSWORD` was unset). Rotate if unsure with `ADMIN_PASSWORD='<new password>' npm run admin:set-password`, which changes only that user's password. **Do not re-run `npm run db:seed` against production:** it rewrites the seeded blog posts. It now refuses non-local databases unless `SEED_ALLOW_REMOTE=1`. |
 | **P0** | Review the deployment on a **Vercel preview** (Next 16.4.6 + next-auth beta.32 upgrades): sign in, submit a test lead, run the advisor with the real key. |
 | P1 | Work through the **Owner verification checklist** below (claims, testimonials, stats, case study outcomes). |
-| P1 | Real-estate case study: confirm each capability status, the anonymised wording and client permission, then set `status: "published"`. |
+| P1 | Real-estate case study: approve publication. Confirm client permission and the anonymised wording, confirm whether any capability is still *in progress* (the answers listed all four groups as both implemented and in progress), and give the confirmed tech stack. Steps: [`deployment-checklist.md` §13](./deployment-checklist.md#13-publishing-the-real-estate-case-study-only-after-explicit-owner-approval). |
+| P1 | Social profiles: send the correct LinkedIn and YouTube URLs (the current ones return "Profile Not Found" and 404), an X handle if any, and confirm the Upwork URL. Update `SOCIAL_PROFILES` in `src/content/site.ts`, and links reappear automatically. |
+| P1 | Production: set a working `OPENAI_API_KEY` in Vercel. The live advisor currently returns scripted fallback replies. |
 | P1 | Privacy policy changes — legal review; decide on a consent banner. |
 | P2 | Set `NEXT_PUBLIC_BOOKING_URL` if you use Cal.com/Calendly. Confirm X handles if you want `twitter:site`. Mark `generate_lead` as a GA4 key event. |
 

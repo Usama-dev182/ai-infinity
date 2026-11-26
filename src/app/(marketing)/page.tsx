@@ -11,7 +11,7 @@ import { CaseStudyCard } from "@/components/marketing/case-study-card";
 import { FaqList } from "@/components/marketing/faq-list";
 import { CtaBanner } from "@/components/marketing/cta-banner";
 import { IllustrativeWorkflow } from "@/components/marketing/illustrative-workflow";
-import { AiSolutionAdvisor } from "@/components/marketing/ai-solution-advisor";
+import { DeferredAdvisor } from "@/components/marketing/deferred-advisor";
 import {
   CREDENTIALS,
   FAQ_ITEMS,
@@ -340,7 +340,7 @@ export default async function HomePage() {
             </TrackedLink>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <AiSolutionAdvisor location="home_advisor" />
+            <DeferredAdvisor location="home_advisor" />
           </FadeUp>
         </div>
       </Section>
