@@ -89,9 +89,15 @@ function NavDropdown({ group, pathname }: { group: NavGroup; pathname: string })
 
       <div
         id={panelId}
+        // Visibility is only transitioned when closing (so the panel fades out before hiding).
+        // When opening it must switch immediately: a visibility transition keeps the panel hidden
+        // for its first frame, and links in a hidden panel can't take focus, so a fast Tab after
+        // Enter would skip the menu and close it.
         className={cn(
-          "absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 transition-[opacity,transform,visibility] duration-150",
-          open ? "visible opacity-100 translate-y-0" : "invisible opacity-0 translate-y-1"
+          "absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50 duration-150",
+          open
+            ? "visible opacity-100 translate-y-0 transition-[opacity,transform]"
+            : "invisible opacity-0 translate-y-1 transition-[opacity,transform,visibility]"
         )}
       >
         <ul className="min-w-[240px] rounded-xl border border-[var(--surface-border)] bg-[var(--surface-card)] shadow-xl p-1.5">
