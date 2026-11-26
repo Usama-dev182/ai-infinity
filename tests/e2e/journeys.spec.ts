@@ -278,8 +278,10 @@ test("keyboard navigation: skip link, dropdown with Escape", async ({ page }) =>
   await work.focus();
   await page.keyboard.press("Enter");
   await expect(work).toHaveAttribute("aria-expanded", "true");
+  // Tab straight away: the panel must be focusable on the frame it opens (no visibility transition).
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("link", { name: /Case Studies/ }).first()).toBeFocused();
+  // Scope to the header so the footer's "Case Studies" link can't match.
+  await expect(page.getByRole("banner").getByRole("link", { name: /Case Studies/ })).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(work).toHaveAttribute("aria-expanded", "false");
   await expect(work).toBeFocused();
