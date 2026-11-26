@@ -286,6 +286,16 @@ Branched from `main` after PR #4 was merged. Owner answers received on 2026-11-2
   block and the Organization `sameAs`. A unit test enforces this.
 * Daspire, Cohere and Cazvid are labelled as the founder's freelance work, with softened summaries.
   The founder bio and eBrainX role descriptions were toned down.
+* **The founder's core frontend expertise** is highlighted from one list (`FRONTEND_EXPERTISE` in
+  `src/content/site.ts`). The skills, as provided by the owner: React, Next.js, Vue.js, TypeScript,
+  Redux, Zustand, React Query, Tailwind CSS and MUI. It appears in:
+  - a grouped "Core expertise" panel on `/about`;
+  - a compact row in the homepage founder block;
+  - the Full-Stack Engineering service's tools (now described as frontend-first);
+  - the founder's `knowsAbout` in Organization JSON-LD.
+
+  A unit test keeps all four consistent, and `/about` was added to the axe checks (0 violations,
+  light and dark).
 
 ### 4. Social distribution and lead attribution
 

@@ -6,7 +6,7 @@ import { CASE_STUDIES } from "@/content/case-studies";
 import { SERVICES, getService } from "@/content/services";
 import { INDUSTRIES } from "@/content/industries";
 import { HEADER_NAV, FOOTER_LINKS, isNavGroup } from "@/content/navigation";
-import { STATS, TESTIMONIALS, VERIFIED_STATS, VERIFIED_TESTIMONIALS } from "@/content/site";
+import { FOUNDER, STATS, TESTIMONIALS, VERIFIED_STATS, VERIFIED_TESTIMONIALS } from "@/content/site";
 import {
   caseStudiesForIndustry,
   caseStudiesForService,
@@ -18,7 +18,7 @@ import {
   verifiedOutcomes,
   type DbCaseStudyRow,
 } from "@/lib/content/case-study-model";
-import { ogImageUrl, resolveTitle, stripBrandSuffix } from "@/lib/seo";
+import { ogImageUrl, organizationJsonLd, resolveTitle, stripBrandSuffix } from "@/lib/seo";
 
 const dbRow: DbCaseStudyRow = {
   slug: "db-study",
@@ -165,4 +165,17 @@ test("titles never repeat the brand and OG URLs are bounded", () => {
   const url = new URL(ogImageUrl({ title: "t".repeat(500), description: "d".repeat(500) }), "https://x.test");
   assert.ok((url.searchParams.get("title") ?? "").length <= 110);
   assert.ok((url.searchParams.get("description") ?? "").length <= 180);
+});
+
+test("the founder's core frontend expertise is shown consistently", () => {
+  const core = ["React", "Next.js", "TypeScript", "Redux", "Zustand", "React Query", "Vue.js", "Tailwind CSS", "MUI"];
+  const listed = FOUNDER.expertise.flatMap((g) => g.items);
+  for (const skill of core) assert.ok(listed.includes(skill), `founder expertise lists ${skill}`);
+  assert.equal(new Set(listed).size, listed.length, "no duplicates");
+  // The Full-Stack Engineering service offers the same stack.
+  const fullStack = SERVICES.find((s) => s.slug === "full-stack-development")!;
+  for (const skill of core) assert.ok(fullStack.techStack.includes(skill), `full-stack service lists ${skill}`);
+  // Structured data says the same thing to search engines.
+  const founder = (organizationJsonLd() as { founder: { knowsAbout: string[] } }).founder;
+  assert.deepEqual(founder.knowsAbout, listed);
 });

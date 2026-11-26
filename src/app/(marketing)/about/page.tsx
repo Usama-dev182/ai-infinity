@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
 import { FOUNDER, SITE, VERIFIED_STATS } from "@/content/site";
+import { FounderExpertise } from "@/components/marketing/founder-expertise";
 import { SERVICES, serviceHref } from "@/content/services";
 import { buildMetadata } from "@/lib/seo";
 
@@ -110,8 +111,9 @@ export default function AboutPage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
-              <div className="relative">
-                <div className="w-72 h-96 rounded-2xl bg-cta-gradient p-0.5 mx-auto lg:mx-0">
+              {/* w-fit: the "Available" tag is positioned against the photo, not the whole column. */}
+              <div className="relative w-fit mx-auto lg:mx-0">
+                <div className="w-72 h-96 rounded-2xl bg-cta-gradient p-0.5">
                   <div className="w-full h-full rounded-2xl bg-[var(--surface-bg)] overflow-hidden">
                     <Image
                       src={FOUNDER.avatar}
@@ -136,7 +138,8 @@ export default function AboutPage() {
                 <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-2">{FOUNDER.name}</h2>
                 <p className="text-[var(--text-brand)] font-semibold mb-5">{FOUNDER.title}</p>
                 <p className="text-[var(--text-secondary)] leading-relaxed mb-6 text-lg">{FOUNDER.bio}</p>
-                <div className="flex items-center gap-3">
+                <FounderExpertise className="mb-6" />
+                <div className="flex flex-wrap items-center gap-3">
                   {FOUNDER.github && (
                     <Button asChild variant="outline" size="sm">
                       <Link href={FOUNDER.github} target="_blank" rel="noopener noreferrer">

@@ -383,7 +383,7 @@ export const SERVICES: Service[] = [
     icon: "Code2",
     tagline: "The product foundation your AI features run on",
     description:
-      "We build modern web applications and SaaS platforms with React, Next.js, TypeScript, Node.js and Python — secure, tested and ready to scale with your AI roadmap.",
+      "We build modern web applications and SaaS platforms, frontend-first: React, Next.js and Vue.js with TypeScript, backed by Node.js and Python — secure, tested and ready to scale with your AI roadmap.",
     metaTitle: "Full-Stack Engineering (React, Next.js, TypeScript, Node.js, Python)",
     metaDescription:
       "Full-stack engineering for SaaS and web applications: React and Next.js, TypeScript, Node.js and Python/FastAPI, PostgreSQL, multi-tenant architecture, auth and cloud deployment.",
@@ -439,7 +439,7 @@ export const SERVICES: Service[] = [
       { title: "Verify", description: "Automated tests, accessibility and performance checks." },
       { title: "Ship", description: "Automated deployment, monitoring and handover." },
     ],
-    techStack: ["React", "Next.js", "TypeScript", "Node.js", "Python", "FastAPI", "Django", "PostgreSQL", "Prisma", "Redis", "Tailwind CSS", "Vercel", "AWS", "Docker"],
+    techStack: ["React", "Next.js", "Vue.js", "TypeScript", "Redux", "Zustand", "React Query", "Tailwind CSS", "MUI", "Node.js", "Python", "FastAPI", "Django", "PostgreSQL", "Prisma", "Redis", "Vercel", "AWS", "Docker"],
     faqs: [
       {
         question: "Do you work on existing codebases?",

@@ -81,13 +81,27 @@ export const SITE = {
   bookingUrl: process.env.NEXT_PUBLIC_BOOKING_URL || undefined,
 };
 
+export interface ExpertiseGroup {
+  label: string;
+  items: string[];
+}
+
+/** The founder's core expertise (owner-provided). Shown on /about, the homepage and in structured data. */
+export const FRONTEND_EXPERTISE: ExpertiseGroup[] = [
+  { label: "Frameworks", items: ["React", "Next.js", "Vue.js"] },
+  { label: "Language", items: ["TypeScript"] },
+  { label: "State & data", items: ["Redux", "Zustand", "React Query"] },
+  { label: "UI & styling", items: ["Tailwind CSS", "MUI"] },
+];
+
 export const FOUNDER = {
   name: "Usama Ali",
   title: "Founder & Lead Engineer",
-  bio: "Senior software engineer with 5+ years building frontends, full-stack applications and AI integrations. Previously Senior Full Stack Engineer at eBrainX Solutions and Software Engineer at Techling Pvt, with freelance engineering for SaaS products alongside.",
+  bio: "Senior software engineer specialising in frontend engineering with React, Next.js and TypeScript, with 5+ years building frontends, full-stack applications and AI integrations. Previously Senior Full Stack Engineer at eBrainX Solutions and Software Engineer at Techling Pvt, with freelance engineering for SaaS products alongside.",
   avatar: "/images/usama-ali.jpg",
   github: socialUrl("github"),
   linkedin: socialUrl("linkedin"),
+  expertise: FRONTEND_EXPERTISE,
 };
 
 export interface StatItem {

@@ -12,6 +12,7 @@ import { FaqList } from "@/components/marketing/faq-list";
 import { CtaBanner } from "@/components/marketing/cta-banner";
 import { IllustrativeWorkflow } from "@/components/marketing/illustrative-workflow";
 import { DeferredAdvisor } from "@/components/marketing/deferred-advisor";
+import { FounderExpertise } from "@/components/marketing/founder-expertise";
 import {
   CREDENTIALS,
   FAQ_ITEMS,
@@ -478,7 +479,8 @@ export default async function HomePage() {
             </h2>
             <p className="mt-1 font-medium text-[var(--text-brand)]">{FOUNDER.title}</p>
             <p className="mt-5 text-[var(--text-secondary)]">{FOUNDER.bio}</p>
-            <p className="mt-4 text-[var(--text-secondary)]">
+            <FounderExpertise variant="compact" className="mt-5" />
+            <p className="mt-5 text-[var(--text-secondary)]">
               Every engagement is led by a senior engineer, from the first discovery conversation to production.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">

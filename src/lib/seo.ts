@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl } from "./utils";
-import { SITE } from "@/content/site";
+import { FOUNDER, SITE } from "@/content/site";
 
 const BRAND = SITE.name;
 
@@ -83,7 +83,13 @@ export function organizationJsonLd() {
     logo: absoluteUrl("/images/logo.png"),
     slogan: SITE.tagline,
     description: SITE.description,
-    founder: { "@type": "Person", name: "Usama Ali", url: absoluteUrl("/about") },
+    founder: {
+      "@type": "Person",
+      name: FOUNDER.name,
+      jobTitle: FOUNDER.title,
+      url: absoluteUrl("/about"),
+      knowsAbout: FOUNDER.expertise.flatMap((g) => g.items),
+    },
     sameAs: [SITE.linkedin, SITE.github, SITE.upwork, SITE.youtube].filter((u): u is string => Boolean(u)),
     contactPoint: {
       "@type": "ContactPoint",
@@ -98,6 +104,7 @@ export function organizationJsonLd() {
       "Retrieval-augmented generation",
       "Business process automation",
       "Full-stack web development",
+      "Frontend engineering",
     ],
   };
 }
