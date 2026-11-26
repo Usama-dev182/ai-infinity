@@ -153,7 +153,7 @@ curl -s https://aiinfinitylabs.com/api/ai/demo -H 'content-type: application/jso
 ## 10. Post-deploy smoke test (production)
 
 - [ ] These return 200 and render correctly on a phone and on desktop:
-      `/`, `/case-studies`, `/case-studies/daspire-platform`, `/services/ai-agents`, `/industries/real-estate`,
+      `/`, `/case-studies`, `/case-studies/daspire-platform`, `/services/ai-agents`, `/services/frontend-engineering`, `/industries/real-estate`,
       `/tools/ai-solution-advisor`, `/tools/ai-roi-calculator`, `/contact`, `/quote`.
 - [ ] `/case-studies/real-estate-conversational-ai` returns **404** (draft) until publication is approved.
 - [ ] `/sitemap.xml` lists the published case studies and not the draft.

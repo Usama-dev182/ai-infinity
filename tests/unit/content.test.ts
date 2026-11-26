@@ -179,3 +179,17 @@ test("the founder's core frontend expertise is shown consistently", () => {
   const founder = (organizationJsonLd() as { founder: { knowsAbout: string[] } }).founder;
   assert.deepEqual(founder.knowsAbout, listed);
 });
+
+test("Frontend Engineering service: own page, founder's stack, related freelance work", () => {
+  const fe = SERVICES.find((s) => s.slug === "frontend-engineering");
+  assert.ok(fe && !fe.href, "has its own /services/frontend-engineering page");
+  for (const skill of FOUNDER.expertise.flatMap((g) => g.items)) assert.ok(fe.techStack.includes(skill), skill);
+  const published = CASE_STUDIES.filter(isPublished);
+  const related = caseStudiesForService(published, "frontend-engineering").map((c) => c.slug);
+  for (const slug of ["daspire-platform", "cohere-saas", "cazvid-job-board"]) assert.ok(related.includes(slug), slug);
+});
+
+test("the verified 'Service Areas' stat matches the catalogue", () => {
+  const stat = STATS.find((s) => s.label === "Service Areas")!;
+  assert.equal(stat.value, String(SERVICES.length));
+});

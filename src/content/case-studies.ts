@@ -305,7 +305,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     cover: { src: "/images/case-studies/daspire-platform.svg", alt: "Illustration of an analytics dashboard" },
     status: "published",
     featured: true,
-    services: ["full-stack-development"],
+    services: ["frontend-engineering", "full-stack-development"],
     techStack: ["React", "TypeScript", "Node.js"],
     outcomes: [
       { label: "Performance", value: "40%", description: "faster page loads", verified: false },
@@ -326,7 +326,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     cover: { src: "/images/case-studies/cohere-saas.svg", alt: "Illustration of a video collaboration workspace" },
     status: "published",
     featured: true,
-    services: ["full-stack-development"],
+    services: ["frontend-engineering", "full-stack-development"],
     techStack: ["React", "TypeScript", "Redux"],
     outcomes: [
       { label: "Architecture", value: "Scalable", description: "feature-based component system", verified: false },
@@ -347,7 +347,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     cover: { src: "/images/case-studies/cazvid-job-board.svg", alt: "Illustration of video resume cards on a job board" },
     status: "published",
     featured: true,
-    services: ["full-stack-development"],
+    services: ["frontend-engineering", "full-stack-development"],
     techStack: ["React", "TypeScript", "REST APIs"],
     outcomes: [
       { label: "Users", value: "Global", description: "international user base", verified: false },

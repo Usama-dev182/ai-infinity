@@ -296,6 +296,22 @@ Branched from `main` after PR #4 was merged. Owner answers received on 2026-11-2
 
   A unit test keeps all four consistent, and `/about` was added to the axe checks (0 violations,
   light and dark).
+* **New service page: Frontend Engineering** (`/services/frontend-engineering`). It covers
+  capabilities, audience, problems, approach, the founder's stack and four FAQs (React vs Vue.js;
+  Redux vs Zustand vs React Query; speeding up an existing app; working with designers and
+  backend teams). The copy describes capabilities only, with no outcome claims.
+  - Daspire, Cohere and Cazvid (frontend freelance work) now list it first, so they appear as its
+    related work and their contact links pre-fill it.
+  - The SaaS & Startups industry links to it.
+  - Navigation, footer, `/services`, the homepage, `/about`, the sitemap, the contact form and
+    campaign links pick it up from the catalogue.
+  - The "Service Areas" stat is now 7, and a unit test keeps it equal to the catalogue size.
+  - "Six connected service areas" copy is now generated from the catalogue.
+  - Service grids centre an incomplete last row.
+  - Tests:
+    - unit: the page exists, it lists the founder's stack, and the freelance case studies are related;
+    - E2E: listing → page → related work → pre-filled CTA;
+    - axe: 0 violations, light and dark.
 
 ### 4. Social distribution and lead attribution
 

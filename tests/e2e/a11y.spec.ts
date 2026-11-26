@@ -8,6 +8,7 @@ const PAGES = [
   "/about",
   "/services",
   "/services/ai-agents",
+  "/services/frontend-engineering",
   "/industries/real-estate",
   "/case-studies",
   "/case-studies/daspire-platform",

@@ -115,7 +115,8 @@ export const STATS: StatItem[] = [
   { value: "5+", label: "Years Experience", verified: true },
   { value: "50+", label: "Projects Delivered", verified: false },
   { value: "20+", label: "Happy Clients", verified: false },
-  { value: "6", label: "Service Areas", verified: true },
+  // Must equal SERVICES.length (unit-tested; site.ts can't import services, it ships to the client).
+  { value: "7", label: "Service Areas", verified: true },
 ];
 
 export const VERIFIED_STATS = STATS.filter((s) => s.verified);

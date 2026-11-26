@@ -24,6 +24,23 @@ test("homepage → service page → consultation CTA carries the service", async
   expect((await events(page, "service_view")).map((e) => e.params.service)).toContain("ai-agents");
 });
 
+test("services listing → Frontend Engineering page with related work and a pre-filled CTA", async ({ page }) => {
+  await page.goto("/services");
+  await ready(page);
+  await page.getByRole("main").getByRole("link", { name: "Explore Frontend" }).click();
+  await expect(page).toHaveURL(/\/services\/frontend-engineering$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Frontend Engineering");
+  for (const tool of ["React", "Next.js", "Vue.js", "TypeScript", "Redux", "Zustand", "React Query", "Tailwind CSS", "MUI"]) {
+    await expect(page.getByRole("main").getByText(tool, { exact: true }).first()).toBeVisible();
+  }
+  await expect(page.getByRole("link", { name: /Daspire/ }).first()).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: /Discuss Your Project/ }).first()).toHaveAttribute(
+    "href",
+    "/contact?service=frontend-engineering&topic=service-page"
+  );
+  expect((await events(page, "service_view")).map((e) => e.params.service)).toContain("frontend-engineering");
+});
+
 test("homepage → case study; generic achievements and unverified outcomes are not shown", async ({ page }) => {
   await page.goto("/");
   await ready(page);

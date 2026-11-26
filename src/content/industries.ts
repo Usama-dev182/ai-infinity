@@ -120,7 +120,7 @@ export const INDUSTRIES: Industry[] = [
     name: "SaaS & Startups",
     shortDescription: "AI product engineering for founders and product teams, from prototype to production SaaS.",
     hasDetailPage: false,
-    relatedServices: ["ai-product-engineering", "full-stack-development"],
+    relatedServices: ["ai-product-engineering", "frontend-engineering", "full-stack-development"],
   },
   {
     slug: "ecommerce",
