@@ -5,8 +5,10 @@ import { ready } from "./helpers";
 // WCAG 2.x A/AA automated checks (axe-core) in both colour schemes.
 const PAGES = [
   "/",
+  "/about",
   "/services",
   "/services/ai-agents",
+  "/services/frontend-engineering",
   "/industries/real-estate",
   "/case-studies",
   "/case-studies/daspire-platform",

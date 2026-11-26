@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/animation";
 import { FOUNDER, SITE, VERIFIED_STATS } from "@/content/site";
-import { SERVICES, serviceHref } from "@/content/services";
+import { FounderExpertise } from "@/components/marketing/founder-expertise";
+import { SERVICE_AREAS_LABEL, SERVICES, serviceHref } from "@/content/services";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -110,8 +111,9 @@ export default function AboutPage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <FadeUp>
-              <div className="relative">
-                <div className="w-72 h-96 rounded-2xl bg-cta-gradient p-0.5 mx-auto lg:mx-0">
+              {/* w-fit: the "Available" tag is positioned against the photo, not the whole column. */}
+              <div className="relative w-fit mx-auto lg:mx-0">
+                <div className="w-72 h-96 rounded-2xl bg-cta-gradient p-0.5">
                   <div className="w-full h-full rounded-2xl bg-[var(--surface-bg)] overflow-hidden">
                     <Image
                       src={FOUNDER.avatar}
@@ -136,7 +138,8 @@ export default function AboutPage() {
                 <h2 className="text-heading-2 font-bold text-[var(--text-primary)] mb-2">{FOUNDER.name}</h2>
                 <p className="text-[var(--text-brand)] font-semibold mb-5">{FOUNDER.title}</p>
                 <p className="text-[var(--text-secondary)] leading-relaxed mb-6 text-lg">{FOUNDER.bio}</p>
-                <div className="flex items-center gap-3">
+                <FounderExpertise className="mb-6" />
+                <div className="flex flex-wrap items-center gap-3">
                   {FOUNDER.github && (
                     <Button asChild variant="outline" size="sm">
                       <Link href={FOUNDER.github} target="_blank" rel="noopener noreferrer">
@@ -227,14 +230,14 @@ export default function AboutPage() {
                 What we build
               </h2>
               <p className="text-[var(--text-secondary)] max-w-xl mx-auto">
-                Six connected service areas, from AI strategy to production software.
+                {SERVICE_AREAS_LABEL}, from AI strategy to production software.
               </p>
             </div>
           </FadeUp>
-          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <StaggerContainer className="flex flex-wrap justify-center gap-6 mb-12">
             {SERVICES.map((s) => (
-              <StaggerItem key={s.slug}>
-                <Link href={serviceHref(s)} className="group block glass-card rounded-xl p-6 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 transition-all">
+              <StaggerItem key={s.slug} className="w-full md:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]">
+                <Link href={serviceHref(s)} className="group block h-full glass-card rounded-xl p-6 border border-[var(--surface-border)] hover:border-[var(--brand-primary)]/40 transition-all">
                   <h3 className="font-semibold text-[var(--text-primary)] group-hover:text-[var(--text-brand)] mb-2 transition-colors">{s.title}</h3>
                   <p className="text-sm text-[var(--text-secondary)]">{s.tagline}</p>
                 </Link>

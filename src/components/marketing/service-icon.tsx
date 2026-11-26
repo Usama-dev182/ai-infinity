@@ -1,4 +1,4 @@
-import { Bot, Brain, Code2, Compass, Rocket, Workflow, type LucideProps } from "lucide-react";
+import { Bot, Brain, Code2, Compass, MonitorSmartphone, Rocket, Workflow, type LucideProps } from "lucide-react";
 import type { ServiceIconName } from "@/content/services";
 
 const ICONS: Record<ServiceIconName, React.ComponentType<LucideProps>> = {
@@ -8,6 +8,7 @@ const ICONS: Record<ServiceIconName, React.ComponentType<LucideProps>> = {
   Workflow,
   Code2,
   Compass,
+  MonitorSmartphone,
 };
 
 /** Maps a service's icon name to its Lucide component (single source for every page). */

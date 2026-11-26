@@ -286,6 +286,32 @@ Branched from `main` after PR #4 was merged. Owner answers received on 2026-11-2
   block and the Organization `sameAs`. A unit test enforces this.
 * Daspire, Cohere and Cazvid are labelled as the founder's freelance work, with softened summaries.
   The founder bio and eBrainX role descriptions were toned down.
+* **The founder's core frontend expertise** is highlighted from one list (`FRONTEND_EXPERTISE` in
+  `src/content/site.ts`). The skills, as provided by the owner: React, Next.js, Vue.js, TypeScript,
+  Redux, Zustand, React Query, Tailwind CSS and MUI. It appears in:
+  - a grouped "Core expertise" panel on `/about`;
+  - a compact row in the homepage founder block;
+  - the Full-Stack Engineering service's tools (now described as frontend-first);
+  - the founder's `knowsAbout` in Organization JSON-LD.
+
+  A unit test keeps all four consistent, and `/about` was added to the axe checks (0 violations,
+  light and dark).
+* **New service page: Frontend Engineering** (`/services/frontend-engineering`). It covers
+  capabilities, audience, problems, approach, the founder's stack and four FAQs (React vs Vue.js;
+  Redux vs Zustand vs React Query; speeding up an existing app; working with designers and
+  backend teams). The copy describes capabilities only, with no outcome claims.
+  - Daspire, Cohere and Cazvid (frontend freelance work) now list it first, so they appear as its
+    related work and their contact links pre-fill it.
+  - The SaaS & Startups industry links to it.
+  - Navigation, footer, `/services`, the homepage, `/about`, the sitemap, the contact form and
+    campaign links pick it up from the catalogue.
+  - The "Service Areas" stat is now 7, and a unit test keeps it equal to the catalogue size.
+  - "Six connected service areas" copy is now generated from the catalogue.
+  - Service grids centre an incomplete last row.
+  - Tests:
+    - unit: the page exists, it lists the founder's stack, and the freelance case studies are related;
+    - E2E: listing → page → related work → pre-filled CTA;
+    - axe: 0 violations, light and dark.
 
 ### 4. Social distribution and lead attribution
 

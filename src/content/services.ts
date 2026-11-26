@@ -4,7 +4,7 @@
 // Copy describes capabilities and approach — not past results. Do not add outcome claims
 // here; verified outcomes belong to individual case studies.
 
-export type ServiceIconName = "Rocket" | "Brain" | "Bot" | "Workflow" | "Code2" | "Compass";
+export type ServiceIconName = "Rocket" | "Brain" | "Bot" | "Workflow" | "Code2" | "Compass" | "MonitorSmartphone";
 
 export interface ServiceFaq {
   question: string;
@@ -377,13 +377,105 @@ export const SERVICES: Service[] = [
     related: ["ai-agents", "ai-integrations", "full-stack-development"],
   },
   {
+    slug: "frontend-engineering",
+    title: "Frontend Engineering",
+    shortTitle: "Frontend",
+    icon: "MonitorSmartphone",
+    tagline: "Fast, accessible interfaces built to last",
+    description:
+      "Senior frontend engineering with React, Next.js and Vue.js in TypeScript: design systems, complex application state and performance work for SaaS products and AI-powered interfaces.",
+    metaTitle: "Frontend Engineering (React, Next.js, Vue.js, TypeScript)",
+    metaDescription:
+      "Senior frontend engineering: React, Next.js and Vue.js with TypeScript, Redux, Zustand and React Query, Tailwind CSS and MUI design systems, Core Web Vitals and accessibility.",
+    keywords: [
+      "frontend development services",
+      "React development company",
+      "Next.js developer",
+      "Vue.js development",
+      "TypeScript frontend developer",
+      "frontend performance optimization",
+      "design system development",
+    ],
+    capabilities: [
+      "React and Next.js (App Router, Server Components)",
+      "Vue.js applications",
+      "TypeScript across the codebase",
+      "Client state with Redux and Zustand",
+      "Server state and caching with React Query",
+      "Design systems with Tailwind CSS and MUI",
+      "Core Web Vitals and performance",
+      "Accessibility (WCAG 2.2 AA)",
+    ],
+    audience: [
+      "SaaS teams that need senior frontend capacity for a growing product",
+      "Startups turning designs into a production-ready web application",
+      "Teams whose React or Vue.js codebase has become slow or hard to change",
+      "Products adding AI features that need a responsive, streaming interface",
+    ],
+    problems: [
+      "Pages that feel slow, with poor Core Web Vitals on mobile",
+      "State scattered across components, causing bugs and duplicated API calls",
+      "An inconsistent UI because there is no shared component library",
+      "Accessibility gaps that shut out users and create legal risk",
+      "A legacy frontend that slows down every new feature",
+    ],
+    solution: [
+      "We structure the frontend around clear boundaries: server-rendered where it helps speed and SEO, client state only where it is needed, and server data handled by a caching layer such as React Query instead of hand-written effects.",
+      "Shared components and design tokens, built with Tailwind CSS or MUI, keep the interface consistent, and automated accessibility and performance checks in CI stop regressions before they reach users.",
+    ],
+    useCases: [
+      { title: "SaaS dashboards", description: "Data-heavy interfaces with tables, charts, filters and role-based views." },
+      { title: "Design systems", description: "Reusable, accessible component libraries in Tailwind CSS or MUI, documented for your team." },
+      { title: "Performance & migrations", description: "Core Web Vitals work, and migrations such as Pages Router to App Router or JavaScript to TypeScript." },
+      { title: "AI product interfaces", description: "Chat, streaming responses, review queues and human-in-the-loop screens for AI features." },
+    ],
+    deliverables: [
+      "Frontend architecture and state management plan",
+      "Production React, Next.js or Vue.js implementation in TypeScript",
+      "Reusable component library and design tokens",
+      "Accessibility and performance checks in CI",
+      "Unit and end-to-end tests",
+      "Documentation and handover to your team",
+    ],
+    approach: [
+      { title: "Review", description: "Codebase or design review, with a Core Web Vitals and accessibility baseline." },
+      { title: "Plan", description: "Component, state and data-fetching architecture, with milestones." },
+      { title: "Build", description: "Iterative delivery with preview deployments, demos and code review." },
+      { title: "Verify", description: "Automated tests, accessibility checks and performance budgets before release." },
+    ],
+    techStack: ["React", "Next.js", "Vue.js", "TypeScript", "Redux", "Zustand", "React Query", "Tailwind CSS", "MUI", "Playwright"],
+    faqs: [
+      {
+        question: "React or Vue.js: which should we use?",
+        answer:
+          "Usually the one your team already knows. For new products we often recommend Next.js for its rendering options and ecosystem; Vue.js is a good fit when your team already works with it.",
+      },
+      {
+        question: "Redux, Zustand or React Query?",
+        answer:
+          "They solve different problems. React Query manages server data (fetching, caching and keeping it fresh); Zustand suits small to medium client state; Redux suits large applications with complex shared state and strict conventions. We choose per project and keep server and client state separate.",
+      },
+      {
+        question: "Can you speed up an existing application?",
+        answer:
+          "Yes. We measure first (Lighthouse and, where available, real-user Core Web Vitals), fix the biggest bottlenecks such as rendering strategy, bundle size, images and data fetching, and add checks so it stays fast.",
+      },
+      {
+        question: "Do you work with our designers and backend team?",
+        answer:
+          "Yes. We work from your Figma designs or existing design system and against your current APIs. If the backend needs work too, it can be combined with our full-stack engineering service.",
+      },
+    ],
+    related: ["full-stack-development", "ai-product-engineering", "ai-integrations"],
+  },
+  {
     slug: "full-stack-development",
     title: "Full-Stack Engineering",
     shortTitle: "Full-Stack",
     icon: "Code2",
     tagline: "The product foundation your AI features run on",
     description:
-      "We build modern web applications and SaaS platforms with React, Next.js, TypeScript, Node.js and Python — secure, tested and ready to scale with your AI roadmap.",
+      "We build modern web applications and SaaS platforms, frontend-first: React, Next.js and Vue.js with TypeScript, backed by Node.js and Python — secure, tested and ready to scale with your AI roadmap.",
     metaTitle: "Full-Stack Engineering (React, Next.js, TypeScript, Node.js, Python)",
     metaDescription:
       "Full-stack engineering for SaaS and web applications: React and Next.js, TypeScript, Node.js and Python/FastAPI, PostgreSQL, multi-tenant architecture, auth and cloud deployment.",
@@ -439,7 +531,7 @@ export const SERVICES: Service[] = [
       { title: "Verify", description: "Automated tests, accessibility and performance checks." },
       { title: "Ship", description: "Automated deployment, monitoring and handover." },
     ],
-    techStack: ["React", "Next.js", "TypeScript", "Node.js", "Python", "FastAPI", "Django", "PostgreSQL", "Prisma", "Redis", "Tailwind CSS", "Vercel", "AWS", "Docker"],
+    techStack: ["React", "Next.js", "Vue.js", "TypeScript", "Redux", "Zustand", "React Query", "Tailwind CSS", "MUI", "Node.js", "Python", "FastAPI", "Django", "PostgreSQL", "Prisma", "Redis", "Vercel", "AWS", "Docker"],
     faqs: [
       {
         question: "Do you work on existing codebases?",
@@ -452,7 +544,7 @@ export const SERVICES: Service[] = [
           "It depends on your requirements. Vercel suits many Next.js products; AWS or other clouds make sense for specific compliance, data or infrastructure needs.",
       },
     ],
-    related: ["ai-product-engineering", "ai-integrations", "ai-automation"],
+    related: ["frontend-engineering", "ai-product-engineering", "ai-integrations"],
   },
   {
     slug: "ai-consulting",
@@ -488,6 +580,11 @@ export const SERVICES: Service[] = [
 
 /** Services with their own /services/[slug] page. */
 export const SERVICE_PAGES = SERVICES.filter((s) => !s.href);
+
+const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve"];
+
+/** "Seven connected service areas", always in step with the catalogue. */
+export const SERVICE_AREAS_LABEL = `${NUMBER_WORDS[SERVICES.length] ?? SERVICES.length} connected service areas`;
 
 export function getService(slug: string) {
   return SERVICES.find((s) => s.slug === slug);

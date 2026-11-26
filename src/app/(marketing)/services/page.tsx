@@ -7,7 +7,7 @@ import { PageHero, Section } from "@/components/marketing/section";
 import { ServiceIconTile } from "@/components/marketing/service-icon";
 import { CtaBanner } from "@/components/marketing/cta-banner";
 import { JsonLd } from "@/components/seo/json-ld";
-import { SERVICES, serviceHref } from "@/content/services";
+import { SERVICE_AREAS_LABEL, SERVICES, serviceHref } from "@/content/services";
 import { breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -37,13 +37,13 @@ export default function ServicesPage() {
             From AI idea to <span className="gradient-text">production system</span>
           </>
         }
-        description="Six connected service areas covering strategy, applied AI, agents, automation and the software foundation around them. Start with one, or combine them across a product's lifecycle."
+        description={`${SERVICE_AREAS_LABEL} covering strategy, applied AI, agents, automation, frontend and the software foundation around them. Start with one, or combine them across a product's lifecycle.`}
       />
 
       <Section>
-        <StaggerContainer className="grid md:grid-cols-2 gap-6">
+        <StaggerContainer className="flex flex-wrap justify-center gap-6">
           {SERVICES.map((service) => (
-            <StaggerItem key={service.slug} className="h-full">
+            <StaggerItem key={service.slug} className="w-full md:w-[calc((100%-1.5rem)/2)]">
               <article className="flex flex-col h-full rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-7 lg:p-8">
                 <div className="flex items-start gap-4">
                   <ServiceIconTile name={service.icon} />

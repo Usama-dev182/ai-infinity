@@ -12,6 +12,7 @@ import { FaqList } from "@/components/marketing/faq-list";
 import { CtaBanner } from "@/components/marketing/cta-banner";
 import { IllustrativeWorkflow } from "@/components/marketing/illustrative-workflow";
 import { DeferredAdvisor } from "@/components/marketing/deferred-advisor";
+import { FounderExpertise } from "@/components/marketing/founder-expertise";
 import {
   CREDENTIALS,
   FAQ_ITEMS,
@@ -20,7 +21,7 @@ import {
   SITE,
   VERIFIED_TESTIMONIALS,
 } from "@/content/site";
-import { SERVICES, serviceHref } from "@/content/services";
+import { SERVICE_AREAS_LABEL, SERVICES, serviceHref } from "@/content/services";
 import { INDUSTRIES } from "@/content/industries";
 import { PRIMARY_CTA, SECONDARY_CTA } from "@/content/navigation";
 import { getPublishedCaseStudies } from "@/lib/content/case-studies";
@@ -227,11 +228,12 @@ export default async function HomePage() {
               AI product engineering, <span className="gradient-text">end to end</span>
             </>
           }
-          description="Six connected service areas — so the strategy, the AI and the software around it are designed by the same team."
+          description={`${SERVICE_AREAS_LABEL} — so the strategy, the AI and the software around it are designed by the same team.`}
         />
-        <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Flex-wrap instead of grid so an incomplete last row is centred. */}
+        <StaggerContainer className="flex flex-wrap justify-center gap-6">
           {SERVICES.map((service) => (
-            <StaggerItem key={service.slug}>
+            <StaggerItem key={service.slug} className="w-full md:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]">
               <TrackedLink
                 href={serviceHref(service)}
                 eventName="service_card_click"
@@ -478,7 +480,8 @@ export default async function HomePage() {
             </h2>
             <p className="mt-1 font-medium text-[var(--text-brand)]">{FOUNDER.title}</p>
             <p className="mt-5 text-[var(--text-secondary)]">{FOUNDER.bio}</p>
-            <p className="mt-4 text-[var(--text-secondary)]">
+            <FounderExpertise variant="compact" className="mt-5" />
+            <p className="mt-5 text-[var(--text-secondary)]">
               Every engagement is led by a senior engineer, from the first discovery conversation to production.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
