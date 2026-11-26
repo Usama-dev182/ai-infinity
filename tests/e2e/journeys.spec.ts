@@ -19,7 +19,7 @@ test("homepage → service page → consultation CTA carries the service", async
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("AI Agents & Agentic Systems");
   await expect(page.getByRole("main").getByRole("link", { name: /Discuss Your Project/ }).first()).toHaveAttribute(
     "href",
-    "/contact?service=ai-agents"
+    "/contact?service=ai-agents&topic=service-page"
   );
   expect((await events(page, "service_view")).map((e) => e.params.service)).toContain("ai-agents");
 });
@@ -93,6 +93,61 @@ test("industry landing page → inquiry with attribution (writes to local DB)", 
   const lead = (await events(page, "generate_lead"))[0]?.params;
   expect(lead).toMatchObject({ form: "contact", service: "ai-agents", industry: "real-estate", utm_source: "linkedin", utm_campaign: "e2e" });
   expectNoPii(lead, ["E2E Industry Lead", "e2e-industry@example.test", "qualifies property"]);
+});
+
+test("social post → case study → service page → consultation → lead in admin (writes to local DB)", async ({ page, baseURL }) => {
+  test.skip(!allowWrites(baseURL), "lead-writing tests run against localhost only");
+  const adminEmail = process.env.E2E_ADMIN_EMAIL;
+  const adminPassword = process.env.E2E_ADMIN_PASSWORD;
+  test.skip(!adminEmail || !adminPassword, "set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD (local admin) to run");
+  const runId = `e2e-journey-${Date.now()}`;
+
+  // 1. A campaign link from a LinkedIn post (as generated on /admin/campaign-links).
+  await page.goto("/case-studies/daspire-platform?utm_source=linkedin&utm_medium=social&utm_campaign=case-study-daspire-platform");
+  await ready(page);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Daspire");
+  // Share links on the page carry their own UTM tags.
+  const shareHref = await page.getByRole("link", { name: /^LinkedIn/ }).last().getAttribute("href");
+  const shared = new URL(new URL(shareHref!).searchParams.get("url")!);
+  expect(Object.fromEntries(shared.searchParams)).toMatchObject({ utm_source: "linkedin", utm_medium: "share", utm_campaign: "case-study-daspire-platform" });
+
+  // 2. Case study → related service page.
+  await page.locator('main a[href="/services/full-stack-development"]').first().click();
+  await expect(page).toHaveURL(/\/services\/full-stack-development$/);
+  await ready(page);
+
+  // 3. Service page → consultation CTA.
+  await page.getByRole("main").getByRole("link", { name: /Discuss Your Project/ }).first().click();
+  await expect(page).toHaveURL(/\/contact\?service=full-stack-development&topic=service-page/);
+  await ready(page);
+
+  // 4. Lead submission.
+  await page.locator("#contact-name").fill(`Journey ${runId}`);
+  await page.locator("#contact-email").fill(`${runId}@example.test`);
+  await page.locator("#contact-message").fill("We read your Daspire case study and want a similar analytics frontend.");
+  await page.waitForTimeout(2200);
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "your message is on its way" })).toBeVisible();
+  expect((await events(page, "generate_lead"))[0]?.params).toMatchObject({
+    service: "full-stack-development",
+    utm_source: "linkedin",
+    utm_campaign: "case-study-daspire-platform",
+  });
+
+  // 5. The lead appears in the admin dashboard with its attribution (first touch).
+  await page.goto("/admin/login");
+  await page.locator("#email").fill(adminEmail!);
+  await page.locator("#password").fill(adminPassword!);
+  await page.getByRole("button", { name: /sign in/i }).click();
+  await page.waitForURL(/\/admin$/);
+  await page.goto(`/admin/leads?source=linkedin&q=${runId}`);
+  const card = page.getByRole("listitem").filter({ hasText: `Journey ${runId}` });
+  await expect(card).toHaveCount(1);
+  await expect(card).toContainText("linkedin");
+  await expect(card).toContainText("social / case-study-daspire-platform");
+  await expect(card).toContainText("/case-studies/daspire-platform");
+  await expect(card).toContainText("Service page");
+  await expect(card).toContainText("Full-Stack Engineering");
 });
 
 test("quote submission succeeds (writes to local DB)", async ({ page, baseURL }) => {

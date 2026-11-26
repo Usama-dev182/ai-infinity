@@ -9,6 +9,7 @@ import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/an
 import { Section, SectionHeading } from "@/components/marketing/section";
 import { ServiceIconTile } from "@/components/marketing/service-icon";
 import { CaseStudyCard } from "@/components/marketing/case-study-card";
+import { ShareLinks } from "@/components/marketing/share-links";
 import { FaqList } from "@/components/marketing/faq-list";
 import { CtaBanner } from "@/components/marketing/cta-banner";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -49,7 +50,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   const related = service.related.map(getService).filter((s) => s !== undefined);
   const caseStudies = caseStudiesForService(await getPublishedCaseStudies(), service.slug).slice(0, 3);
-  const quoteHref = `/contact?service=${service.slug}`;
+  const quoteHref = `/contact?service=${service.slug}&topic=service-page`;
 
   return (
     <>
@@ -287,6 +288,9 @@ export default async function ServiceDetailPage({ params }: Props) {
               </li>
             ))}
           </ul>
+          <div className="mt-10 border-t border-[var(--surface-border)] pt-6">
+            <ShareLinks path={`/services/${service.slug}`} title={service.title} location={`service_detail:${service.slug}`} />
+          </div>
         </Section>
       )}
 

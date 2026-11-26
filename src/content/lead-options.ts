@@ -30,6 +30,8 @@ export const ENTRY_POINTS = [
   { value: "advisor", label: "AI Solution Advisor" },
   { value: "roi-calculator", label: "ROI calculator" },
   { value: "discovery-call", label: "Discovery call request" },
+  { value: "case-study", label: "Case study" },
+  { value: "service-page", label: "Service page" },
 ];
 
 export const LEAD_STAGES = [

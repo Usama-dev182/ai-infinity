@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, typecheck, unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+
+  e2e:
+    name: Build and end-to-end tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Throwaway database that exists only for this job. Never point CI at production:
+    # the E2E suite writes test leads.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ai_infinity_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ai_infinity_ci
+      # CI-only values for an ephemeral database; not secrets.
+      AUTH_SECRET: ci-only-auth-secret-not-used-anywhere-else
+      AUTH_URL: http://localhost:3100
+      NEXT_PUBLIC_SITE_URL: https://aiinfinitylabs.com
+      ADMIN_PASSWORD: ci-admin-password-123
+      E2E_ADMIN_EMAIL: admin@aiinfinitylabs.com
+      E2E_ADMIN_PASSWORD: ci-admin-password-123
+      E2E_BASE_URL: http://localhost:3100
+      # No OpenAI, Resend, Upstash or GA keys: the app must degrade gracefully without them.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Create schema and seed
+        run: |
+          npx prisma db push
+          npm run db:seed
+      - run: npm run build
+      - name: Start the production server
+        run: |
+          npm run start -- -p 3100 > server.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -sf -o /dev/null http://localhost:3100/ && exit 0
+            sleep 1
+          done
+          cat server.log
+          exit 1
+      # Playwright uses the Google Chrome that ubuntu-latest ships with (channel "chrome").
+      - run: npm run test:e2e
+      - name: Upload traces and server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: |
+            test-results/
+            server.log
+          retention-days: 7

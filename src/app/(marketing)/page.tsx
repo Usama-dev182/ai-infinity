@@ -11,7 +11,7 @@ import { CaseStudyCard } from "@/components/marketing/case-study-card";
 import { FaqList } from "@/components/marketing/faq-list";
 import { CtaBanner } from "@/components/marketing/cta-banner";
 import { IllustrativeWorkflow } from "@/components/marketing/illustrative-workflow";
-import { AiSolutionAdvisor } from "@/components/marketing/ai-solution-advisor";
+import { DeferredAdvisor } from "@/components/marketing/deferred-advisor";
 import {
   CREDENTIALS,
   FAQ_ITEMS,
@@ -24,6 +24,7 @@ import { SERVICES, serviceHref } from "@/content/services";
 import { INDUSTRIES } from "@/content/industries";
 import { PRIMARY_CTA, SECONDARY_CTA } from "@/content/navigation";
 import { getPublishedCaseStudies } from "@/lib/content/case-studies";
+import { featuredCaseStudies } from "@/lib/content/case-study-model";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
@@ -85,9 +86,15 @@ const CAPABILITY_GROUPS = [
 
 export default async function HomePage() {
   const caseStudies = await getPublishedCaseStudies();
-  const featured = caseStudies.filter((c) => c.featured).slice(0, 3);
+  const featured = featuredCaseStudies(caseStudies);
   const detailedIndustry = INDUSTRIES.find((i) => i.hasDetailPage);
   const otherIndustries = INDUSTRIES.filter((i) => !i.hasDetailPage);
+  // Only verified/working profile URLs are defined (see SOCIAL_PROFILES).
+  const founderProfile = FOUNDER.linkedin
+    ? { label: "LinkedIn", href: FOUNDER.linkedin }
+    : FOUNDER.github
+      ? { label: "GitHub", href: FOUNDER.github }
+      : undefined;
 
   return (
     <>
@@ -333,7 +340,7 @@ export default async function HomePage() {
             </TrackedLink>
           </FadeUp>
           <FadeUp delay={0.1}>
-            <AiSolutionAdvisor location="home_advisor" />
+            <DeferredAdvisor location="home_advisor" />
           </FadeUp>
         </div>
       </Section>
@@ -480,18 +487,20 @@ export default async function HomePage() {
                   About AI Infinity Labs
                 </TrackedLink>
               </Button>
-              <Button asChild variant="ghost">
-                <TrackedLink
-                  href={FOUNDER.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  eventName="social_click"
-                  params={{ label: "LinkedIn", location: "home_founder", destination: FOUNDER.linkedin }}
-                >
-                  LinkedIn <ArrowUpRight aria-hidden="true" className="w-4 h-4" />
-                  <span className="sr-only">(opens in a new tab)</span>
-                </TrackedLink>
-              </Button>
+              {founderProfile && (
+                <Button asChild variant="ghost">
+                  <TrackedLink
+                    href={founderProfile.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    eventName="social_click"
+                    params={{ label: founderProfile.label, location: "home_founder", destination: founderProfile.href }}
+                  >
+                    {founderProfile.label} <ArrowUpRight aria-hidden="true" className="w-4 h-4" />
+                    <span className="sr-only">(opens in a new tab)</span>
+                  </TrackedLink>
+                </Button>
+              )}
             </div>
           </FadeUp>
         </div>

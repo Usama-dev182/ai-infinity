@@ -5,6 +5,58 @@
 // unverified items stay in source for review but are never rendered.
 // See docs/implementation-progress.md → "Owner verification checklist".
 
+/**
+ * Social profiles and what is known about each URL.
+ *
+ * - "verified": checked and confirmed to belong to us.
+ * - "unconfirmed": could not be checked automatically (the site blocks automated requests),
+ *   and nothing suggests it is wrong. Shown.
+ * - "not-found": the platform reported the profile does not exist (or is not public).
+ *   Hidden everywhere until the owner supplies a working URL.
+ *
+ * Last checked 2026-11-25 with logged-out requests. Update `status` when a URL is fixed.
+ */
+export type SocialNetwork = "linkedin" | "github" | "upwork" | "youtube" | "x";
+export type SocialStatus = "verified" | "unconfirmed" | "not-found";
+
+export const SOCIAL_PROFILES: Record<SocialNetwork, { label: string; url?: string; status: SocialStatus; note: string }> = {
+  github: {
+    label: "GitHub",
+    url: "https://github.com/Usama-dev182",
+    status: "verified",
+    note: "Public profile; name matches the founder and the repository owner.",
+  },
+  upwork: {
+    label: "Upwork",
+    url: "https://www.upwork.com/freelancers/~012a332067f71fa1bd",
+    status: "unconfirmed",
+    note: "Upwork blocks automated checks (HTTP 403). Owner to confirm.",
+  },
+  linkedin: {
+    label: "LinkedIn",
+    url: "https://www.linkedin.com/in/info-usama-ali/",
+    status: "not-found",
+    note: "LinkedIn shows 'Profile Not Found' to logged-out visitors. Fix the URL or make the profile public.",
+  },
+  youtube: {
+    label: "YouTube",
+    url: "https://www.youtube.com/@Techtalkswithusamaali",
+    status: "not-found",
+    note: "YouTube returns 404 for this handle. Replace with the channel's real URL.",
+  },
+  x: {
+    label: "X",
+    status: "not-found",
+    note: "No account confirmed yet.",
+  },
+};
+
+/** URL of a social profile that may be shown publicly, or undefined. */
+export function socialUrl(network: SocialNetwork): string | undefined {
+  const profile = SOCIAL_PROFILES[network];
+  return profile.url && profile.status !== "not-found" ? profile.url : undefined;
+}
+
 export const SITE = {
   name: "AI Infinity Labs",
   tagline: "Building AI-Powered Products That Matter",
@@ -15,10 +67,10 @@ export const SITE = {
   email: "infousamaali1@gmail.com",
   phone: "+92 309 073 0852",
   whatsapp: "https://wa.me/923090730852",
-  linkedin: "https://www.linkedin.com/in/info-usama-ali/",
-  github: "https://github.com/Usama-dev182",
-  upwork: "https://www.upwork.com/freelancers/~012a332067f71fa1bd",
-  youtube: "https://www.youtube.com/@Techtalkswithusamaali",
+  linkedin: socialUrl("linkedin"),
+  github: socialUrl("github"),
+  upwork: socialUrl("upwork"),
+  youtube: socialUrl("youtube"),
   /**
    * X (Twitter) handles. Left undefined until the owner confirms the accounts exist and
    * belong to the company — an unverified handle attributes social cards to someone else.
@@ -32,10 +84,10 @@ export const SITE = {
 export const FOUNDER = {
   name: "Usama Ali",
   title: "Founder & Lead Engineer",
-  bio: "Senior software engineer with 5+ years building pixel-perfect frontends, scalable full-stack applications, and cutting-edge AI integrations. Previously at eBrainX Solutions and Techling Pvt, leading global teams to deliver impactful digital products.",
+  bio: "Senior software engineer with 5+ years building frontends, full-stack applications and AI integrations. Previously Senior Full Stack Engineer at eBrainX Solutions and Software Engineer at Techling Pvt, with freelance engineering for SaaS products alongside.",
   avatar: "/images/usama-ali.jpg",
-  github: "https://github.com/Usama-dev182",
-  linkedin: "https://www.linkedin.com/in/info-usama-ali/",
+  github: socialUrl("github"),
+  linkedin: socialUrl("linkedin"),
 };
 
 export interface StatItem {
@@ -58,7 +110,7 @@ export const VERIFIED_STATS = STATS.filter((s) => s.verified);
  * Credibility facts that link to public evidence (case studies, profiles, channels).
  * Prefer these over unverifiable numbers.
  */
-export const CREDENTIALS = [
+const ALL_CREDENTIALS: { title: string; description: string; href?: string; linkLabel: string }[] = [
   {
     title: "Founder-led engineering",
     description: "Led by Usama Ali, a full-stack and AI engineer with prior roles at eBrainX Solutions and Techling.",
@@ -67,23 +119,27 @@ export const CREDENTIALS = [
   },
   {
     title: "Shipped client platforms",
-    description: "Frontend and platform engineering for SaaS products including Daspire, Cohere and Cazvid.",
+    description: "Our founder's freelance engineering for SaaS products including Daspire, Cohere and Cazvid.",
     href: "/case-studies",
     linkLabel: "See case studies",
   },
   {
     title: "Independent client profile",
     description: "Client work and history on Upwork, available to review before you get in touch.",
-    href: "https://www.upwork.com/freelancers/~012a332067f71fa1bd",
+    href: SITE.upwork,
     linkLabel: "View Upwork profile",
   },
   {
     title: "Engineering in public",
-    description: "Practical videos and articles on AI agents, LLM integration and automation.",
-    href: "/tech-talks",
-    linkLabel: "Watch Tech Talks",
+    // Tech Talks videos are not published yet, so this links to the blog.
+    description: "Practical articles on AI agents, LLM integration and automation.",
+    href: "/blog",
+    linkLabel: "Read the blog",
   },
-] as const;
+];
+
+/** Only credentials with a working evidence link are shown. */
+export const CREDENTIALS = ALL_CREDENTIALS.filter((c): c is typeof c & { href: string } => Boolean(c.href));
 
 export interface TestimonialItem {
   id: number;

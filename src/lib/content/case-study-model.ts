@@ -75,7 +75,7 @@ export function mapDbCaseStudy(row: DbCaseStudyRow): CaseStudyRecord {
     techStack: row.techStack,
     overview: paragraphs.length ? paragraphs : undefined,
     outcomes: parseOutcomes(row.outcomes),
-    coverImage: row.coverImage,
+    cover: row.coverImage ? { src: row.coverImage, alt: `${row.title} cover image` } : null,
     seo: {
       title: row.metaTitle ?? undefined,
       description: row.metaDescription ?? undefined,
@@ -107,4 +107,17 @@ export function verifiedOutcomes(c: Pick<CaseStudy, "outcomes">) {
 
 export function caseStudiesForService<T extends Pick<CaseStudy, "services">>(list: T[], serviceSlug: string) {
   return list.filter((c) => c.services.includes(serviceSlug));
+}
+
+/** Homepage "Featured work": featured entries in content order. Pass published entries only. */
+export function featuredCaseStudies<T extends Pick<CaseStudy, "featured">>(list: T[], limit = 3) {
+  return list.filter((c) => c.featured).slice(0, limit);
+}
+
+/** Case studies for an industry page: explicitly related, or tagged with the industry. */
+export function caseStudiesForIndustry<T extends Pick<CaseStudy, "slug" | "industrySlug">>(
+  list: T[],
+  industry: { slug: string; relatedCaseStudies?: string[] }
+) {
+  return list.filter((c) => industry.relatedCaseStudies?.includes(c.slug) || c.industrySlug === industry.slug);
 }

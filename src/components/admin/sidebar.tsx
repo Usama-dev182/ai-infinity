@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
+  Megaphone,
   LayoutDashboard,
   FileText,
   Briefcase,
@@ -32,6 +33,7 @@ const NAV: NavItem[] = [
   { href: "/admin/leads", icon: Inbox, label: "Leads", adminOnly: true },
   { href: "/admin/posts", icon: FileText, label: "Blog Posts" },
   { href: "/admin/case-studies", icon: Briefcase, label: "Case Studies" },
+  { href: "/admin/campaign-links", icon: Megaphone, label: "Campaign Links" },
   { href: "/admin/jobs", icon: Users, label: "Job Postings" },
   { href: "/admin/submissions/careers", icon: UserCheck, label: "Applications", adminOnly: true },
 ];

@@ -45,7 +45,7 @@ export default function ContactPage() {
     { href: SITE.linkedin, label: "LinkedIn", icon: ExternalLink, external: true },
     { href: SITE.upwork, label: "Upwork", icon: ExternalLink, external: true },
     { href: SITE.github, label: "GitHub", icon: Code2, external: true },
-  ];
+  ].filter((l): l is typeof l & { href: string } => Boolean(l.href));
 
   return (
     <>

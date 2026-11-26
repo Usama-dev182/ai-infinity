@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, CheckCircle2, Compass, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrackedLink } from "@/components/analytics/tracked-link";
@@ -6,15 +6,27 @@ import { FadeUp, StaggerContainer, StaggerItem } from "@/components/marketing/an
 import { Section } from "@/components/marketing/section";
 import { ServiceIconTile } from "@/components/marketing/service-icon";
 import { CaseStudyCard } from "@/components/marketing/case-study-card";
-import type { CapabilityStatus, CaseStudy } from "@/content/case-studies";
+import { CaseStudyCover } from "@/components/marketing/case-study-cover";
+import { ArchitectureDiagram } from "@/components/marketing/architecture-diagram";
+import { ShareLinks } from "@/components/marketing/share-links";
+import type { CapabilityStatus, CaseStudy, CaseStudyCapability } from "@/content/case-studies";
 import { getService, serviceHref } from "@/content/services";
 import { verifiedOutcomes } from "@/lib/content/case-study-model";
 
-const STATUS_LABEL: Record<CapabilityStatus, { label: string; variant: "success" | "warning" | "secondary" | "outline" }> = {
-  implemented: { label: "Implemented", variant: "success" },
-  "in-progress": { label: "In progress", variant: "warning" },
-  planned: { label: "Planned", variant: "secondary" },
-  unconfirmed: { label: "Status to be confirmed", variant: "outline" },
+// Static class names (Tailwind can't see computed ones), so the fact strip never has an empty cell.
+const FACT_GRID: Record<number, string> = {
+  1: "grid-cols-1",
+  2: "grid-cols-1 sm:grid-cols-2",
+  3: "grid-cols-1 sm:grid-cols-3",
+  4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
+};
+
+const STATUS_ORDER: CapabilityStatus[] = ["implemented", "in-progress", "planned", "unconfirmed"];
+const STATUS_LABEL: Record<CapabilityStatus, { heading: string; badge: string; variant: "success" | "warning" | "secondary" | "outline" }> = {
+  implemented: { heading: "Implemented", badge: "Implemented", variant: "success" },
+  "in-progress": { heading: "In progress", badge: "In progress", variant: "warning" },
+  planned: { heading: "Planned", badge: "Planned", variant: "secondary" },
+  unconfirmed: { heading: "Status to be confirmed", badge: "To be confirmed", variant: "outline" },
 };
 
 function Prose({ paragraphs }: { paragraphs: string[] }) {
@@ -27,9 +39,20 @@ function Prose({ paragraphs }: { paragraphs: string[] }) {
   );
 }
 
-function ArticleSection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+function ArticleSection({
+  id,
+  title,
+  eyebrow,
+  children,
+}: {
+  id: string;
+  title: string;
+  eyebrow?: string;
+  children: React.ReactNode;
+}) {
   return (
     <section aria-labelledby={id} className="scroll-mt-24">
+      {eyebrow && <p className="mb-2 text-sm font-semibold uppercase tracking-wider text-[var(--text-brand)]">{eyebrow}</p>}
       <h2 id={id} className="text-heading-2 font-bold text-[var(--text-primary)] mb-5">
         {title}
       </h2>
@@ -38,18 +61,41 @@ function ArticleSection({ id, title, children }: { id: string; title: string; ch
   );
 }
 
+function groupByStatus(capabilities: CaseStudyCapability[]) {
+  return STATUS_ORDER.map((status) => ({ status, items: capabilities.filter((c) => c.status === status) })).filter(
+    (g) => g.items.length > 0
+  );
+}
+
+/** Pre-fills the contact form with the context of this case study. */
+export function caseStudyContactHref(study: Pick<CaseStudy, "services" | "industrySlug">) {
+  const params = new URLSearchParams({ topic: "case-study" });
+  if (study.services[0]) params.set("service", study.services[0]);
+  if (study.industrySlug) params.set("industry", study.industrySlug);
+  return `/contact?${params.toString()}`;
+}
+
 /** Full case study layout. Used by the public page and the admin draft preview. */
 export function CaseStudyArticle({ study, related }: { study: CaseStudy; related: CaseStudy[] }) {
   const outcomes = verifiedOutcomes(study);
   const services = study.services.map(getService).filter((s) => s !== undefined);
   const location = `case_study:${study.slug}`;
+  const contactHref = caseStudyContactHref(study);
+  const path = `/case-studies/${study.slug}`;
+
+  const facts = [
+    { label: "Client", value: study.client },
+    { label: "Our role", value: study.role },
+    { label: "Engagement", value: study.engagement },
+    { label: "Industry", value: study.industry },
+  ].filter((f): f is { label: string; value: string } => Boolean(f.value));
 
   return (
     <>
       {/* Hero */}
       <section className="relative border-b border-[var(--surface-border)] bg-gradient-to-b from-[var(--surface-bg-subtle)] to-[var(--surface-bg)]">
         <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.08),transparent_60%)]" />
-        <div className="relative container-page py-14 lg:py-20">
+        <div className="relative container-page py-12 lg:py-16">
           <nav aria-label="Breadcrumb" className="mb-8">
             <TrackedLink
               href="/case-studies"
@@ -60,15 +106,18 @@ export function CaseStudyArticle({ study, related }: { study: CaseStudy; related
               <ArrowLeft aria-hidden="true" className="w-4 h-4" /> All case studies
             </TrackedLink>
           </nav>
-          <div className="grid lg:grid-cols-[1.25fr_0.75fr] gap-12 items-start">
+          <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-10 lg:gap-14 items-center">
             <div>
-              {study.industry && <Badge variant="gradient" className="mb-4">{study.industry}</Badge>}
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {study.industry && <Badge variant="gradient">{study.industry}</Badge>}
+                {study.projectType && <Badge variant="outline">{study.projectType}</Badge>}
+              </div>
               <h1 className="text-heading-1 font-extrabold text-[var(--text-primary)]">{study.title}</h1>
               <p className="mt-6 text-lead text-[var(--text-secondary)]">{study.summary}</p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Button asChild variant="gradient" size="lg">
                   <TrackedLink
-                    href="/contact"
+                    href={contactHref}
                     eventName="cta_click"
                     params={{ label: "Discuss Your Project", location: `${location}:hero`, destination: "/contact" }}
                   >
@@ -91,31 +140,34 @@ export function CaseStudyArticle({ study, related }: { study: CaseStudy; related
                 )}
               </div>
             </div>
-            <FadeUp delay={0.1}>
-              <dl className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-6 space-y-5">
-                <div>
-                  <dt className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Client</dt>
-                  <dd className="mt-1 font-medium text-[var(--text-primary)]">{study.client}</dd>
-                </div>
-                {study.role && (
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Our role</dt>
-                    <dd className="mt-1 font-medium text-[var(--text-primary)]">{study.role}</dd>
-                  </div>
-                )}
-                {study.techStack.length > 0 && (
-                  <div>
-                    <dt className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">Technology</dt>
-                    <dd className="mt-2 flex flex-wrap gap-1.5">
-                      {study.techStack.map((t) => (
-                        <Badge key={t} variant="secondary">{t}</Badge>
-                      ))}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-            </FadeUp>
+            <CaseStudyCover
+              cover={study.cover}
+              preload
+              sizes="(min-width: 1024px) 560px, 100vw"
+              className="rounded-2xl border border-[var(--surface-border)] shadow-xl"
+            />
           </div>
+
+          <dl className={`mt-10 grid ${FACT_GRID[facts.length]} gap-px overflow-hidden rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-border)]`}>
+            {facts.map((f) => (
+              <div key={f.label} className="bg-[var(--surface-card)] p-4 sm:p-5">
+                <dt className="text-caption font-semibold uppercase tracking-wider text-[var(--text-muted)]">{f.label}</dt>
+                <dd className="mt-1 font-medium text-[var(--text-primary)]">{f.value}</dd>
+              </div>
+            ))}
+          </dl>
+          {study.techStack.length > 0 && (
+            <div className="mt-5 flex flex-wrap items-center gap-2">
+              <span className="text-caption font-semibold uppercase tracking-wider text-[var(--text-muted)]">Technology</span>
+              <ul className="flex flex-wrap gap-1.5" aria-label="Technologies">
+                {study.techStack.map((t) => (
+                  <li key={t}>
+                    <Badge variant="secondary">{t}</Badge>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </section>
 
@@ -153,11 +205,19 @@ export function CaseStudyArticle({ study, related }: { study: CaseStudy; related
           )}
           {study.vision && (
             <ArticleSection id="vision" title="Product vision">
-              <Prose paragraphs={study.vision} />
+              <div className="relative rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-bg-subtle)] p-6 sm:p-8">
+                <Compass aria-hidden="true" className="absolute right-6 top-6 w-6 h-6 text-[var(--text-brand)] opacity-60" />
+                <Prose paragraphs={study.vision} />
+              </div>
             </ArticleSection>
           )}
           {study.contributions && (
             <ArticleSection id="contribution" title="Our engineering contribution">
+              {study.role && (
+                <p className="mb-5 text-lg text-[var(--text-secondary)]">
+                  Role: <strong className="font-semibold text-[var(--text-primary)]">{study.role}</strong>
+                </p>
+              )}
               <ul className="grid sm:grid-cols-2 gap-3">
                 {study.contributions.map((c) => (
                   <li key={c} className="flex items-start gap-3 text-[var(--text-secondary)]">
@@ -170,56 +230,68 @@ export function CaseStudyArticle({ study, related }: { study: CaseStudy; related
           )}
           {study.capabilities && (
             <ArticleSection id="solution" title="The solution">
-              <ul className="grid gap-4">
-                {study.capabilities.map((c) => {
-                  const status = STATUS_LABEL[c.status];
+              <div className="space-y-8">
+                {groupByStatus(study.capabilities).map(({ status, items }) => {
+                  const label = STATUS_LABEL[status];
                   return (
-                    <li key={c.title} className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-5">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="font-semibold text-[var(--text-primary)]">{c.title}</h3>
-                        <Badge variant={status.variant}>{status.label}</Badge>
-                      </div>
-                      <p className="mt-2 text-meta text-[var(--text-secondary)]">{c.description}</p>
-                    </li>
-                  );
-                })}
-              </ul>
-            </ArticleSection>
-          )}
-          {study.architecture && (
-            <ArticleSection id="architecture" title="Architecture overview">
-              <figure className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-5 sm:p-6">
-                <ol className="space-y-3">
-                  {study.architecture.layers.map((layer) => (
-                    <li key={layer.name} className="grid sm:grid-cols-[10rem_1fr] gap-3 items-start">
-                      <span className="text-sm font-semibold text-[var(--text-brand)] pt-1.5">{layer.name}</span>
-                      <ul className="flex flex-wrap gap-2">
-                        {layer.items.map((item) => (
-                          <li
-                            key={item}
-                            className="rounded-lg border border-[var(--surface-border)] bg-[var(--surface-bg-subtle)] px-3 py-1.5 text-sm text-[var(--text-primary)]"
-                          >
-                            {item}
+                    <div key={status}>
+                      <h3 className="mb-3 flex items-center gap-2 font-semibold text-[var(--text-primary)]">
+                        <Badge variant={label.variant}>{label.badge}</Badge>
+                        <span className="text-[var(--text-muted)] text-sm font-normal">
+                          {items.length} {items.length === 1 ? "capability" : "capabilities"}
+                        </span>
+                      </h3>
+                      <ul className="grid sm:grid-cols-2 gap-3">
+                        {items.map((c) => (
+                          <li key={c.title} className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-5">
+                            {c.group && <p className="text-caption font-semibold uppercase tracking-wider text-[var(--text-muted)]">{c.group}</p>}
+                            <p className="mt-1 font-semibold text-[var(--text-primary)]">{c.title}</p>
+                            <p className="mt-2 text-meta text-[var(--text-secondary)]">{c.description}</p>
                           </li>
                         ))}
                       </ul>
-                    </li>
-                  ))}
-                </ol>
-                <figcaption className="mt-5 text-xs text-[var(--text-muted)]">{study.architecture.caption}</figcaption>
-              </figure>
+                    </div>
+                  );
+                })}
+              </div>
             </ArticleSection>
           )}
-          {study.engineeringChallenges && (
-            <ArticleSection id="engineering-challenges" title="Engineering challenges">
+        </div>
+
+        {study.architecture && (
+          <div className="max-w-5xl mx-auto mt-16">
+            <ArticleSection id="architecture" eyebrow="Architecture" title="How the platform fits together">
+              <ArchitectureDiagram architecture={study.architecture} id="architecture-diagram" />
+            </ArticleSection>
+          </div>
+        )}
+
+        <div className="max-w-3xl mx-auto mt-16 space-y-16">
+          {study.considerations && (
+            <ArticleSection id="considerations" title="Architectural considerations">
               <div className="grid sm:grid-cols-2 gap-4">
-                {study.engineeringChallenges.map((c) => (
+                {study.considerations.map((c) => (
                   <div key={c.title} className="rounded-xl border border-[var(--surface-border)] bg-[var(--surface-card)] p-5">
                     <h3 className="font-semibold text-[var(--text-primary)]">{c.title}</h3>
                     <p className="mt-2 text-meta text-[var(--text-secondary)]">{c.description}</p>
                   </div>
                 ))}
               </div>
+            </ArticleSection>
+          )}
+          {study.intendedBenefits && (
+            <ArticleSection id="benefits" title="Intended business benefits">
+              <p className="mb-5 text-meta text-[var(--text-muted)]">
+                What the platform is designed to achieve. These are goals, not measured results.
+              </p>
+              <ul className="space-y-3">
+                {study.intendedBenefits.map((b) => (
+                  <li key={b} className="flex gap-3 text-lg text-[var(--text-secondary)]">
+                    <Sparkles aria-hidden="true" className="w-5 h-5 mt-1 shrink-0 text-[var(--text-brand)]" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
             </ArticleSection>
           )}
           {study.projectStatus && (
@@ -239,6 +311,46 @@ export function CaseStudyArticle({ study, related }: { study: CaseStudy; related
               </ul>
             </ArticleSection>
           )}
+
+          {/* Contextual CTA */}
+          <FadeUp>
+            <aside
+              aria-labelledby="case-study-cta"
+              className="rounded-2xl border border-[var(--surface-border)] bg-[var(--surface-bg-subtle)] p-6 sm:p-8"
+            >
+              <h2 id="case-study-cta" className="text-heading-3 font-bold text-[var(--text-primary)]">
+                Planning something similar?
+              </h2>
+              <p className="mt-3 text-[var(--text-secondary)]">
+                Tell us about the product or workflow you have in mind. We&apos;ll reply within 1–2 business days with
+                initial thoughts and suggested next steps.
+              </p>
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <Button asChild variant="gradient">
+                  <TrackedLink
+                    href={contactHref}
+                    eventName="cta_click"
+                    params={{ label: "Discuss Your Project", location: `${location}:cta`, destination: "/contact" }}
+                  >
+                    Discuss your project <ArrowRight aria-hidden="true" className="w-4 h-4" />
+                  </TrackedLink>
+                </Button>
+                <Button asChild variant="outline">
+                  <TrackedLink
+                    href="/tools/ai-solution-advisor"
+                    eventName="cta_click"
+                    params={{ label: "AI Solution Advisor", location: `${location}:cta`, destination: "/tools/ai-solution-advisor" }}
+                  >
+                    Try the AI Solution Advisor
+                  </TrackedLink>
+                </Button>
+              </div>
+              <div className="mt-6 border-t border-[var(--surface-border)] pt-5">
+                <ShareLinks path={path} title={study.title} location={location} />
+              </div>
+            </aside>
+          </FadeUp>
+
           {services.length > 0 && (
             <ArticleSection id="services" title="Related services">
               <ul className="grid sm:grid-cols-2 gap-3">

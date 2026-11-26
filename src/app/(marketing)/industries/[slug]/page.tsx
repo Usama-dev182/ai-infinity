@@ -14,6 +14,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { INDUSTRY_PAGES, getIndustry } from "@/content/industries";
 import { getService, serviceHref } from "@/content/services";
 import { getPublishedCaseStudies } from "@/lib/content/case-studies";
+import { caseStudiesForIndustry } from "@/lib/content/case-study-model";
 import { breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 
 export const revalidate = 300;
@@ -46,9 +47,7 @@ export default async function IndustryPage({ params }: Props) {
   if (!industry?.hasDetailPage) notFound();
 
   const published = await getPublishedCaseStudies();
-  const caseStudies = published.filter(
-    (c) => industry.relatedCaseStudies?.includes(c.slug) || c.industrySlug === industry.slug
-  );
+  const caseStudies = caseStudiesForIndustry(published, industry);
   const services = (industry.relatedServices ?? []).map(getService).filter((s) => s !== undefined);
   const contactHref = `/contact?industry=${industry.slug}`;
   const label = industry.audienceLabel ?? industry.name.toLowerCase();
